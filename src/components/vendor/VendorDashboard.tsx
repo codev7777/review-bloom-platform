@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,7 +6,7 @@ import {
   BarChart4, 
   ShoppingBag, 
   QrCode, 
-  Settings, 
+  Settings as SettingsIcon, 
   LogOut,
   Menu,
   X
@@ -25,7 +24,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
     { icon: <BarChart4 size={20} />, label: "Analytics", path: "/vendor-dashboard/analytics" },
     { icon: <ShoppingBag size={20} />, label: "Products", path: "/vendor-dashboard/products" },
     { icon: <QrCode size={20} />, label: "Campaigns", path: "/vendor-dashboard/campaigns" },
-    { icon: <Settings size={20} />, label: "Settings", path: "/vendor-dashboard/settings" },
+    { icon: <SettingsIcon size={20} />, label: "Settings", path: "/vendor-dashboard/settings" },
   ];
 
   return (
