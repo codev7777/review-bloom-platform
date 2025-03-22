@@ -39,7 +39,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import QRCode from '@/components/ui/QRCode';
+import { QRCode } from '@/components/ui/QRCode';
 import { toast } from '@/components/ui/use-toast';
 
 // Mock data
