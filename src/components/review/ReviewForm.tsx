@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import StarRating from "./StarRating";
 
 interface ReviewFormProps {
@@ -28,6 +29,7 @@ export interface ReviewFormData {
   feedback: string;
   email: string;
   country: string;
+  usedMoreThanSevenDays: boolean;
 }
 
 const ReviewForm = ({
@@ -38,11 +40,12 @@ const ReviewForm = ({
 }: ReviewFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ReviewFormData>({
-    orderId: "",
+    orderId: "123-4567890-1234567",
     rating: 0,
     feedback: "",
     email: "",
     country: "",
+    usedMoreThanSevenDays: false,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
 
@@ -70,11 +73,22 @@ const ReviewForm = ({
     }
   };
 
+  const handleCheckboxChange = (checked: boolean) => {
+    setFormData((prev) => ({ ...prev, usedMoreThanSevenDays: checked }));
+    if (errors.usedMoreThanSevenDays) {
+      setErrors((prev) => ({ ...prev, usedMoreThanSevenDays: "" }));
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
     
+    // Validate Order ID (Amazon order numbers format: 11Y-YYYYYYY-YYYYYYY)
+    const orderIdPattern = /^\d{3}-\d{7}-\d{7}$/;
     if (!formData.orderId.trim()) {
       newErrors.orderId = "Order ID is required";
+    } else if (!orderIdPattern.test(formData.orderId)) {
+      newErrors.orderId = "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
     }
     
     if (formData.rating === 0) {
@@ -87,6 +101,10 @@ const ReviewForm = ({
     
     if (!formData.country) {
       newErrors.country = "Please select your country";
+    }
+    
+    if (!formData.usedMoreThanSevenDays) {
+      newErrors.usedMoreThanSevenDays = "You must have used the product for at least 7 days";
     }
     
     // Email is optional, but if provided, should be valid
@@ -127,15 +145,18 @@ const ReviewForm = ({
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="orderId">Order ID</Label>
+        <Label htmlFor="orderId">Amazon Order ID</Label>
         <Input
           id="orderId"
           name="orderId"
-          placeholder="Enter your Amazon order ID"
+          placeholder="123-4567890-1234567"
           value={formData.orderId}
           onChange={handleChange}
           className={errors.orderId ? "border-destructive" : ""}
         />
+        <p className="text-xs text-muted-foreground">
+          Format: 123-4567890-1234567 (found in your Amazon order confirmation)
+        </p>
         {errors.orderId && (
           <p className="text-sm text-destructive">{errors.orderId}</p>
         )}
@@ -188,6 +209,26 @@ const ReviewForm = ({
         )}
       </div>
 
+      <div className="flex items-start space-x-2">
+        <Checkbox 
+          id="usedMoreThanSevenDays" 
+          checked={formData.usedMoreThanSevenDays}
+          onCheckedChange={handleCheckboxChange}
+          className={errors.usedMoreThanSevenDays ? "border-destructive" : ""}
+        />
+        <div className="grid gap-1.5 leading-none">
+          <label
+            htmlFor="usedMoreThanSevenDays"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
+            I confirm that I have used this product for at least 7 days
+          </label>
+          {errors.usedMoreThanSevenDays && (
+            <p className="text-sm text-destructive">{errors.usedMoreThanSevenDays}</p>
+          )}
+        </div>
+      </div>
+
       <div className="space-y-3">
         <Label htmlFor="email">Email (Optional)</Label>
         <Input
@@ -208,7 +249,7 @@ const ReviewForm = ({
         )}
       </div>
 
-      <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90 mt-6">
+      <Button type="submit" className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium mt-6">
         Submit Review
         <ChevronRight className="ml-2 w-4 h-4" />
       </Button>

@@ -33,6 +33,7 @@ const ReviewFunnel = ({
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState<ReviewFormData | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const handleSubmit = (data: ReviewFormData) => {
     setFormData(data);
@@ -41,12 +42,18 @@ const ReviewFunnel = ({
     setTimeout(() => {
       setIsSubmitted(true);
       
-      // For 4-5 star ratings, prepare for redirection to Amazon
+      // For 4-5 star ratings, automatically redirect to Amazon
       if (data.rating >= 4) {
         toast({
           title: "Thank you for your positive review!",
           description: "You'll be redirected to Amazon to share your feedback.",
         });
+        
+        // Set a short timeout to allow the toast to be seen before redirect
+        setIsRedirecting(true);
+        setTimeout(() => {
+          redirectToAmazon(data);
+        }, 1500);
       } else {
         toast({
           title: "Thank you for your feedback!",
@@ -56,10 +63,8 @@ const ReviewFunnel = ({
     }, 1000);
   };
 
-  const handleRedirectToAmazon = () => {
-    if (!formData) return;
-    
-    const domain = amazonDomains[formData.country] || amazonDomains.us;
+  const redirectToAmazon = (data: ReviewFormData) => {
+    const domain = amazonDomains[data.country] || amazonDomains.us;
     // In a real implementation, you would use the actual ASIN to create the correct URL
     const redirectUrl = `${domain}/review/create-review`;
     
@@ -105,21 +110,22 @@ const ReviewFunnel = ({
           </h2>
           <p className="text-muted-foreground">
             {formData && formData.rating >= 4
-              ? "We're delighted that you enjoyed our product. Would you mind sharing your experience on Amazon to help other customers?"
+              ? isRedirecting 
+                ? "Redirecting you to Amazon..." 
+                : "We're delighted that you enjoyed our product. You'll be redirected to Amazon to share your experience."
               : "We value your honest feedback and will use it to improve our products and services."}
           </p>
           
-          {formData && formData.rating >= 4 ? (
-            <Button
-              onClick={handleRedirectToAmazon}
-              className="mt-6 bg-secondary hover:bg-secondary/90"
-            >
-              Leave a Review on Amazon <ExternalLink className="ml-2 w-4 h-4" />
-            </Button>
-          ) : (
-            <Button onClick={handleGoHome} className="mt-6">
+          {formData && formData.rating < 4 && (
+            <Button onClick={handleGoHome} className="mt-6 bg-[#FF9900] text-[#232F3E]">
               Return to Home
             </Button>
+          )}
+          
+          {isRedirecting && (
+            <div className="flex justify-center mt-4">
+              <div className="w-8 h-8 border-4 border-t-[#FF9900] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+            </div>
           )}
           
           {formData && formData.email && (

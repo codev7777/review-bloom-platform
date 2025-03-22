@@ -17,7 +17,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
   const isMobile = useIsMobile();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, isAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,13 +42,13 @@ const Navbar = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "py-3 bg-white/95 backdrop-blur-lg shadow-sm"
-          : "py-5 bg-transparent"
+          ? "py-3 bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
+          : "py-5 bg-[#232F3E]"
       }`}
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
+          <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
             ReviewBloom
           </span>
         </Link>
@@ -57,13 +57,13 @@ const Navbar = () => {
         <nav className={`hidden md:flex items-center space-x-8`}>
           <Link
             to="/"
-            className="text-sm font-medium text-foreground hover:text-orange-500 transition-colors"
+            className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
           >
             Home
           </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild className="cursor-pointer">
-              <div className="flex items-center space-x-1 text-sm font-medium text-foreground hover:text-orange-500 transition-colors">
+              <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
                 <span>Features</span>
                 <ChevronDown size={16} />
               </div>
@@ -82,13 +82,13 @@ const Navbar = () => {
           </DropdownMenu>
           <Link
             to="/#pricing"
-            className="text-sm font-medium text-foreground hover:text-orange-500 transition-colors"
+            className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
           >
             Pricing
           </Link>
           <Link
             to="/#contact"
-            className="text-sm font-medium text-foreground hover:text-orange-500 transition-colors"
+            className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
           >
             Contact
           </Link>
@@ -98,16 +98,16 @@ const Navbar = () => {
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-full w-10 h-10 p-0 text-orange-500">
+                <Button variant="ghost" className="rounded-full w-10 h-10 p-0 text-[#FF9900]">
                   <User size={20} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link to="/vendor-dashboard">Dashboard</Link>
+                  <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}>Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/vendor-dashboard/settings">Settings</Link>
+                  <Link to={isAdmin() ? "/admin-dashboard/settings" : "/vendor-dashboard/settings"}>Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout}>
                   Logout
@@ -116,10 +116,10 @@ const Navbar = () => {
             </DropdownMenu>
           ) : (
             <>
-              <Button variant="ghost" asChild className="text-orange-500 hover:text-orange-600 hover:bg-orange-50">
+              <Button variant="ghost" asChild className="text-[#FF9900] hover:text-orange-400 hover:bg-[#232F3E]/50">
                 <Link to="/auth/login">Login</Link>
               </Button>
-              <Button variant="default" asChild className="bg-orange-500 hover:bg-orange-600">
+              <Button variant="default" asChild className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium">
                 <Link to="/auth/signup">Sign Up</Link>
               </Button>
             </>
@@ -128,7 +128,7 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-foreground"
+          className="md:hidden text-white"
           onClick={toggleMenu}
           aria-label="Toggle Menu"
         >
@@ -138,36 +138,36 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && isMobile && (
-        <div className="fixed inset-0 top-[72px] z-40 bg-white/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
+        <div className="fixed inset-0 top-[72px] z-40 bg-[#232F3E]/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
           <div className="container px-4 py-6">
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/"
-                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
                 onClick={toggleMenu}
               >
                 Home
               </Link>
-              <div className="text-base font-medium text-foreground">
+              <div className="text-base font-medium text-white">
                 Features
                 <div className="ml-4 mt-2 flex flex-col space-y-2">
                   <Link
                     to="/#review-funnel"
-                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
                     Review Funnel
                   </Link>
                   <Link
                     to="/#qr-code"
-                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
                     QR Code Integration
                   </Link>
                   <Link
                     to="/#analytics"
-                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
                     Analytics Dashboard
@@ -176,14 +176,14 @@ const Navbar = () => {
               </div>
               <Link
                 to="/#pricing"
-                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
                 onClick={toggleMenu}
               >
                 Pricing
               </Link>
               <Link
                 to="/#contact"
-                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
                 onClick={toggleMenu}
               >
                 Contact
@@ -191,12 +191,12 @@ const Navbar = () => {
               <div className="pt-2 flex flex-col space-y-3">
                 {isAuthenticated ? (
                   <>
-                    <Button variant="outline" asChild className="w-full">
-                      <Link to="/vendor-dashboard" onClick={toggleMenu}>Dashboard</Link>
+                    <Button variant="outline" asChild className="w-full border-white/20 text-white">
+                      <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"} onClick={toggleMenu}>Dashboard</Link>
                     </Button>
                     <Button 
                       variant="default" 
-                      className="w-full bg-orange-500 hover:bg-orange-600" 
+                      className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]" 
                       onClick={() => {
                         logout();
                         toggleMenu();
@@ -207,10 +207,10 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Button variant="outline" asChild className="w-full">
+                    <Button variant="outline" asChild className="w-full border-white/20 text-white">
                       <Link to="/auth/login" onClick={toggleMenu}>Login</Link>
                     </Button>
-                    <Button variant="default" asChild className="w-full bg-orange-500 hover:bg-orange-600">
+                    <Button variant="default" asChild className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]">
                       <Link to="/auth/signup" onClick={toggleMenu}>Sign Up</Link>
                     </Button>
                   </>

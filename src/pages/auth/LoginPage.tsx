@@ -7,8 +7,8 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('vendor@example.com');
+  const [password, setPassword] = useState('password');
   const { login, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -18,10 +18,10 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md">
+      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-md animate-fade-in">
         <div className="text-center">
           <Link to="/" className="inline-block">
-            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
               ReviewBloom
             </h2>
           </Link>
@@ -40,7 +40,7 @@ const LoginPage = () => {
                 type="email" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="vendor@example.com"
                 required
                 className="mt-1"
               />
@@ -49,7 +49,7 @@ const LoginPage = () => {
             <div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <a href="#" className="text-xs text-orange-500 hover:text-orange-600">
+                <a href="#" className="text-xs text-[#FF9900] hover:text-orange-500">
                   Forgot password?
                 </a>
               </div>
@@ -58,7 +58,7 @@ const LoginPage = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="password"
                 required
                 className="mt-1"
               />
@@ -68,7 +68,7 @@ const LoginPage = () => {
           <div>
             <Button 
               type="submit" 
-              className="w-full bg-orange-500 hover:bg-orange-600"
+              className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -88,14 +88,14 @@ const LoginPage = () => {
         
         <div className="mt-4 text-center text-sm">
           <p>For demo, use:</p>
-          <p className="text-orange-500 mt-1">vendor@example.com / password</p>
-          <p className="text-orange-500">admin@example.com / admin</p>
+          <p className="text-[#FF9900] mt-1">vendor@example.com / password</p>
+          <p className="text-[#FF9900]">admin@example.com / admin</p>
         </div>
         
         <div className="text-center mt-4">
           <p className="text-sm text-gray-500">
             Don't have an account?{' '}
-            <Link to="/auth/signup" className="text-orange-500 hover:text-orange-600 font-medium">
+            <Link to="/auth/signup" className="text-[#FF9900] hover:text-orange-500 font-medium">
               Sign up
             </Link>
           </p>

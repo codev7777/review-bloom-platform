@@ -74,11 +74,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(userData);
         
         toast({
-          title: "Login successful",
+          title: "Admin Login successful",
           description: "Welcome back, Admin!",
         });
         
-        navigate('/vendor-dashboard');
+        navigate('/admin-dashboard');
       } else {
         toast({
           variant: "destructive",
@@ -146,6 +146,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isVendor = () => user?.role === 'vendor';
   const isAdmin = () => user?.role === 'admin';
 
+  // Add static context accessor for use in components that don't have direct access
+  AuthProvider.useContext = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+      throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -162,6 +171,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Static method to access context
+AuthProvider.useContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };
 
 export const useAuth = () => {

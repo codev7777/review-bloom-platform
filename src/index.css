@@ -211,6 +211,29 @@
   .hover-lift {
     @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
   }
+  
+  /* Button effects */
+  .btn-effect {
+    @apply relative overflow-hidden transition-all duration-300;
+  }
+  
+  .btn-effect::after {
+    @apply absolute top-0 left-0 w-full h-full bg-white/20 transform scale-x-0 origin-right transition-transform duration-300 ease-out;
+    content: '';
+  }
+  
+  .btn-effect:hover::after {
+    @apply scale-x-100 origin-left;
+  }
+  
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .card-hover:hover {
+    @apply transform -translate-y-1 shadow-lg border-primary/20;
+  }
 }
 
 @keyframes fadeIn {
@@ -299,4 +322,42 @@
 
 .shadow-glass {
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Dialog Animations */
+.dialog-overlay-enter {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.dialog-content-enter {
+  animation: dialogContentEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dialogContentEnter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Fix for mobile menu interactions */
+.mobile-menu-button:active {
+  transform: scale(0.96);
+}
+
+/* Fix for QR code dialog centering */
+.fixed.inset-0.z-50.flex.items-center.justify-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Center the dialog content */
+[data-radix-popper-content-wrapper] {
+  justify-content: center !important;
+  align-items: center !important;
 }

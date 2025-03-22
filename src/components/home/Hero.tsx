@@ -9,21 +9,21 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-block mb-6">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-orange-600 text-sm font-medium">
+          <div className="inline-block mb-6 animate-fade-in">
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-[#FF9900] text-sm font-medium">
               Streamline Your Amazon Product Reviews
             </span>
           </div>
-          <h1 className="mb-6 font-semibold text-foreground leading-tight">
+          <h1 className="mb-6 font-semibold text-[#232F3E] leading-tight animate-fade-in">
             Transform Customer Feedback into
-            <span className="text-orange-500"> Business Growth</span>
+            <span className="text-[#FF9900]"> Business Growth</span>
           </h1>
-          <p className="mb-10 text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="mb-10 text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in">
             The all-in-one platform that helps Amazon vendors collect, manage, and
             leverage product reviews to boost sales and improve products.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" asChild className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in">
+            <Button size="lg" asChild className="w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E]">
               <Link to="/auth/signup" className="px-8">
                 Start Free Trial
               </Link>
@@ -37,7 +37,7 @@ const Hero = () => {
           </div>
         </div>
         
-        <div className="mt-16 relative max-w-5xl mx-auto">
+        <div className="mt-16 relative max-w-5xl mx-auto animate-fade-in">
           <div className="glass-card overflow-hidden">
             <div className="p-2">
               <img

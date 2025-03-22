@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ReviewPage from "./pages/ReviewPage";
 import VendorDashboard from "./pages/VendorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import ContractPage from "./pages/ContractPage";
@@ -35,6 +36,21 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+// Admin route that checks if the user is both authenticated and an admin
+const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isAdmin } = AuthProvider.useContext();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/auth/login" />;
+  }
+  
+  if (!isAdmin()) {
+    return <Navigate to="/vendor-dashboard" />;
+  }
+  
+  return <>{children}</>;
+};
+
 // Make App a proper React function component
 function App() {
   return (
@@ -50,6 +66,8 @@ function App() {
               <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
               <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
               <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
+              
+              {/* Vendor Dashboard Routes */}
               <Route path="/vendor-dashboard/*" element={
                 <PageTransition>
                   <PrivateRoute>
@@ -57,6 +75,16 @@ function App() {
                   </PrivateRoute>
                 </PageTransition>
               } />
+              
+              {/* Admin Dashboard Routes */}
+              <Route path="/admin-dashboard/*" element={
+                <PageTransition>
+                  <PrivateRoute>
+                    <AdminDashboard />
+                  </PrivateRoute>
+                </PageTransition>
+              } />
+              
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
             </Routes>
           </TooltipProvider>

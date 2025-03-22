@@ -5,6 +5,9 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
 import Features from "@/components/home/Features";
 import Pricing from "@/components/home/Pricing";
+import HowItWorks from "@/components/home/HowItWorks";
+import RecentReviews from "@/components/home/RecentReviews";
+import FAQ from "@/components/home/FAQ";
 
 const Index = () => {
   useEffect(() => {
@@ -34,10 +37,13 @@ const Index = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow pt-16">
         <Hero />
         <Features />
+        <HowItWorks />
+        <RecentReviews />
         <Pricing />
+        <FAQ />
       </main>
       <Footer />
     </div>
