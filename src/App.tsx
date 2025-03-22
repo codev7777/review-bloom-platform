@@ -15,6 +15,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import ContractPage from "./pages/ContractPage";
 
+// Create query client outside of the component
 const queryClient = new QueryClient();
 
 const ScrollToTop = () => {
@@ -34,32 +35,35 @@ const PageTransition = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+// Make App a proper React function component
+function App() {
+  return (
     <BrowserRouter>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-            <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
-            <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
-            <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
-            <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
-            <Route path="/vendor-dashboard/*" element={
-              <PageTransition>
-                <PrivateRoute>
-                  <VendorDashboard />
-                </PrivateRoute>
-              </PageTransition>
-            } />
-            <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-          </Routes>
-        </TooltipProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+              <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
+              <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
+              <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+              <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
+              <Route path="/vendor-dashboard/*" element={
+                <PageTransition>
+                  <PrivateRoute>
+                    <VendorDashboard />
+                  </PrivateRoute>
+                </PageTransition>
+              } />
+              <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+            </Routes>
+          </TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </BrowserRouter>
-  </QueryClientProvider>
-);
+  );
+}
 
 export default App;
