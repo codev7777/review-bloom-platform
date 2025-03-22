@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { StatsCard } from "@/components/vendor/StatsCard";
-import { Users, StarIcon, ShoppingCart, Activity } from "lucide-react";
+import StatsCard from "@/components/vendor/StatsCard";
+import { Users, Star as StarIcon, ShoppingCart, Activity } from "lucide-react";
 
 const AdminOverview = () => {
   // Mock data for the dashboard

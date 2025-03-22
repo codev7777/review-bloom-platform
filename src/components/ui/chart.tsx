@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as RechartsPrimitive from "recharts"
 
@@ -352,6 +353,96 @@ function getPayloadConfigFromPayload(
     ? config[configLabelKey]
     : config[key as keyof typeof config]
 }
+
+// Add the missing chart components
+
+// Bar Chart Component
+export const BarChart = ({ data }: { data: { name: string; value: number; color?: string }[] }) => {
+  const chartConfig = data.reduce((acc, item) => {
+    acc[item.name] = { color: item.color || "#3b82f6" };
+    return acc;
+  }, {} as ChartConfig);
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <RechartsPrimitive.XAxis dataKey="name" />
+        <RechartsPrimitive.YAxis />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent />
+          }
+        />
+        <RechartsPrimitive.Bar dataKey="value" radius={[4, 4, 0, 0]}>
+          {data.map((entry, index) => (
+            <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </RechartsPrimitive.Bar>
+      </RechartsPrimitive.BarChart>
+    </ChartContainer>
+  );
+};
+
+// Line Chart Component
+export const LineChart = ({ data }: { data: { name: string; value: number }[] }) => {
+  const chartConfig = {
+    value: { color: "#3b82f6" },
+  };
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.LineChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 20 }}>
+        <RechartsPrimitive.CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <RechartsPrimitive.XAxis dataKey="name" />
+        <RechartsPrimitive.YAxis />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent />
+          }
+        />
+        <RechartsPrimitive.Line
+          type="monotone"
+          dataKey="value"
+          stroke="#3b82f6"
+          strokeWidth={2}
+          dot={{ r: 4 }}
+          activeDot={{ r: 6 }}
+        />
+      </RechartsPrimitive.LineChart>
+    </ChartContainer>
+  );
+};
+
+// Pie Chart Component
+export const PieChart = ({ data }: { data: { name: string; value: number; color: string }[] }) => {
+  const chartConfig = data.reduce((acc, item) => {
+    acc[item.name] = { color: item.color };
+    return acc;
+  }, {} as ChartConfig);
+
+  return (
+    <ChartContainer config={chartConfig}>
+      <RechartsPrimitive.PieChart margin={{ top: 10, right: 10, bottom: 10, left: 10 }}>
+        <RechartsPrimitive.Pie
+          data={data}
+          dataKey="value"
+          nameKey="name"
+          cx="50%"
+          cy="50%"
+          outerRadius={80}
+          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+          labelLine={false}
+        >
+          {data.map((entry, index) => (
+            <RechartsPrimitive.Cell key={`cell-${index}`} fill={entry.color} />
+          ))}
+        </RechartsPrimitive.Pie>
+        <ChartTooltip content={<ChartTooltipContent />} />
+      </RechartsPrimitive.PieChart>
+    </ChartContainer>
+  );
+};
 
 export {
   ChartContainer,

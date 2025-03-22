@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Copy, Edit, PlusCircle, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -79,15 +78,16 @@ const MOCK_DISCOUNTS = [
   },
 ];
 
-interface DiscountCode {
+// Define the DiscountCode type properly
+type DiscountCode = {
   id: string;
   code: string;
   discount: number;
-  type: "percentage" | "flat";
+  type: "flat" | "percentage"; // Must be these specific string literals
   validUntil: string;
   timesUsed: number;
-  status: "active" | "expired" | "scheduled";
-}
+  status: "active" | "scheduled" | "expired";
+};
 
 const DiscountCodesList = () => {
   const [discounts, setDiscounts] = useState<DiscountCode[]>(MOCK_DISCOUNTS);
