@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,15 +10,24 @@ import {
   Settings as SettingsIcon, 
   LogOut,
   Menu,
-  X
+  X,
+  Plus
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/hooks/use-auth";
 import CampaignCard from "./CampaignCard";
 import StatsCard from "./StatsCard";
+import ProductsList from "./products/ProductsList";
+import ProductForm from "./products/ProductForm";
+import CampaignsList from "./campaigns/CampaignsList";
+import CampaignForm from "./campaigns/CampaignForm";
+import AnalyticsPanel from "./analytics/AnalyticsPanel";
+import SettingsPanel from "./settings/SettingsPanel";
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { logout, user } = useAuth();
   
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: "Dashboard", path: "/vendor-dashboard" },
@@ -48,9 +58,14 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
       
       <div className="flex flex-col h-full py-6">
         <div className="px-6 mb-8">
-          <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+          <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
             ReviewBloom
           </h2>
+          {user && (
+            <p className="text-xs text-muted-foreground mt-1">
+              {user.name} | {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+            </p>
+          )}
         </div>
         
         <nav className="flex-1 space-y-1 px-3">
@@ -58,7 +73,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <Button
               key={index}
               variant="ghost"
-              className="w-full justify-start"
+              className="w-full justify-start hover:text-orange-500 hover:bg-orange-50"
               onClick={() => {
                 navigate(item.path);
                 if (isMobile) toggleSidebar();
@@ -74,7 +89,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           <Button
             variant="outline"
             className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={() => navigate("/")}
+            onClick={() => logout()}
           >
             <LogOut size={20} className="mr-3" />
             Logout
@@ -86,11 +101,16 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
 };
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <Button>Create Campaign</Button>
+        <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => navigate("/vendor-dashboard/campaigns/new")}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Campaign
+        </Button>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -129,7 +149,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <CampaignCard 
             name="Kitchen Knife Set" 
-            image="https://placehold.co/200x200/EEE/31304D?text=Kitchen+Set"
+            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Kitchen+Set"
             status="active"
             reviews={156}
             rating={4.8}
@@ -137,7 +157,7 @@ const Dashboard = () => {
           />
           <CampaignCard 
             name="Yoga Mat" 
-            image="https://placehold.co/200x200/EEE/31304D?text=Yoga+Mat"
+            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Yoga+Mat"
             status="active"
             reviews={98}
             rating={4.5}
@@ -145,7 +165,7 @@ const Dashboard = () => {
           />
           <CampaignCard 
             name="Bluetooth Headphones" 
-            image="https://placehold.co/200x200/EEE/31304D?text=Headphones"
+            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Headphones"
             status="active"
             reviews={212}
             rating={4.7}
@@ -156,42 +176,6 @@ const Dashboard = () => {
     </div>
   );
 };
-
-const Analytics = () => (
-  <div>
-    <h1 className="text-2xl font-semibold mb-8">Analytics</h1>
-    <div className="p-12 border border-dashed rounded-lg flex items-center justify-center">
-      <p className="text-muted-foreground">Analytics dashboard content goes here</p>
-    </div>
-  </div>
-);
-
-const Products = () => (
-  <div>
-    <h1 className="text-2xl font-semibold mb-8">Products</h1>
-    <div className="p-12 border border-dashed rounded-lg flex items-center justify-center">
-      <p className="text-muted-foreground">Products management content goes here</p>
-    </div>
-  </div>
-);
-
-const Campaigns = () => (
-  <div>
-    <h1 className="text-2xl font-semibold mb-8">Campaigns</h1>
-    <div className="p-12 border border-dashed rounded-lg flex items-center justify-center">
-      <p className="text-muted-foreground">Campaign management content goes here</p>
-    </div>
-  </div>
-);
-
-const Settings = () => (
-  <div>
-    <h1 className="text-2xl font-semibold mb-8">Settings</h1>
-    <div className="p-12 border border-dashed rounded-lg flex items-center justify-center">
-      <p className="text-muted-foreground">Settings content goes here</p>
-    </div>
-  </div>
-);
 
 const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -218,10 +202,14 @@ const VendorDashboard = () => {
         <div className="px-6 py-8 max-w-7xl mx-auto">
           <Routes>
             <Route path="/" element={<Dashboard />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/campaigns" element={<Campaigns />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="/analytics" element={<AnalyticsPanel />} />
+            <Route path="/products" element={<ProductsList />} />
+            <Route path="/products/new" element={<ProductForm />} />
+            <Route path="/products/edit/:id" element={<ProductForm />} />
+            <Route path="/campaigns" element={<CampaignsList />} />
+            <Route path="/campaigns/new" element={<CampaignForm />} />
+            <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
+            <Route path="/settings" element={<SettingsPanel />} />
           </Routes>
         </div>
       </main>

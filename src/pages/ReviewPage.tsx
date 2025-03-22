@@ -31,13 +31,48 @@ const ReviewPage = () => {
         if (!campaignId) {
           throw new Error("Campaign ID is missing");
         }
+
+        // Demo campaign data
+        if (campaignId === 'demo-campaign') {
+          setCampaignData({
+            productName: "ReviewBloom Demo Product",
+            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Demo+Product",
+            vendor: "ReviewBloom Demo",
+          });
+          return;
+        }
         
         // Placeholder data - in a real app, this would come from the API
-        setCampaignData({
-          productName: "Premium Kitchen Knife Set",
-          productImage: "https://placehold.co/300x300/EEE/31304D?text=Kitchen+Set",
-          vendor: "HomeChef Essentials",
-        });
+        // Simulate different products based on campaign ID
+        const productData = {
+          '1': {
+            productName: "Premium Kitchen Knife Set",
+            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
+            vendor: "HomeChef Essentials",
+          },
+          '2': {
+            productName: "Yoga Mat",
+            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Yoga+Mat",
+            vendor: "Fitness Guru",
+          },
+          '3': {
+            productName: "Bluetooth Headphones",
+            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Headphones",
+            vendor: "Tech Innovations",
+          }
+        };
+        
+        // @ts-ignore - This is just for demo purposes
+        if (productData[campaignId]) {
+          // @ts-ignore - This is just for demo purposes
+          setCampaignData(productData[campaignId]);
+        } else {
+          setCampaignData({
+            productName: "Premium Kitchen Knife Set",
+            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
+            vendor: "HomeChef Essentials",
+          });
+        }
       } catch (err) {
         console.error("Error fetching campaign:", err);
         setError("Failed to load campaign information. Please check the URL and try again.");
