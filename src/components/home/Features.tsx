@@ -1,152 +1,158 @@
 
-import { QrCode, BarChart4, Mail, Repeat } from "lucide-react";
+import { ArrowRight, BarChart3, Sparkles, QrCode, Lightbulb, Share, BarChart4, Smartphone, Star } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 const Features = () => {
-  const features = [
-    {
-      icon: <QrCode className="w-10 h-10 text-secondary" />,
-      title: "QR Code Integration",
-      description:
-        "Generate QR codes for your products that direct customers to a customized review funnel, making feedback collection seamless and efficient.",
-    },
-    {
-      icon: <Repeat className="w-10 h-10 text-secondary" />,
-      title: "Smart Review Funnel",
-      description:
-        "Automatically route positive reviews to Amazon while capturing constructive feedback internally for product improvement.",
-    },
-    {
-      icon: <BarChart4 className="w-10 h-10 text-secondary" />,
-      title: "Comprehensive Analytics",
-      description:
-        "Track review trends, sentiment analysis, and performance metrics to gain actionable insights for your Amazon business.",
-    },
-    {
-      icon: <Mail className="w-10 h-10 text-secondary" />,
-      title: "Email Automation",
-      description:
-        "Trigger personalized follow-up emails to customers, encouraging reviews and building lasting relationships.",
-    },
-  ];
-
   return (
-    <section id="features" className="py-24 bg-background">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="mb-4 font-semibold text-foreground">
-            Powerful Features for Amazon Vendors
-          </h2>
+    <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+      <div className="container px-4 mx-auto">
+        <div className="max-w-3xl mx-auto text-center mb-16">
+          <h2 className="text-3xl sm:text-4xl font-semibold mb-4">Powerful Features</h2>
           <p className="text-lg text-muted-foreground">
-            Our platform provides all the tools you need to collect, manage, and
-            leverage Amazon product reviews effectively.
+            Streamline your review collection process and gain valuable insights from customer feedback
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="relative group p-8 bg-white rounded-xl shadow-sm border border-border hover:shadow-hover transition-all duration-300"
-            >
-              <div className="mb-4">{feature.icon}</div>
-              <h3 className="text-xl font-medium mb-3">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+            <CardHeader className="pb-2">
+              <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
+                <QrCode className="h-6 w-6 text-orange-500" />
+              </div>
+              <CardTitle>Review Funnel</CardTitle>
+              <CardDescription>
+                Simplify the review collection process with our streamlined funnel
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="glass-card rounded-lg overflow-hidden mb-4 p-4 bg-gradient-to-r from-orange-50 to-orange-100 group-hover:from-orange-100 group-hover:to-orange-200 transition-colors duration-300">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
+                    <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
+                    <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
+                    <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
+                    <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
+                  </div>
+                  <div className="w-full h-16 rounded-md bg-white/60 p-2 text-sm text-gray-600">
+                    "I absolutely love this product! It has made my life so much easier."
+                  </div>
+                  <Button variant="outline" size="sm" className="w-fit ml-auto opacity-70">
+                    Submit Review
+                  </Button>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-sm text-muted-foreground">Collect more authentic reviews</p>
+                <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300" asChild>
+                  <Link to="/review/demo-campaign">
+                    Try Demo
+                    <ArrowRight className="ml-1 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+            <CardHeader className="pb-2">
+              <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
+                <QrCode className="h-6 w-6 text-orange-500" />
+              </div>
+              <CardTitle>QR Code Integration</CardTitle>
+              <CardDescription>
+                Generate custom QR codes to place on products, packaging, or receipts
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="glass-card rounded-lg overflow-hidden mb-4 p-4 bg-gradient-to-r from-orange-50 to-orange-100 group-hover:from-orange-100 group-hover:to-orange-200 transition-colors duration-300 flex justify-center">
+                <div className="bg-white p-4 rounded-lg w-32 h-32 flex items-center justify-center">
+                  <QrCode className="h-24 w-24 text-gray-800" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-sm text-muted-foreground">Easy for customers to scan</p>
+                <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300">
+                  Learn More
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+            <CardHeader className="pb-2">
+              <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
+                <BarChart4 className="h-6 w-6 text-orange-500" />
+              </div>
+              <CardTitle>Analytics Dashboard</CardTitle>
+              <CardDescription>
+                Gain insights from customer feedback with detailed analytics
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="glass-card rounded-lg overflow-hidden mb-4 p-4 bg-gradient-to-r from-orange-50 to-orange-100 group-hover:from-orange-100 group-hover:to-orange-200 transition-colors duration-300">
+                <div className="flex flex-col space-y-2">
+                  <div className="w-full flex items-end space-x-1 h-24">
+                    <div className="w-1/6 h-1/3 bg-orange-300 rounded-t"></div>
+                    <div className="w-1/6 h-2/3 bg-orange-400 rounded-t"></div>
+                    <div className="w-1/6 h-[80%] bg-orange-500 rounded-t"></div>
+                    <div className="w-1/6 h-[95%] bg-orange-600 rounded-t"></div>
+                    <div className="w-1/6 h-full bg-orange-700 rounded-t"></div>
+                    <div className="w-1/6 h-3/4 bg-orange-500 rounded-t"></div>
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between mt-4">
+                <p className="text-sm text-muted-foreground">Track performance metrics</p>
+                <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300">
+                  Learn More
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        <div className="mt-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="order-2 lg:order-1">
-              <div className="space-y-6">
-                <div className="inline-block">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm font-medium">
-                    Review Funnel
-                  </span>
-                </div>
-                <h2 className="font-semibold text-foreground">
-                  Guide Customers Through a Seamless Review Process
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  Our intelligent review funnel uses conditional logic to route feedback appropriately: positive reviews go to Amazon while constructive feedback is captured for your team.
-                </p>
-                <ul className="space-y-3">
-                  {[
-                    "Customizable review forms with your branding",
-                    "Intelligent routing based on star ratings",
-                    "Region-specific Amazon redirection",
-                    "Incentive management for reviewers",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-secondary/20 flex items-center justify-center mt-1">
-                        <div className="w-2 h-2 rounded-full bg-secondary"></div>
-                      </div>
-                      <span className="ml-3 text-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+          <div className="p-6 rounded-lg border border-border bg-background">
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+              <Smartphone className="h-5 w-5 text-orange-500" />
             </div>
-            <div className="order-1 lg:order-2 relative">
-              <div className="glass-card overflow-hidden">
-                <div className="p-2">
-                  <img
-                    src="https://placehold.co/800x600/EEE/31304D?text=Review+Funnel"
-                    alt="Review Funnel Example"
-                    className="w-full h-auto rounded-lg shadow-sm"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -right-4 -z-10 w-full h-full bg-gradient-to-r from-primary/20 to-secondary/20 rounded-xl blur-xl opacity-40"></div>
-            </div>
+            <h3 className="text-lg font-medium mb-2">Mobile Optimized</h3>
+            <p className="text-muted-foreground">
+              Perfect experience on any device for easy customer interaction
+            </p>
           </div>
 
-          <div className="mt-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="relative">
-              <div className="glass-card overflow-hidden">
-                <div className="p-2">
-                  <img
-                    src="https://placehold.co/800x600/EEE/31304D?text=Analytics+Dashboard"
-                    alt="Analytics Dashboard Example"
-                    className="w-full h-auto rounded-lg shadow-sm"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-              <div className="absolute -bottom-4 -left-4 -z-10 w-full h-full bg-gradient-to-r from-secondary/20 to-primary/20 rounded-xl blur-xl opacity-40"></div>
+          <div className="p-6 rounded-lg border border-border bg-background">
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+              <Lightbulb className="h-5 w-5 text-orange-500" />
             </div>
-            <div>
-              <div className="space-y-6">
-                <div className="inline-block">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm font-medium">
-                    Analytics
-                  </span>
-                </div>
-                <h2 className="font-semibold text-foreground">
-                  Gain Actionable Insights from Customer Feedback
-                </h2>
-                <p className="text-muted-foreground text-lg">
-                  Our comprehensive analytics dashboard transforms raw feedback into valuable business intelligence, helping you identify trends and improvement opportunities.
-                </p>
-                <ul className="space-y-3">
-                  {[
-                    "Review volume and sentiment tracking",
-                    "Product performance comparisons",
-                    "Campaign effectiveness metrics",
-                    "Detailed feedback categorization",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start">
-                      <div className="flex-shrink-0 w-5 h-5 rounded-full bg-secondary/20 flex items-center justify-center mt-1">
-                        <div className="w-2 h-2 rounded-full bg-secondary"></div>
-                      </div>
-                      <span className="ml-3 text-foreground">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <h3 className="text-lg font-medium mb-2">Actionable Insights</h3>
+            <p className="text-muted-foreground">
+              Turn customer feedback into product improvements
+            </p>
+          </div>
+
+          <div className="p-6 rounded-lg border border-border bg-background">
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-4">
+              <Share className="h-5 w-5 text-orange-500" />
             </div>
+            <h3 className="text-lg font-medium mb-2">Easy Sharing</h3>
+            <p className="text-muted-foreground">
+              Share review links across all your marketing channels
+            </p>
           </div>
         </div>
       </div>

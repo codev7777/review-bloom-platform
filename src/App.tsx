@@ -13,6 +13,7 @@ import ReviewPage from "./pages/ReviewPage";
 import VendorDashboard from "./pages/VendorDashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
+import ContractPage from "./pages/ContractPage";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
             <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
             <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+            <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
             <Route path="/vendor-dashboard/*" element={
               <PageTransition>
                 <PrivateRoute>

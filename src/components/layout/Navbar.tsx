@@ -42,7 +42,7 @@ const Navbar = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "py-3 bg-white/80 backdrop-blur-lg shadow-sm"
+          ? "py-3 bg-white/95 backdrop-blur-lg shadow-sm"
           : "py-5 bg-transparent"
       }`}
     >
@@ -138,71 +138,86 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && isMobile && (
-        <div className="absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 md:hidden animate-fade-in z-50">
-          <nav className="flex flex-col space-y-4">
-            <Link
-              to="/"
-              className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
-            >
-              Home
-            </Link>
-            <div className="text-base font-medium text-foreground">
-              Features
-              <div className="ml-4 mt-2 flex flex-col space-y-2">
-                <Link
-                  to="/#review-funnel"
-                  className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
-                >
-                  Review Funnel
-                </Link>
-                <Link
-                  to="/#qr-code"
-                  className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
-                >
-                  QR Code Integration
-                </Link>
-                <Link
-                  to="/#analytics"
-                  className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
-                >
-                  Analytics Dashboard
-                </Link>
+        <div className="fixed inset-0 top-[72px] z-40 bg-white/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
+          <div className="container px-4 py-6">
+            <nav className="flex flex-col space-y-4">
+              <Link
+                to="/"
+                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                onClick={toggleMenu}
+              >
+                Home
+              </Link>
+              <div className="text-base font-medium text-foreground">
+                Features
+                <div className="ml-4 mt-2 flex flex-col space-y-2">
+                  <Link
+                    to="/#review-funnel"
+                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    onClick={toggleMenu}
+                  >
+                    Review Funnel
+                  </Link>
+                  <Link
+                    to="/#qr-code"
+                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    onClick={toggleMenu}
+                  >
+                    QR Code Integration
+                  </Link>
+                  <Link
+                    to="/#analytics"
+                    className="text-sm text-muted-foreground hover:text-orange-500 transition-colors"
+                    onClick={toggleMenu}
+                  >
+                    Analytics Dashboard
+                  </Link>
+                </div>
               </div>
-            </div>
-            <Link
-              to="/#pricing"
-              className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              to="/#contact"
-              className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
-            >
-              Contact
-            </Link>
-            <div className="pt-2 flex flex-col space-y-3">
-              {isAuthenticated ? (
-                <>
-                  <Button variant="outline" asChild className="w-full">
-                    <Link to="/vendor-dashboard">Dashboard</Link>
-                  </Button>
-                  <Button variant="default" asChild className="w-full bg-orange-500 hover:bg-orange-600" onClick={logout}>
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="outline" asChild className="w-full">
-                    <Link to="/auth/login">Login</Link>
-                  </Button>
-                  <Button variant="default" asChild className="w-full bg-orange-500 hover:bg-orange-600">
-                    <Link to="/auth/signup">Sign Up</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          </nav>
+              <Link
+                to="/#pricing"
+                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                onClick={toggleMenu}
+              >
+                Pricing
+              </Link>
+              <Link
+                to="/#contact"
+                className="text-base font-medium text-foreground hover:text-orange-500 transition-colors"
+                onClick={toggleMenu}
+              >
+                Contact
+              </Link>
+              <div className="pt-2 flex flex-col space-y-3">
+                {isAuthenticated ? (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/vendor-dashboard" onClick={toggleMenu}>Dashboard</Link>
+                    </Button>
+                    <Button 
+                      variant="default" 
+                      className="w-full bg-orange-500 hover:bg-orange-600" 
+                      onClick={() => {
+                        logout();
+                        toggleMenu();
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link to="/auth/login" onClick={toggleMenu}>Login</Link>
+                    </Button>
+                    <Button variant="default" asChild className="w-full bg-orange-500 hover:bg-orange-600">
+                      <Link to="/auth/signup" onClick={toggleMenu}>Sign Up</Link>
+                    </Button>
+                  </>
+                )}
+              </div>
+            </nav>
+          </div>
         </div>
       )}
     </header>
