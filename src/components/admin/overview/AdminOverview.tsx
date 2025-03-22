@@ -1,5 +1,5 @@
 
-import { BarChart, LineChart, PieChart } from "@/components/ui/chart";
+import { BarChart, LineChart, PieChart } from "@/components/ui/charts";
 import {
   Card,
   CardContent,
@@ -26,7 +26,7 @@ const AdminOverview = () => {
         <StatsCard
           title="Total Vendors"
           value={recentStatistics.vendors.toString()}
-          description="+8 this month"
+          subtitle="+8 this month"
           icon={<Users className="h-6 w-6 text-blue-500" />}
           trend="up"
           percentage="16.2%"
@@ -34,7 +34,7 @@ const AdminOverview = () => {
         <StatsCard
           title="Active Campaigns"
           value={recentStatistics.campaigns.toString()}
-          description="Across all vendors"
+          subtitle="Across all vendors"
           icon={<ShoppingCart className="h-6 w-6 text-emerald-500" />}
           trend="up"
           percentage="12.4%"
@@ -42,7 +42,7 @@ const AdminOverview = () => {
         <StatsCard
           title="Average Rating"
           value={recentStatistics.avgRating.toString()}
-          description="Out of 5"
+          subtitle="Out of 5"
           icon={<StarIcon className="h-6 w-6 text-amber-500" />}
           trend="up"
           percentage="2.1%"
@@ -50,7 +50,7 @@ const AdminOverview = () => {
         <StatsCard
           title="Total Reviews"
           value={recentStatistics.totalReviews.toLocaleString()}
-          description="All-time collection"
+          subtitle="All-time collection"
           icon={<Activity className="h-6 w-6 text-purple-500" />}
           trend="up"
           percentage={`${recentStatistics.weeklyGrowth}%`}
