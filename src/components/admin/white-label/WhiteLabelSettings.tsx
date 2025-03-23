@@ -16,12 +16,12 @@ import { Upload, Save, Eye } from "lucide-react";
 
 const WhiteLabelSettings = () => {
   const [brandSettings, setBrandSettings] = useState({
-    companyName: "ReviewBloom",
-    logoUrl: "https://placehold.co/200x80/FF9900/FFFFFF?text=ReviewBloom",
+    companyName: "ReviewBrothers",
+    logoUrl: "https://placehold.co/200x80/FF9900/FFFFFF?text=ReviewBrothers",
     primaryColor: "#FF9900",
     secondaryColor: "#232F3E",
-    emailFooter: "© 2023 ReviewBloom. All rights reserved.",
-    supportEmail: "support@reviewbloom.com",
+    emailFooter: "© 2023 ReviewBrothers. All rights reserved.",
+    supportEmail: "support@ReviewBrothers.com",
     customCss: "",
   });
 
@@ -313,7 +313,7 @@ const WhiteLabelSettings = () => {
                     Show platform branding
                   </Label>
                   <p className="text-xs text-gray-500 ml-5">
-                    Display "Powered by ReviewBloom" in the footer
+                    Display "Powered by ReviewBrothers" in the footer
                   </p>
                 </div>
                 

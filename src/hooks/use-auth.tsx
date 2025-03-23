@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         toast({
           title: "Login successful",
-          description: "Welcome back to ReviewBloom!",
+          description: "Welcome back to ReviewBrothers!",
         });
         
         navigate('/vendor-dashboard');
@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: "Account created",
-        description: "Welcome to ReviewBloom!",
+        description: "Welcome to ReviewBrothers!",
       });
       
       navigate('/vendor-dashboard');

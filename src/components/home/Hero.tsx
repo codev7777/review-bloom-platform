@@ -41,8 +41,8 @@ const Hero = () => {
           <div className="glass-card overflow-hidden">
             <div className="p-2">
               <img
-                src="https://placehold.co/1200x675/FFF5E8/FF9130?text=ReviewBloom+Dashboard"
-                alt="ReviewBloom Dashboard Preview"
+                src="https://placehold.co/1200x675/FFF5E8/FF9130?text=ReviewBrothers+Dashboard"
+                alt="ReviewBrothers Dashboard Preview"
                 className="w-full h-auto rounded-lg shadow-sm"
                 loading="lazy"
               />

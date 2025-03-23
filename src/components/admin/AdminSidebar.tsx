@@ -65,7 +65,7 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
           {open ? (
             <div className="flex items-center gap-2">
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
-                ReviewBloom
+                ReviewBrothers
               </span>
               <span className="text-sm text-white/80 font-medium px-2 py-0.5 rounded-md bg-[#FF9900]/10">
                 Admin

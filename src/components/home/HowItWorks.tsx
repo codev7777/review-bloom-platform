@@ -59,7 +59,7 @@ const HowItWorks = () => {
           <span className="text-[#FF9900] font-medium">Simple Process</span>
           <h2 className="text-3xl font-semibold mt-2 mb-4">Need More Product Reviews?</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            ReviewBloom makes it easy to collect authentic Amazon reviews for your products. 
+            ReviewBrothers makes it easy to collect authentic Amazon reviews for your products. 
             Follow these simple steps to boost your review count and product visibility.
           </p>
         </div>

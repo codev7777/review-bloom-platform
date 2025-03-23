@@ -22,7 +22,7 @@ const LoginPage = () => {
         <div className="text-center">
           <Link to="/" className="inline-block">
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
-              ReviewBloom
+              ReviewBrothers
             </h2>
           </Link>
           <h1 className="mt-6 text-2xl font-bold">Welcome back</h1>

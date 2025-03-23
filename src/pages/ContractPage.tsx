@@ -18,9 +18,9 @@ const ContractPage = () => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`
-ReviewBloom Service Agreement
+ReviewBrothers Service Agreement
 
-This Service Agreement ("Agreement") is entered into between ReviewBloom ("Provider") and the user ("Client") as of the date of acceptance.
+This Service Agreement ("Agreement") is entered into between ReviewBrothers ("Provider") and the user ("Client") as of the date of acceptance.
 
 1. Services
 Provider agrees to provide the Client with review management services, including but not limited to review collection tools, analytics dashboards, and reporting, as described on the Provider's website and documentation.
@@ -74,7 +74,7 @@ This Agreement shall be governed by the laws of the State of California.
           <div className="max-w-4xl mx-auto">
             <div className="mb-12 text-center">
               <h1 className="text-3xl sm:text-4xl font-semibold mb-4">
-                ReviewBloom Contract & Terms
+                ReviewBrothers Contract & Terms
               </h1>
               <p className="text-lg text-muted-foreground">
                 Our commitment to transparency and fair business practices
@@ -151,9 +151,9 @@ This Agreement shall be governed by the laws of the State of California.
                 <p className="text-sm font-medium uppercase text-muted-foreground mb-4">
                   Last updated: June 1, 2023
                 </p>
-                <h3>ReviewBloom Service Agreement</h3>
+                <h3>ReviewBrothers Service Agreement</h3>
                 <p>
-                  This Service Agreement ("Agreement") is entered into between ReviewBloom ("Provider") and the user ("Client") as of the date of acceptance.
+                  This Service Agreement ("Agreement") is entered into between ReviewBrothers ("Provider") and the user ("Client") as of the date of acceptance.
                 </p>
                 <h4 className="font-medium text-base mt-4">1. Services</h4>
                 <p>
