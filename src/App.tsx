@@ -54,9 +54,9 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 // Make App a proper React function component
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -88,9 +88,9 @@ function App() {
               <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
             </Routes>
           </TooltipProvider>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }
 
