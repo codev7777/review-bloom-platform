@@ -14,7 +14,7 @@ import { Campaign } from "@/types"
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import CampaignForm from "@/components/vendor/campaigns/CampaignForm";
-import { QRCode } from "qrcode.react"; // Changed from react-qrcode-logo to qrcode.react
+import QRCodeReact from "qrcode.react"; // Import the default export from qrcode.react
 import { toast } from "@/components/ui/use-toast";
 import { deleteCampaign } from "@/lib/api/campaigns/campaigns.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -131,7 +131,7 @@ const CampaignsList = ({ campaigns = [] }: CampaignsListProps) => {
         {selectedCampaign && (
           <div className="flex flex-col items-center justify-center mt-4">
             <p className="text-sm text-muted-foreground">Scan the QR code to submit a review</p>
-            <QRCode value={selectedCampaign.url} size={200} />
+            <QRCodeReact value={selectedCampaign.url} size={200} />
           </div>
         )}
       </DialogContent>

@@ -28,9 +28,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
+import { DiscountCode } from "@/types";
 
-// Mock discount data
-const MOCK_DISCOUNTS = [
+// Mock discount data with proper types
+const MOCK_DISCOUNTS: DiscountCode[] = [
   {
     id: "1",
     code: "WELCOME25",
@@ -78,23 +79,17 @@ const MOCK_DISCOUNTS = [
   },
 ];
 
-// Define the DiscountCode type properly
-type DiscountCode = {
-  id: string;
-  code: string;
-  discount: number;
-  type: "flat" | "percentage"; // Must be these specific string literals
-  validUntil: string;
-  timesUsed: number;
-  status: "active" | "scheduled" | "expired";
-};
-
 const DiscountCodesList = () => {
   const [discounts, setDiscounts] = useState<DiscountCode[]>(MOCK_DISCOUNTS);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [currentDiscount, setCurrentDiscount] = useState<DiscountCode | null>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    code: string;
+    discount: number;
+    type: 'percentage' | 'flat';
+    validUntil: string;
+  }>({
     code: "",
     discount: 0,
     type: "percentage",
@@ -146,9 +141,7 @@ const DiscountCodesList = () => {
   };
 
   const handleSaveDiscount = () => {
-    // In a real app, this would send data to an API
     if (currentDiscount) {
-      // Update existing discount
       setDiscounts((prev) =>
         prev.map((d) =>
           d.id === currentDiscount.id
@@ -161,7 +154,6 @@ const DiscountCodesList = () => {
         description: `Discount code ${formData.code} has been updated`,
       });
     } else {
-      // Create new discount
       const newDiscount: DiscountCode = {
         id: Math.random().toString(36).substring(2, 9),
         ...formData,
@@ -314,7 +306,6 @@ const DiscountCodesList = () => {
         </CardContent>
       </Card>
 
-      {/* Add/Edit Discount Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -393,7 +384,6 @@ const DiscountCodesList = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>

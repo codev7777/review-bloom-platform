@@ -26,6 +26,7 @@ export interface DiscountCode {
 export interface StatsCardProps {
   title: string;
   value: string;
+  subtitle?: string; // Add subtitle property to match usage in AdminOverview
   change?: string;
   changeType?: 'positive' | 'negative' | 'neutral';
   period?: string;
