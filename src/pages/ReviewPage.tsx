@@ -35,9 +35,9 @@ const ReviewPage = () => {
         // Demo campaign data
         if (campaignId === 'demo-campaign') {
           setCampaignData({
-            productName: "ReviewBloom Demo Product",
+            productName: "ReviewBrothers Demo Product",
             productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Demo+Product",
-            vendor: "ReviewBloom Demo",
+            vendor: "ReviewBrothers Demo",
           });
           return;
         }

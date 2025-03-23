@@ -60,7 +60,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
       <div className="flex flex-col h-full py-6">
         <div className="px-6 mb-8">
           <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
-            ReviewBloom
+            ReviewBrothers
           </h2>
           {user && (
             <p className="text-xs text-muted-foreground mt-1">

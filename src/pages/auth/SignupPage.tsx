@@ -23,7 +23,7 @@ const SignupPage = () => {
         <div className="text-center">
           <Link to="/" className="inline-block">
             <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
-              ReviewBloom
+              ReviewBrothers
             </h2>
           </Link>
           <h1 className="mt-6 text-2xl font-bold">Create an account</h1>

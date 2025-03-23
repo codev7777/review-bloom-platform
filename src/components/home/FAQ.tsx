@@ -11,16 +11,16 @@ const faqItems = [
     answer: "Yes, you can fully customize the QR codes with your branding, colors, and even add your logo. Each QR code is tied to a specific product or campaign for accurate tracking."
   },
   {
-    question: "Is ReviewBloom compliant with Amazon's TOS?",
-    answer: "Absolutely. ReviewBloom is designed to be 100% compliant with Amazon's Terms of Service. We never incentivize or manipulate reviews, only make it easier for genuine customers to share their honest feedback."
+    question: "Is ReviewBrothers compliant with Amazon's TOS?",
+    answer: "Absolutely. ReviewBrothers is designed to be 100% compliant with Amazon's Terms of Service. We never incentivize or manipulate reviews, only make it easier for genuine customers to share their honest feedback."
   },
   {
     question: "How do I track the performance of my review campaigns?",
     answer: "The analytics dashboard provides comprehensive metrics including review conversion rates, average ratings, sentiment analysis, and campaign performance comparisons. You can filter data by date ranges, products, or campaigns."
   },
   {
-    question: "Can I integrate ReviewBloom with my existing tools?",
-    answer: "Yes, ReviewBloom offers API access (on Enterprise plans) for integration with your CRM, email marketing tools, and other business systems to streamline your workflow."
+    question: "Can I integrate ReviewBrothers with my existing tools?",
+    answer: "Yes, ReviewBrothers offers API access (on Enterprise plans) for integration with your CRM, email marketing tools, and other business systems to streamline your workflow."
   },
   {
     question: "What happens if a customer has a negative experience?",
@@ -35,7 +35,7 @@ const FAQ = () => {
         <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-semibold mb-4">Frequently Asked Questions</h2>
           <p className="text-lg text-muted-foreground">
-            Everything you need to know about ReviewBloom
+            Everything you need to know about ReviewBrothers
           </p>
         </div>
 

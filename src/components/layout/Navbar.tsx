@@ -50,7 +50,7 @@ const Navbar = () => {
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
-            ReviewBloom
+            ReviewBrothers
           </span>
         </Link>
 

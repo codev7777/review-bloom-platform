@@ -122,7 +122,7 @@ const RecentReviews = () => {
           <h2 className="text-3xl font-semibold mb-4">Real Customer Reviews</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             See what customers are saying about products from our vendors. These
-            authentic reviews showcase the power of ReviewBloom.
+            authentic reviews showcase the power of ReviewBrothers.
           </p>
         </div>
 
