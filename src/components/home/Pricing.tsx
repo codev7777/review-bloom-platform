@@ -1,5 +1,4 @@
-
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -7,7 +6,7 @@ interface PricingTierProps {
   title: string;
   price: string;
   description: string;
-  features: string[];
+  features: { name: string; included: boolean }[];
   cta: string;
   isPopular?: boolean;
 }
@@ -37,13 +36,17 @@ const PricingTier = ({
       <div className="mb-4">
         <span className="text-3xl font-bold">${price}</span>
         <span className="text-muted-foreground">/month</span>
+        <div className="text-sm text-muted-foreground">Billed annually</div>
       </div>
-      <p className="text-muted-foreground mb-6">{description}</p>
       <ul className="space-y-3 mb-8 flex-grow">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
-            <span className="ml-3 text-sm">{feature}</span>
+            {feature.included ? (
+              <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
+            ) : (
+              <X className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+            )}
+            <span className="ml-3 text-sm">{feature.name}</span>
           </li>
         ))}
       </ul>
@@ -61,45 +64,55 @@ const PricingTier = ({
 const Pricing = () => {
   const tiers = [
     {
-      title: "Basic",
-      price: "49",
-      description: "Perfect for small vendors with 1-3 products",
+      title: "Starter",
+      price: "29",
+      description: "Great for small vendors starting out",
       features: [
-        "Up to 3 products",
-        "QR code generation",
-        "Review funnel",
-        "Basic analytics",
-        "Email support",
+        { name: "Unlimited Reviews", included: true },
+        { name: "Unlimited Leads", included: true },
+        { name: "1 Campaign", included: true },
+        { name: "1 Promotion", included: true },
+        { name: "1 Product", included: true },
+        { name: "1 Marketplace", included: true },
+        { name: "Collect Seller Feedback", included: false },
+        { name: "Meta Pixel Support", included: false },
+        { name: "Business Features", included: false },
       ],
-      cta: "Start with Basic",
+      cta: "Start with Starter",
     },
     {
       title: "Pro",
       price: "99",
-      description: "Ideal for growing Amazon businesses",
+      description: "For growing businesses expanding their reach",
       features: [
-        "Up to 10 products",
-        "Advanced analytics",
-        "Email automation",
-        "White-label branding",
-        "Priority support",
-        "Campaign management",
+        { name: "Unlimited Reviews", included: true },
+        { name: "Unlimited Leads", included: true },
+        { name: "Unlimited Campaigns", included: true },
+        { name: "10 Promotions", included: true },
+        { name: "30 Products", included: true },
+        { name: "All Marketplaces", included: true },
+        { name: "Collect Seller Feedback", included: true },
+        { name: "Personalized Branding", included: true },
+        { name: "Meta Pixel Support", included: true },
       ],
       cta: "Start with Pro",
       isPopular: true,
     },
     {
       title: "Enterprise",
-      price: "249",
-      description: "For established vendors with multiple products",
+      price: "199",
+      description: "For established businesses scaling at full speed",
       features: [
-        "Unlimited products",
-        "Team member accounts",
-        "Advanced analytics & reports",
-        "API access",
-        "Dedicated account manager",
-        "Custom integration options",
-        "Gift card auto-issuance",
+        { name: "Unlimited Reviews", included: true },
+        { name: "Unlimited Leads", included: true },
+        { name: "Unlimited Campaigns", included: true },
+        { name: "Unlimited Promotions", included: true },
+        { name: "Unlimited Products", included: true },
+        { name: "All Marketplaces", included: true },
+        { name: "Collect Seller Feedback", included: true },
+        { name: "Personalized Branding", included: true },
+        { name: "Meta Pixel Support", included: true },
+        { name: "Multiple Sub-Accounts", included: true },
       ],
       cta: "Contact Sales",
     },
@@ -126,13 +139,10 @@ const Pricing = () => {
 
         <div className="mt-16 text-center">
           <p className="text-muted-foreground mb-4">
-            All plans include a 14-day free trial. No credit card required.
+            All plans are billed annually. 14-day free trial included. No credit card required.
           </p>
           <Button variant="link" asChild>
-            <Link
-              to="/pricing-details"
-              className="text-primary hover:underline"
-            >
+            <Link to="/pricing-details" className="text-primary hover:underline">
               View full pricing details
             </Link>
           </Button>
