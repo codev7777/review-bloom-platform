@@ -181,6 +181,31 @@ const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
 
+  // Mock campaigns data for the CampaignsList component
+  const mockCampaigns = [
+    {
+      id: "1",
+      name: "Summer Kitchen Sale",
+      code: "KITCHEN2023",
+      url: "https://example.com/review/KITCHEN2023",
+      status: "active",
+    },
+    {
+      id: "2",
+      name: "Yoga Promotion",
+      code: "YOGA2023",
+      url: "https://example.com/review/YOGA2023",
+      status: "active",
+    },
+    {
+      id: "3",
+      name: "Tech Gadgets Campaign",
+      code: "TECH2023",
+      url: "https://example.com/review/TECH2023",
+      status: "paused",
+    }
+  ];
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -206,7 +231,7 @@ const VendorDashboard = () => {
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
             <Route path="/products/edit/:id" element={<ProductForm />} />
-            <Route path="/campaigns" element={<CampaignsList />} />
+            <Route path="/campaigns" element={<CampaignsList campaigns={mockCampaigns} />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
             <Route path="/settings" element={<SettingsPanel />} />
