@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
+import { Campaign } from "@/types"; // Import Campaign type
 import CampaignCard from "./CampaignCard";
 import StatsCard from "./StatsCard";
 import ProductsList from "./products/ProductsList";
@@ -181,8 +182,8 @@ const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Mock campaigns data for the CampaignsList component
-  const mockCampaigns = [
+  // Mock campaigns data with proper status types
+  const mockCampaigns: Campaign[] = [
     {
       id: "1",
       name: "Summer Kitchen Sale",

@@ -14,7 +14,7 @@ import { Campaign } from "@/types"
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import CampaignForm from "@/components/vendor/campaigns/CampaignForm";
-import { QRCode } from "react-qrcode-logo";
+import { QRCode } from "qrcode.react"; // Changed from react-qrcode-logo to qrcode.react
 import { toast } from "@/components/ui/use-toast";
 import { deleteCampaign } from "@/lib/api/campaigns/campaigns.api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

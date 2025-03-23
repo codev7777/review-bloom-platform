@@ -12,3 +12,24 @@ export interface Campaign {
   giftOffer?: boolean;
   giftDescription?: string;
 }
+
+export interface DiscountCode {
+  id: string;
+  code: string;
+  discount: number;
+  type: 'flat' | 'percentage';
+  validUntil: string;
+  timesUsed: number;
+  status: 'active' | 'scheduled' | 'expired';
+}
+
+export interface StatsCardProps {
+  title: string;
+  value: string;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
+  period?: string;
+  trend?: string;
+  percentage?: string;
+  icon?: React.ReactNode;
+}
