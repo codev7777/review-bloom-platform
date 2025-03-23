@@ -17,7 +17,13 @@ const Index = () => {
       if (hash) {
         const element = document.querySelector(hash);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          // Add padding to account for fixed navbar height
+          const navbarHeight = document.querySelector('header')?.offsetHeight || 0;
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - navbarHeight - 20, // Add some extra padding
+            behavior: "smooth"
+          });
         }
       }
     };
@@ -37,7 +43,7 @@ const Index = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className="flex-grow pt-16">
+      <main className="flex-grow pt-24 md:pt-28">
         <Hero />
         <Features />
         <HowItWorks />

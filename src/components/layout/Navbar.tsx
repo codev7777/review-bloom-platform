@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,8 +43,8 @@ const Navbar = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "py-3 bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
-          : "py-5 bg-[#232F3E]"
+          ? "py-3 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
+          : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
@@ -95,6 +96,8 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-4">
+          <ThemeToggle />
+          
           {isAuthenticated ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -104,10 +107,13 @@ const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
-                  <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}>Dashboard</Link>
+                  <Link to="/profile">Profile</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to={isAdmin() ? "/admin-dashboard/settings" : "/vendor-dashboard/settings"}>Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}>Dashboard</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={logout}>
                   Logout
@@ -127,18 +133,21 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-white"
-          onClick={toggleMenu}
-          aria-label="Toggle Menu"
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="flex items-center space-x-2 md:hidden">
+          <ThemeToggle />
+          <button
+            className="text-white"
+            onClick={toggleMenu}
+            aria-label="Toggle Menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && isMobile && (
-        <div className="fixed inset-0 top-[72px] z-40 bg-[#232F3E]/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
+        <div className="fixed inset-0 top-[72px] z-40 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
           <div className="container px-4 py-6">
             <nav className="flex flex-col space-y-4">
               <Link
@@ -191,6 +200,9 @@ const Navbar = () => {
               <div className="pt-2 flex flex-col space-y-3">
                 {isAuthenticated ? (
                   <>
+                    <Button variant="outline" asChild className="w-full border-white/20 text-white">
+                      <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+                    </Button>
                     <Button variant="outline" asChild className="w-full border-white/20 text-white">
                       <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"} onClick={toggleMenu}>Dashboard</Link>
                     </Button>

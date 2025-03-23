@@ -120,11 +120,44 @@
   }
   
   .glass-card {
-    @apply bg-white bg-opacity-50 backdrop-filter backdrop-blur-lg shadow-glass border border-white border-opacity-20 rounded-xl;
+    @apply bg-white dark:bg-amazon-black/30 bg-opacity-50 dark:bg-opacity-30 backdrop-filter backdrop-blur-lg shadow-glass border border-white border-opacity-20 dark:border-white/10 rounded-xl;
   }
   
   .shimmer {
     @apply animate-shimmer bg-shimmer bg-[length:200%_100%];
+  }
+
+  /* Amazon-specific colors */
+  .amazon-text-black {
+    @apply text-amazon-black dark:text-amazon-white;
+  }
+  
+  .amazon-text-white {
+    @apply text-amazon-white dark:text-amazon-black;
+  }
+  
+  .amazon-bg-black {
+    @apply bg-amazon-black dark:bg-amazon-black;
+  }
+  
+  .amazon-bg-white {
+    @apply bg-amazon-white dark:bg-amazon-black;
+  }
+  
+  .amazon-text-orange {
+    @apply text-amazon-orange;
+  }
+  
+  .amazon-bg-orange {
+    @apply bg-amazon-orange;
+  }
+  
+  .amazon-text-blue {
+    @apply text-amazon-blue;
+  }
+  
+  .amazon-bg-blue {
+    @apply bg-amazon-blue;
   }
 }
 
@@ -139,6 +172,14 @@
   
   .input-field {
     @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .amazon-button {
+    @apply bg-amazon-orange text-amazon-black hover:bg-amazon-orange/90 font-medium;
+  }
+  
+  .amazon-link {
+    @apply text-amazon-blue hover:text-amazon-blue/90 hover:underline;
   }
 }
 

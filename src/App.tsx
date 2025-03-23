@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PrivateRoute } from "@/components/auth/PrivateRoute";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ReviewPage from "./pages/ReviewPage";
@@ -56,39 +57,41 @@ function App() {
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Routes>
-              <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-              <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
-              <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
-              <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
-              <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
-              
-              {/* Vendor Dashboard Routes */}
-              <Route path="/vendor-dashboard/*" element={
-                <PageTransition>
-                  <PrivateRoute>
-                    <VendorDashboard />
-                  </PrivateRoute>
-                </PageTransition>
-              } />
-              
-              {/* Admin Dashboard Routes */}
-              <Route path="/admin-dashboard/*" element={
-                <PageTransition>
-                  <PrivateRoute>
-                    <AdminDashboard />
-                  </PrivateRoute>
-                </PageTransition>
-              } />
-              
-              <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-            </Routes>
-          </TooltipProvider>
-        </AuthProvider>
+        <ThemeProvider defaultTheme="light">
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Routes>
+                <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+                <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
+                <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
+                <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+                <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
+                
+                {/* Vendor Dashboard Routes */}
+                <Route path="/vendor-dashboard/*" element={
+                  <PageTransition>
+                    <PrivateRoute>
+                      <VendorDashboard />
+                    </PrivateRoute>
+                  </PageTransition>
+                } />
+                
+                {/* Admin Dashboard Routes */}
+                <Route path="/admin-dashboard/*" element={
+                  <PageTransition>
+                    <PrivateRoute>
+                      <AdminDashboard />
+                    </PrivateRoute>
+                  </PageTransition>
+                } />
+                
+                <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+              </Routes>
+            </TooltipProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </BrowserRouter>
   );

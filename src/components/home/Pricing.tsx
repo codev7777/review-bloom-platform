@@ -52,7 +52,7 @@ const PricingTier = ({
         className={`w-full ${isPopular ? "bg-secondary hover:bg-secondary/90" : ""}`}
         asChild
       >
-        <Link to="/vendor-dashboard">{cta}</Link>
+        <Link to="/auth/signup">{cta}</Link>
       </Button>
     </div>
   );
@@ -109,7 +109,7 @@ const Pricing = () => {
     <section id="pricing" className="py-24 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="mb-4 font-semibold text-foreground">
+          <h2 className="mb-4 font-semibold text-foreground text-3xl sm:text-4xl">
             Simple, Transparent Pricing
           </h2>
           <p className="text-lg text-muted-foreground">

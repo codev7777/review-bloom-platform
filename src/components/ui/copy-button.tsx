@@ -29,10 +29,10 @@ export const CopyButton = ({ value, className }: CopyButtonProps) => {
         variant="ghost" 
         size="icon" 
         onClick={copyToClipboard}
-        className="h-8 w-8"
+        className="h-8 w-8 transition-all"
       >
         {isCopied ? (
-          <Check className="h-4 w-4 text-green-500" />
+          <Check className="h-4 w-4 text-green-500 animate-in fade-in-0 duration-200" />
         ) : (
           <Copy className="h-4 w-4" />
         )}
