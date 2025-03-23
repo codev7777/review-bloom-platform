@@ -32,7 +32,7 @@ const FunnelStep = ({
 }) => (
   <div 
     className={`transition-all duration-500 transform ${
-      isActive ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20 absolute"
+      isActive ? "opacity-100 translate-x-0" : "opacity-0 translate-x-20 absolute hidden"
     }`}
   >
     {children}
