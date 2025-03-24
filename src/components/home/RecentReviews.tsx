@@ -1,5 +1,4 @@
-
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { StarIcon } from "lucide-react";
 import {
   Card,
@@ -104,8 +103,44 @@ const StarRating = ({ rating, max = 5 }: StarRatingProps) => {
 };
 
 const RecentReviews = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef(null);
+
+  // Log to check if reviews are being passed correctly
+  useEffect(() => {
+    console.log(recentReviews); // Log to verify data
+  }, []);
+
+  // Intersection Observer to detect when the section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true); // Trigger the animation when the section is in view
+        }
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of the section is visible
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-20 bg-gray-50 scroll-reveal opacity-0" id="reviews">
+    <section
+      ref={sectionRef}
+      className={`py-20 bg-gray-50 ${isVisible ? "opacity-100 animate-fade-in" : "opacity-0"} transition-opacity duration-1000`}
+      id="reviews"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="text-[#FF9900] font-medium">Testimonials</span>
@@ -117,6 +152,7 @@ const RecentReviews = () => {
         </div>
 
         <div className="max-w-6xl mx-auto">
+          {/* Check if reviews are properly rendered */}
           <Carousel
             opts={{
               align: "start",
@@ -125,48 +161,52 @@ const RecentReviews = () => {
             className="w-full"
           >
             <CarouselContent>
-              {recentReviews.map((review) => (
-                <CarouselItem key={review.id} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1">
-                    <Card className="h-full flex flex-col hover-lift animate-fade-in">
-                      <CardHeader className="pb-2">
-                        <div className="flex justify-between items-start">
-                          <Avatar className="h-10 w-10 mr-2">
-                            <AvatarImage
-                              src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.avatar}`}
-                              alt={review.customerName}
-                            />
-                            <AvatarFallback>{review.avatar}</AvatarFallback>
-                          </Avatar>
-                          <StarRating rating={review.rating} />
-                        </div>
-                        <CardTitle className="text-base mt-2">
-                          {review.productName}
-                        </CardTitle>
-                        <CardDescription>{review.vendorName}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="flex-grow">
-                        <p className="text-sm text-muted-foreground">
-                          "{review.comment}"
-                        </p>
-                      </CardContent>
-                      <CardFooter className="flex justify-between items-center pt-2 border-t text-xs text-muted-foreground">
-                        <div>
-                          {review.customerName} • {review.date}
-                        </div>
-                        {review.verified && (
-                          <Badge
-                            variant="outline"
-                            className="text-center text-xs bg-green-50 text-green-700 border-green-200"
-                          >
-                            Verified Purchase
-                          </Badge>
-                        )}
-                      </CardFooter>
-                    </Card>
-                  </div>
-                </CarouselItem>
-              ))}
+              {recentReviews.length > 0 ? (
+                recentReviews.map((review) => (
+                  <CarouselItem key={review.id} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <Card className="h-full flex flex-col hover-lift animate-fade-in">
+                        <CardHeader className="pb-2">
+                          <div className="flex justify-between items-start">
+                            <Avatar className="h-10 w-10 mr-2">
+                              <AvatarImage
+                                src={`https://api.dicebear.com/7.x/initials/svg?seed=${review.avatar}`}
+                                alt={review.customerName}
+                              />
+                              <AvatarFallback>{review.avatar}</AvatarFallback>
+                            </Avatar>
+                            <StarRating rating={review.rating} />
+                          </div>
+                          <CardTitle className="text-base mt-2">
+                            {review.productName}
+                          </CardTitle>
+                          <CardDescription>{review.vendorName}</CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex-grow">
+                          <p className="text-sm text-muted-foreground">
+                            "{review.comment}"
+                          </p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between items-center pt-2 border-t text-xs text-muted-foreground">
+                          <div>
+                            {review.customerName} • {review.date}
+                          </div>
+                          {review.verified && (
+                            <Badge
+                              variant="outline"
+                              className="text-center text-xs bg-green-50 text-green-700 border-green-200"
+                            >
+                              Verified Purchase
+                            </Badge>
+                          )}
+                        </CardFooter>
+                      </Card>
+                    </div>
+                  </CarouselItem>
+                ))
+              ) : (
+                <p>No reviews available</p> // Show this if no reviews are available
+              )}
             </CarouselContent>
             <div className="flex justify-center mt-8 gap-2">
               <CarouselPrevious className="relative inset-0 translate-y-0" />

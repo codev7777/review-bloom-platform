@@ -11,20 +11,20 @@ import {
 } from "@/components/ui/carousel";
 
 const countries = [
-  { name: "United States", code: "us", flag: "🇺🇸" },
-  { name: "United Kingdom", code: "uk", flag: "🇬🇧" },
-  { name: "Canada", code: "ca", flag: "🇨🇦" },
-  { name: "Germany", code: "de", flag: "🇩🇪" },
-  { name: "France", code: "fr", flag: "🇫🇷" },
-  { name: "Italy", code: "it", flag: "🇮🇹" },
-  { name: "Spain", code: "es", flag: "🇪🇸" },
-  { name: "Australia", code: "au", flag: "🇦🇺" },
-  { name: "Japan", code: "jp", flag: "🇯🇵" },
-  { name: "Mexico", code: "mx", flag: "🇲🇽" },
-  { name: "Brazil", code: "br", flag: "🇧🇷" },
-  { name: "India", code: "in", flag: "🇮🇳" },
-  { name: "Netherlands", code: "nl", flag: "🇳🇱" },
-  { name: "Sweden", code: "se", flag: "🇸🇪" },
+  { name: "United States", code: "us" },
+  { name: "United Kingdom", code: "gb" },
+  { name: "Canada", code: "ca" },
+  { name: "Germany", code: "de" },
+  { name: "France", code: "fr" },
+  { name: "Italy", code: "it" },
+  { name: "Spain", code: "es" },
+  { name: "Australia", code: "au" },
+  { name: "Japan", code: "jp" },
+  { name: "Mexico", code: "mx" },
+  { name: "Brazil", code: "br" },
+  { name: "India", code: "in" },
+  { name: "Netherlands", code: "nl" },
+  { name: "Sweden", code: "se" },
 ];
 
 const marketplaces = [
@@ -36,10 +36,8 @@ const marketplaces = [
 ];
 
 const SupportedCountries = () => {
-  const [visibleOnMobile, setVisibleOnMobile] = useState(6);
-
   return (
-    <section className="py-20 bg-gray-50 scroll-reveal opacity-0" id="supported-countries">
+    <section className="py-20 bg-gray-50" id="supported-countries">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="text-[#FF9900] font-medium">Global Reach</span>
@@ -50,26 +48,35 @@ const SupportedCountries = () => {
           </p>
         </div>
 
+        {/* Supported Countries */}
         <div className="mb-16">
           <h3 className="text-xl font-medium text-center mb-8 flex items-center justify-center">
             <Globe className="mr-2 h-5 w-5 text-[#FF9900]" />
             Supported Countries
           </h3>
-          
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 max-w-5xl mx-auto">
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-5xl mx-auto">
             {countries.map((country) => (
               <div 
                 key={country.code}
-                className="bg-white rounded-lg p-4 flex flex-col items-center text-center hover-lift"
+                className="bg-white rounded-lg p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition w-full"
               >
-                <span className="text-4xl mb-2" aria-hidden="true">{country.flag}</span>
-                <span className="text-sm font-medium">{country.name}</span>
+                <div className="w-full h-24 flex items-center justify-center overflow-hidden rounded-md">
+                  <img 
+                    src={`https://flagcdn.com/w320/${country.code}.png`} 
+                    alt={country.name} 
+                    className=" object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <span className="text-sm font-medium mt-1">{country.name}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div>
+        {/* Supported Marketplaces */}
+        {/*<div>
           <h3 className="text-xl font-medium text-center mb-8">Supported Marketplaces</h3>
           
           <Carousel
@@ -82,7 +89,7 @@ const SupportedCountries = () => {
             <CarouselContent>
               {marketplaces.map((marketplace) => (
                 <CarouselItem key={marketplace.name} className="basis-1/3 md:basis-1/5">
-                  <Card className="border-none shadow-sm hover-lift">
+                  <Card className="border-none shadow-sm hover:shadow-md transition">
                     <CardContent className="flex flex-col items-center justify-center p-6">
                       <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-3">
                         <span className="text-lg font-semibold">{marketplace.name[0]}</span>
@@ -96,10 +103,11 @@ const SupportedCountries = () => {
             <CarouselPrevious className="hidden md:flex" />
             <CarouselNext className="hidden md:flex" />
           </Carousel>
-        </div>
+        </div>*/}
       </div>
     </section>
   );
 };
+
 
 export default SupportedCountries;

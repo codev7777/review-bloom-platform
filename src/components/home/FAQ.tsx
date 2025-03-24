@@ -1,4 +1,4 @@
-
+import { useEffect, useRef, useState } from "react";
 import { 
   Accordion, 
   AccordionContent, 
@@ -37,8 +37,42 @@ const FAQ = () => {
     }
   ];
 
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      {
+        threshold: 0.1
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section className="py-20 bg-gray-50 scroll-reveal opacity-0" id="faq">
+    <section
+      ref={sectionRef}
+      className={`py-20 bg-gray-50 transition-opacity duration-1000 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+      id="faq"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <span className="text-[#FF9900] font-medium">FAQ</span>
@@ -48,7 +82,7 @@ const FAQ = () => {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-4">
           <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
               <AccordionItem key={index} value={`item-${index}`}>

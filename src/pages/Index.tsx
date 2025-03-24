@@ -81,11 +81,10 @@ const Index = () => {
 
     return () => observer.disconnect();
   }, [loading]);
-
   return (
     <div className="flex flex-col min-h-screen">
-      {loading && <LoadingBar />}
-      
+      {loading && <LoadingBar style="margin-top: 400px" />}
+      {!loading && <div>
       <Navbar />
       <main className="flex-grow pt-24 md:pt-28">
         <Hero />
@@ -99,6 +98,8 @@ const Index = () => {
         <FAQ />
       </main>
       <Footer />
+      </div>
+    }
     </div>
   );
 };

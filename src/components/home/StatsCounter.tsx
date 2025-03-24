@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from "react";
 import { Users, Star, Inbox, ShoppingBag, Gift } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 interface CounterProps {
   title: string;
@@ -24,7 +22,7 @@ const Counter = ({ title, end, suffix = "", duration = 2000, icon }: CounterProp
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.3 } // Slightly increased threshold for better visibility trigger
     );
 
     if (divRef.current) {
@@ -36,28 +34,33 @@ const Counter = ({ title, end, suffix = "", duration = 2000, icon }: CounterProp
 
   useEffect(() => {
     if (!isVisible) return;
-    
+
     let startTime: number | null = null;
     let animationFrame: number;
 
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
-      
+
       setCount(Math.floor(progress * end));
-      
+
       if (progress < 1) {
         animationFrame = requestAnimationFrame(step);
       }
     };
 
     animationFrame = requestAnimationFrame(step);
-    
+
     return () => cancelAnimationFrame(animationFrame);
   }, [end, duration, isVisible]);
 
   return (
-    <div ref={divRef} className="flex flex-col items-center scroll-reveal opacity-0">
+    <div
+      ref={divRef}
+      className={`flex flex-col items-center transition-opacity duration-700 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+      }`}
+    >
       <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center mb-4">
         {icon}
       </div>
@@ -71,13 +74,13 @@ const Counter = ({ title, end, suffix = "", duration = 2000, icon }: CounterProp
 
 const StatsCounter = () => {
   return (
-    <section className="py-16 bg-orange-50 scroll-reveal opacity-0">
+    <section className="py-16 bg-orange-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <span className="text-[#FF9900] font-medium">Our Impact</span>
           <h2 className="text-3xl font-semibold mt-2">Trusted by Thousands of Sellers</h2>
         </div>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
           <Counter
             title="Active Vendors"
