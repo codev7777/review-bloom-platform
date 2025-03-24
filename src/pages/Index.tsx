@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -33,11 +32,13 @@ const Index = () => {
         const element = document.querySelector(hash);
         if (element) {
           // Add padding to account for fixed navbar height
-          const navbarHeight = document.querySelector('header')?.offsetHeight || 0;
-          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const navbarHeight =
+            document.querySelector("header")?.offsetHeight || 0;
+          const elementPosition =
+            element.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({
             top: elementPosition - navbarHeight - 20, // Add some extra padding
-            behavior: "smooth"
+            behavior: "smooth",
           });
         }
       }
@@ -59,23 +60,26 @@ const Index = () => {
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
+      rootMargin: "0px",
       threshold: 0.1,
     };
 
-    const handleIntersect = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-      entries.forEach(entry => {
+    const handleIntersect = (
+      entries: IntersectionObserverEntry[],
+      observer: IntersectionObserver
+    ) => {
+      entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('animate-reveal');
+          entry.target.classList.add("animate-reveal");
           observer.unobserve(entry.target);
         }
       });
     };
 
     const observer = new IntersectionObserver(handleIntersect, observerOptions);
-    
+
     // Target all elements with the scroll-reveal class
-    document.querySelectorAll('.scroll-reveal').forEach(element => {
+    document.querySelectorAll(".scroll-reveal").forEach((element) => {
       observer.observe(element);
     });
 
@@ -84,22 +88,23 @@ const Index = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {loading && <LoadingBar style="margin-top: 400px" />}
-      {!loading && <div>
-      <Navbar />
-      <main className="flex-grow pt-24 md:pt-28">
-        <Hero />
-        <StatsCounter />
-        <Features />
-        <BenefitsSection />
-        <HowItWorks />
-        <SupportedCountries />
-        <RecentReviews />
-        <Pricing />
-        <FAQ />
-      </main>
-      <Footer />
-      </div>
-    }
+      {!loading && (
+        <div>
+          <Navbar />
+          <main className="flex-grow pt-24 md:pt-28">
+            <Hero />
+            <StatsCounter />
+            <Features />
+            <BenefitsSection />
+            <HowItWorks />
+            <SupportedCountries />
+            <RecentReviews />
+            <Pricing />
+            <FAQ />
+          </main>
+          <Footer />
+        </div>
+      )}
     </div>
   );
 };
