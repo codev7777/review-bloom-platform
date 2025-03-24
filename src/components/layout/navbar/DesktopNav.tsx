@@ -1,0 +1,61 @@
+
+import { Link } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+const DesktopNav = () => {
+  return (
+    <nav className="hidden md:flex items-center space-x-8">
+      <Link
+        to="/"
+        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+      >
+        Home
+      </Link>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="cursor-pointer">
+          <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
+            <span>Features</span>
+            <ChevronDown size={16} />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-48">
+          <DropdownMenuItem className="cursor-pointer">
+            Review Funnel
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            QR Code Integration
+          </DropdownMenuItem>
+          <DropdownMenuItem className="cursor-pointer">
+            Analytics Dashboard
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Link
+        to="/#pricing"
+        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+      >
+        Pricing
+      </Link>
+      <Link
+        to="/help"
+        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+      >
+        Help
+      </Link>
+      <Link
+        to="/#contact"
+        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+      >
+        Contact
+      </Link>
+    </nav>
+  );
+};
+
+export default DesktopNav;
