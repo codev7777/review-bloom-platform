@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -87,7 +88,7 @@ const Index = () => {
   }, [loading]);
   return (
     <div className="flex flex-col min-h-screen">
-      {loading && <LoadingBar style="margin-top: 400px" />}
+      {loading && <LoadingBar className="mt-[400px]" />}
       {!loading && (
         <div>
           <Navbar />
