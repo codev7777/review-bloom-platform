@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,7 +50,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 
-// Mock data for reviews
 const mockReviews = [
   {
     id: "rev-001",
@@ -183,23 +181,18 @@ const ReviewsPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [respondedFilter, setRespondedFilter] = useState<string>("all");
 
-  // Filter and sort reviews based on current filters
   const filteredReviews = mockReviews
     .filter(review => {
-      // Search filter
       const searchLower = searchQuery.toLowerCase();
       const matchesSearch = !searchQuery || 
         review.productName.toLowerCase().includes(searchLower) ||
         review.customerName.toLowerCase().includes(searchLower) ||
         review.comment.toLowerCase().includes(searchLower);
       
-      // Rating filter
       const matchesRating = selectedRating === "all" || review.rating === parseInt(selectedRating);
       
-      // Status filter
       const matchesStatus = statusFilter === "all" || review.status === statusFilter;
       
-      // Responded filter
       const matchesResponded = 
         respondedFilter === "all" || 
         (respondedFilter === "yes" && review.responded) ||
@@ -208,7 +201,6 @@ const ReviewsPage = () => {
       return matchesSearch && matchesRating && matchesStatus && matchesResponded;
     })
     .sort((a, b) => {
-      // Sort by selected criteria
       switch (sortBy) {
         case "date-asc":
           return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -253,6 +245,18 @@ const ReviewsPage = () => {
       title: "Opening original review",
       description: `This would open the review on ${platform.charAt(0).toUpperCase() + platform.slice(1)} in a real implementation.`,
     });
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   return (
@@ -442,8 +446,8 @@ const ReviewsPage = () => {
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious 
-                    onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
-                    disabled={currentPage === 1}
+                    onClick={goToPreviousPage}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
                 
@@ -460,8 +464,8 @@ const ReviewsPage = () => {
                 
                 <PaginationItem>
                   <PaginationNext 
-                    onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
-                    disabled={currentPage === totalPages}
+                    onClick={goToNextPage}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
                   />
                 </PaginationItem>
               </PaginationContent>
