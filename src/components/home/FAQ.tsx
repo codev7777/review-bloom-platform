@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { HelpCircle, Mail } from "lucide-react";
@@ -13,28 +13,34 @@ const FAQ = () => {
   const faqItems = [
     {
       question: "How does ReviewBrothers help increase my product reviews?",
-      answer: "ReviewBrothers provides a streamlined funnel that makes it easy for customers to leave reviews. We use QR codes that can be included in your product packaging, automating the review collection process and significantly increasing conversion rates."
+      answer:
+        "ReviewBrothers provides a streamlined funnel that makes it easy for customers to leave reviews. We use QR codes that can be included in your product packaging, automating the review collection process and significantly increasing conversion rates.",
     },
     {
       question: "Is ReviewBrothers compliant with Amazon's Terms of Service?",
-      answer: "Yes, ReviewBrothers is fully compliant with Amazon's Terms of Service. We follow all marketplace guidelines for review solicitation and never incentivize reviews in ways that violate platform policies."
+      answer:
+        "Yes, ReviewBrothers is fully compliant with Amazon's Terms of Service. We follow all marketplace guidelines for review solicitation and never incentivize reviews in ways that violate platform policies.",
     },
     {
       question: "Can I offer promotions to customers through ReviewBrothers?",
-      answer: "Yes, you can offer post-purchase promotions like discount codes or loyalty rewards through our platform. These are delivered after a customer submits feedback, not in exchange for reviews, keeping you compliant with marketplace policies."
+      answer:
+        "Yes, you can offer post-purchase promotions like discount codes or loyalty rewards through our platform. These are delivered after a customer submits feedback, not in exchange for reviews, keeping you compliant with marketplace policies.",
     },
     {
       question: "What marketplaces does ReviewBrothers support?",
-      answer: "ReviewBrothers supports Amazon, Etsy, Shopify, eBay, and Walmart. We're continuously expanding our marketplace integrations based on customer demand."
+      answer:
+        "ReviewBrothers supports Amazon, Etsy, Shopify, eBay, and Walmart. We're continuously expanding our marketplace integrations based on customer demand.",
     },
     {
       question: "How do I track the performance of my review campaigns?",
-      answer: "Our dashboard provides comprehensive analytics including review conversion rates, sentiment analysis, and detailed reports on campaign performance. You can track all metrics in real-time and export reports as needed."
+      answer:
+        "Our dashboard provides comprehensive analytics including review conversion rates, sentiment analysis, and detailed reports on campaign performance. You can track all metrics in real-time and export reports as needed.",
     },
     {
       question: "Can I customize the review funnel for my brand?",
-      answer: "Absolutely! Our white-label feature allows you to customize the review funnel with your brand colors, logo, and messaging. This creates a seamless experience for your customers, building trust and increasing conversion rates."
-    }
+      answer:
+        "Absolutely! Our white-label feature allows you to customize the review funnel with your brand colors, logo, and messaging. This creates a seamless experience for your customers, building trust and increasing conversion rates.",
+    },
   ];
 
   const sectionRef = useRef(null);
@@ -43,14 +49,14 @@ const FAQ = () => {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach(entry => {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true);
           }
         });
       },
       {
-        threshold: 0.1
+        threshold: 0.1,
       }
     );
 
@@ -75,10 +81,13 @@ const FAQ = () => {
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="text-[#FF9900] font-medium">FAQ</span>
-          <h2 className="text-3xl font-semibold mt-2 mb-4">Frequently Asked Questions</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Find answers to common questions about ReviewBrothers and how it can help your business.
+          {/* <span className="text-[#FF9900] font-medium">FAQ</span> */}
+          <h2 className="text-3xl font-semibold mt-2 mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
+            Find answers to common questions about ReviewBrothers and how it can
+            help your business.
           </p>
         </div>
 
@@ -108,7 +117,10 @@ const FAQ = () => {
                 Browse Help Center
               </Link>
             </Button>
-            <Button asChild className="gap-2 bg-[#FF9900] text-[#232F3E] hover:bg-orange-500">
+            <Button
+              asChild
+              className="gap-2 bg-[#FF9900] text-[#232F3E] hover:bg-orange-500"
+            >
               <a href="mailto:support@reviewbrothers.com">
                 <Mail className="h-4 w-4" />
                 Contact Support

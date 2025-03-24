@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -38,7 +37,7 @@ const Navbar = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "py-3 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
           : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
@@ -51,17 +50,17 @@ const Navbar = () => {
         <DesktopNav />
 
         <div className="hidden md:flex items-center space-x-4">
-          <ThemeToggle />
-          <UserMenu 
-            isAuthenticated={isAuthenticated} 
-            isAdmin={isAdmin} 
-            logout={logout} 
+          {/* <ThemeToggle /> */}
+          <UserMenu
+            isAuthenticated={isAuthenticated}
+            isAdmin={isAdmin}
+            logout={logout}
           />
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center space-x-2 md:hidden">
-          <ThemeToggle />
+          {/* <ThemeToggle /> */}
           <button
             className="text-white"
             onClick={toggleMenu}
@@ -74,7 +73,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMobile && (
-        <MobileMenu 
+        <MobileMenu
           isOpen={isMenuOpen}
           toggleMenu={toggleMenu}
           isAdmin={isAdmin}

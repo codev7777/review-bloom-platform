@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import {
@@ -38,13 +37,13 @@ const DesktopNav = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Link
+      {/* <Link
         to="/#pricing"
         className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
       >
         Pricing
-      </Link>
-      
+      </Link> */}
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="cursor-pointer">
           <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
@@ -70,8 +69,8 @@ const DesktopNav = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      
-      <Link
+
+      {/* <Link
         to="/help"
         className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
       >
@@ -88,7 +87,7 @@ const DesktopNav = () => {
         className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
       >
         Contact
-      </Link>
+      </Link> */}
     </nav>
   );
 };

@@ -23,12 +23,12 @@ const PricingTier = ({
     <div
       className={`relative flex flex-col p-8 rounded-xl shadow-sm transition-all duration-300 hover:shadow-hover ${
         isPopular
-          ? "bg-gradient-to-b from-white to-secondary/5 border-2 border-secondary"
+          ? "bg-gradient-to-b from-white to-primary/5 border-2 border-primary/60"
           : "bg-white border border-border"
       }`}
     >
       {isPopular && (
-        <span className="absolute top-0 right-8 -translate-y-1/2 bg-secondary text-white text-sm font-medium px-3 py-1 rounded-full">
+        <span className="absolute top-0 right-8 -translate-y-1/2 bg-primary/80 text-white text-sm font-medium px-3 py-1 rounded-full">
           Most Popular
         </span>
       )}
@@ -44,7 +44,7 @@ const PricingTier = ({
             {feature.included ? (
               <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
             ) : (
-              <X className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
+              <X className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5 text-red-500" />
             )}
             <span className="ml-3 text-sm">{feature.name}</span>
           </li>
@@ -52,7 +52,9 @@ const PricingTier = ({
       </ul>
       <Button
         variant={isPopular ? "default" : "outline"}
-        className={`w-full ${isPopular ? "bg-secondary hover:bg-secondary/90" : ""}`}
+        className={`w-full ${
+          isPopular ? "bg-primary/80 hover:bg-primary/60" : ""
+        }`}
         asChild
       >
         <Link to="/auth/signup">{cta}</Link>
@@ -125,9 +127,9 @@ const Pricing = () => {
           <h2 className="mb-4 font-semibold text-foreground text-3xl sm:text-4xl">
             Simple, Transparent Pricing
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Choose the plan that fits your business needs, with no hidden fees or
-            long-term commitments.
+          <p className="text-lg text-muted-foreground text-primary">
+            Choose the plan that fits your business needs, with no hidden fees
+            or long-term commitments.
           </p>
         </div>
 
@@ -139,10 +141,14 @@ const Pricing = () => {
 
         <div className="mt-16 text-center">
           <p className="text-muted-foreground mb-4">
-            All plans are billed annually. 14-day free trial included. No credit card required.
+            All plans are billed annually. 14-day free trial included. No credit
+            card required.
           </p>
           <Button variant="link" asChild>
-            <Link to="/pricing-details" className="text-primary hover:underline">
+            <Link
+              to="/pricing-details"
+              className="text-primary hover:underline"
+            >
               View full pricing details
             </Link>
           </Button>

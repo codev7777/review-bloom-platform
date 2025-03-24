@@ -138,14 +138,18 @@ const RecentReviews = () => {
   return (
     <section
       ref={sectionRef}
-      className={`py-20 bg-gray-50 ${isVisible ? "opacity-100 animate-fade-in" : "opacity-0"} transition-opacity duration-1000`}
+      className={`py-20 bg-gray-50 ${
+        isVisible ? "opacity-100 animate-fade-in" : "opacity-0"
+      } transition-opacity duration-1000`}
       id="reviews"
     >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <span className="text-[#FF9900] font-medium">Testimonials</span>
-          <h2 className="text-3xl font-semibold mb-4">What Customers Say About Our Vendors</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+          {/* <span className="text-[#FF9900] font-medium">Testimonials</span> */}
+          <h2 className="text-3xl font-semibold mb-4">
+            What Customers Say About Our Vendors
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
             See what customers are saying about products from our vendors. These
             authentic reviews showcase the power of ReviewBrothers.
           </p>
@@ -163,7 +167,10 @@ const RecentReviews = () => {
             <CarouselContent>
               {recentReviews.length > 0 ? (
                 recentReviews.map((review) => (
-                  <CarouselItem key={review.id} className="md:basis-1/2 lg:basis-1/3">
+                  <CarouselItem
+                    key={review.id}
+                    className="md:basis-1/2 lg:basis-1/3"
+                  >
                     <div className="p-1">
                       <Card className="h-full flex flex-col hover-lift animate-fade-in">
                         <CardHeader className="pb-2">

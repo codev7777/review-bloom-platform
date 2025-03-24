@@ -1,11 +1,32 @@
-
-import { ArrowRight, BarChart3, Sparkles, QrCode, Lightbulb, Share, BarChart4, Smartphone, Star } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ArrowRight,
+  BarChart3,
+  Sparkles,
+  QrCode,
+  Lightbulb,
+  Share,
+  BarChart4,
+  Smartphone,
+  Star,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
-const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode, delay?: number }) => {
+const AnimatedCard = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -33,12 +54,10 @@ const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode, dela
   }, [delay]);
 
   return (
-    <div 
-      ref={cardRef} 
+    <div
+      ref={cardRef}
       className={`transform transition-all duration-700 ${
-        isVisible 
-          ? "translate-y-0 opacity-100" 
-          : "translate-y-20 opacity-0"
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
       }`}
     >
       {children}
@@ -48,12 +67,18 @@ const AnimatedCard = ({ children, delay = 0 }: { children: React.ReactNode, dela
 
 const Features = () => {
   return (
-    <section id="features" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section
+      id="features"
+      className="py-24 bg-gradient-to-b from-gray-50 to-white"
+    >
       <div className="container px-4 mx-auto">
         <div className="max-w-3xl mx-auto text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-semibold mb-4">Powerful Features</h2>
-          <p className="text-lg text-muted-foreground">
-            Streamline your review collection process and gain valuable insights from customer feedback
+          <h2 className="text-3xl sm:text-4xl font-semibold mb-4">
+            Powerful Features
+          </h2>
+          <p className="text-lg text-muted-foreground text-primary">
+            Streamline your review collection process and gain valuable insights
+            from customer feedback
           </p>
         </div>
 
@@ -66,7 +91,8 @@ const Features = () => {
                 </div>
                 <CardTitle>Review Funnel</CardTitle>
                 <CardDescription>
-                  Simplify the review collection process with our streamlined funnel
+                  Simplify the review collection process with our streamlined
+                  funnel
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -80,16 +106,28 @@ const Features = () => {
                       <Star className="h-5 w-5 text-orange-500 fill-orange-500" />
                     </div>
                     <div className="w-full h-16 rounded-md bg-white/60 p-2 text-sm text-gray-600">
-                      "I absolutely love this product! It has made my life so much easier."
+                      "I absolutely love this product! It has made my life so
+                      much easier."
                     </div>
-                    <Button variant="outline" size="sm" className="w-fit ml-auto opacity-70">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-fit ml-auto opacity-70"
+                    >
                       Submit Review
                     </Button>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-4">
-                  <p className="text-sm text-muted-foreground">Collect more authentic reviews</p>
-                  <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300" asChild>
+                  <p className="text-sm text-muted-foreground">
+                    Collect more authentic reviews
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300"
+                    asChild
+                  >
                     <Link to="/review/demo-campaign">
                       Try Demo
                       <ArrowRight className="ml-1 h-4 w-4" />
@@ -108,7 +146,8 @@ const Features = () => {
                 </div>
                 <CardTitle>QR Code Integration</CardTitle>
                 <CardDescription>
-                  Generate custom QR codes to place on products, packaging, or receipts
+                  Generate custom QR codes to place on products, packaging, or
+                  receipts
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -118,8 +157,14 @@ const Features = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-4">
-                  <p className="text-sm text-muted-foreground">Easy for customers to scan</p>
-                  <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300">
+                  <p className="text-sm text-muted-foreground">
+                    Easy for customers to scan
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300"
+                  >
                     Learn More
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
@@ -161,8 +206,14 @@ const Features = () => {
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-4">
-                  <p className="text-sm text-muted-foreground">Track performance metrics</p>
-                  <Button variant="ghost" size="sm" className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300">
+                  <p className="text-sm text-muted-foreground">
+                    Track performance metrics
+                  </p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-orange-500 group-hover:translate-x-1 transition-transform duration-300"
+                  >
                     Learn More
                     <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>

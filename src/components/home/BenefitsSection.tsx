@@ -28,22 +28,26 @@ const BenefitsSection = () => {
   const benefits = [
     {
       title: "Boost Reviews and Ratings",
-      description: "Get more customer feedback and increase your product ratings with seamless review requests",
+      description:
+        "Get more customer feedback and increase your product ratings with seamless review requests",
       icon: <Star className="h-8 w-8 text-yellow-500" />,
     },
     {
       title: "Build Your Email List",
-      description: "Collect customer details and email addresses for future marketing campaigns and product launches",
+      description:
+        "Collect customer details and email addresses for future marketing campaigns and product launches",
       icon: <Mail className="h-8 w-8 text-blue-500" />,
     },
     {
       title: "Increase Customer Engagement",
-      description: "Make it easy for shoppers to connect with your brand, redeem gifts, and leave valuable feedback",
+      description:
+        "Make it easy for shoppers to connect with your brand, redeem gifts, and leave valuable feedback",
       icon: <ThumbsUp className="h-8 w-8 text-green-500" />,
     },
     {
       title: "Track Growth Metrics",
-      description: "Monitor key performance indicators with detailed analytics on review conversion rates",
+      description:
+        "Monitor key performance indicators with detailed analytics on review conversion rates",
       icon: <LineChart className="h-8 w-8 text-purple-500" />,
     },
   ];
@@ -57,11 +61,14 @@ const BenefitsSection = () => {
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          <span className="text-[#FF9900] font-medium">Why Choose ReviewBrothers</span>
-          <h2 className="text-3xl font-semibold mt-2 mb-4">Boost Your Sales with Better Product Reviews</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Our platform helps you collect more authentic reviews, build customer relationships, 
-            and increase your product visibility across marketplaces.
+          {/* <span className="text-[#FF9900] font-medium">Why Choose ReviewBrothers</span> */}
+          <h2 className="text-3xl font-semibold mt-2 mb-4">
+            Boost Your Sales with Better Product Reviews
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
+            Our platform helps you collect more authentic reviews, build
+            customer relationships, and increase your product visibility across
+            marketplaces.
           </p>
         </div>
 
@@ -71,7 +78,9 @@ const BenefitsSection = () => {
             <div
               key={index}
               className={`flex border rounded-lg p-6 bg-white transition-opacity duration-700 ${
-                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                isVisible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-10"
               }`}
             >
               <div className="mr-4 mt-1">
@@ -93,12 +102,19 @@ const BenefitsSection = () => {
         >
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
-              <h3 className="text-2xl font-semibold text-white mb-3">Ready to grow your business?</h3>
+              <h3 className="text-2xl font-semibold text-white mb-3">
+                Ready to grow your business?
+              </h3>
               <p className="text-gray-300">
-                Join thousands of sellers who've boosted their reviews and sales with our platform.
+                Join thousands of sellers who've boosted their reviews and sales
+                with our platform.
               </p>
             </div>
-            <Button asChild size="lg" className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] shrink-0">
+            <Button
+              asChild
+              size="lg"
+              className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] shrink-0"
+            >
               <Link to="/auth/signup" className="px-8 group">
                 Start Your Free Trial
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
