@@ -15,7 +15,9 @@ import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import ContractPage from "./pages/ContractPage";
+import HelpPage from "./pages/HelpPage";
 
 // Create query client outside of the component
 const queryClient = new QueryClient();
@@ -67,7 +69,9 @@ function App() {
                 <Route path="/review/:campaignId" element={<PageTransition><ReviewPage /></PageTransition>} />
                 <Route path="/auth/login" element={<PageTransition><LoginPage /></PageTransition>} />
                 <Route path="/auth/signup" element={<PageTransition><SignupPage /></PageTransition>} />
+                <Route path="/auth/forgot-password" element={<PageTransition><ForgotPasswordPage /></PageTransition>} />
                 <Route path="/contract" element={<PageTransition><ContractPage /></PageTransition>} />
+                <Route path="/help" element={<PageTransition><HelpPage /></PageTransition>} />
                 
                 {/* Vendor Dashboard Routes */}
                 <Route path="/vendor-dashboard/*" element={

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, User } from "lucide-react";
+import { Menu, X, ChevronDown, User, HelpCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,6 +86,12 @@ const Navbar = () => {
             className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
           >
             Pricing
+          </Link>
+          <Link
+            to="/help"
+            className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+          >
+            Help
           </Link>
           <Link
             to="/#contact"
@@ -189,6 +195,13 @@ const Navbar = () => {
                 onClick={toggleMenu}
               >
                 Pricing
+              </Link>
+              <Link
+                to="/help"
+                className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
+                onClick={toggleMenu}
+              >
+                Help
               </Link>
               <Link
                 to="/#contact"

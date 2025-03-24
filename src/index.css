@@ -1,80 +1,52 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 215 25% 27%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 195 83% 48%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 24 100% 50%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --background: 215 28% 17%;
+    --foreground: 0 0% 100%;
+    --card: 215 28% 17%;
+    --card-foreground: 0 0% 100%;
+    --popover: 215 28% 17%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 24 100% 50%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 4% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 4% 20%;
+    --muted-foreground: 237 4% 64%;
+    --accent: 240 4% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 4% 20%;
+    --input: 240 4% 20%;
+    --ring: 24 100% 50%;
   }
 }
 
@@ -82,256 +54,77 @@
   * {
     @apply border-border;
   }
-  
-  html, body {
-    height: 100%;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-  }
-  
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Inter', sans-serif;
-  }
-  
-  #root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-medium tracking-tight;
-  }
-  
-  h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl;
-  }
-  
-  h2 {
-    @apply text-3xl sm:text-4xl;
-  }
-  
-  h3 {
-    @apply text-2xl sm:text-3xl;
-  }
-  
-  .glass-card {
-    @apply bg-white dark:bg-amazon-black/30 bg-opacity-50 dark:bg-opacity-30 backdrop-filter backdrop-blur-lg shadow-glass border border-white border-opacity-20 dark:border-white/10 rounded-xl;
-  }
-  
-  .shimmer {
-    @apply animate-shimmer bg-shimmer bg-[length:200%_100%];
-  }
-
-  /* Amazon-specific colors */
-  .amazon-text-black {
-    @apply text-amazon-black dark:text-amazon-white;
-  }
-  
-  .amazon-text-white {
-    @apply text-amazon-white dark:text-amazon-black;
-  }
-  
-  .amazon-bg-black {
-    @apply bg-amazon-black dark:bg-amazon-black;
-  }
-  
-  .amazon-bg-white {
-    @apply bg-amazon-white dark:bg-amazon-black;
-  }
-  
-  .amazon-text-orange {
-    @apply text-amazon-orange;
-  }
-  
-  .amazon-bg-orange {
-    @apply bg-amazon-orange;
-  }
-  
-  .amazon-text-blue {
-    @apply text-amazon-blue;
-  }
-  
-  .amazon-bg-blue {
-    @apply bg-amazon-blue;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2;
-  }
-  
-  .btn-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2;
-  }
-  
-  .input-field {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
-  }
-
-  .amazon-button {
-    @apply bg-amazon-orange text-amazon-black hover:bg-amazon-orange/90 font-medium;
-  }
-  
-  .amazon-link {
-    @apply text-amazon-blue hover:text-amazon-blue/90 hover:underline;
-  }
-}
-
-@layer utilities {
-  /* Animation utilities */
-  .animate-in {
-    animation-duration: 300ms;
-    animation-timing-function: ease-out;
-    animation-fill-mode: both;
-  }
-
-  .fade-in-0 {
-    animation-name: fadeIn;
-    animation-duration: 200ms;
-  }
-
-  .fade-in-50 {
-    animation-name: fadeIn;
-    animation-duration: 500ms;
-  }
-
-  .fade-out-0 {
-    animation-name: fadeOut;
-    animation-duration: 200ms;
-  }
-
-  .zoom-in-95 {
-    animation-name: zoomIn95;
-    animation-duration: 200ms;
-  }
-
-  .slide-in-from-bottom {
-    animation-name: slideInFromBottom;
-    animation-duration: 200ms;
-  }
-
-  .slide-out-to-bottom {
-    animation-name: slideOutToBottom;
-    animation-duration: 200ms;
-  }
-
-  .slide-in-from-left {
-    animation-name: slideInFromLeft;
-    animation-duration: 300ms;
-  }
-
-  .slide-in-from-right {
-    animation-name: slideInFromRight;
-    animation-duration: 300ms;
-  }
-
-  .slide-in-from-top {
-    animation-name: slideInFromTop;
-    animation-duration: 300ms;
-  }
-
-  .page-transition-enter {
-    @apply animate-in fade-in-50 duration-500;
-  }
-  
-  .page-transition-exit {
-    @apply animate-in fade-out-0 duration-200;
-  }
-  
-  /* Interactive utilities */
-  .hover-scale {
-    @apply transition-transform duration-200 hover:scale-105;
-  }
-  
   .hover-lift {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-md;
+    @apply transition-all duration-300 hover:translate-y-[-5px] hover:shadow-md;
   }
   
-  /* Button effects */
-  .btn-effect {
-    @apply relative overflow-hidden transition-all duration-300;
-  }
-  
-  .btn-effect::after {
-    @apply absolute top-0 left-0 w-full h-full bg-white/20 transform scale-x-0 origin-right transition-transform duration-300 ease-out;
-    content: '';
-  }
-  
-  .btn-effect:hover::after {
-    @apply scale-x-100 origin-left;
-  }
-  
-  /* Card hover effects */
-  .card-hover {
-    @apply transition-all duration-300;
-  }
-  
-  .card-hover:hover {
-    @apply transform -translate-y-1 shadow-lg border-primary/20;
-  }
-}
-
-@keyframes fadeIn {
-  from {
+  .scroll-reveal {
     opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
   }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes zoomIn95 {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideInFromBottom {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
+  
+  .animate-reveal {
     opacity: 1;
     transform: translateY(0);
   }
+  
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+  }
+  
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .page-transition-enter {
+    animation: page-transition-enter 0.3s ease-out forwards;
+  }
+  
+  @keyframes page-transition-enter {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
-@keyframes slideOutToBottom {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(10px);
-  }
+/* Update the Review Funnel component animation styles */
+.transition-all.duration-500.transform {
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
 }
 
-@keyframes slideInFromLeft {
+.transition-all.duration-500.transform.opacity-100 {
+  animation-name: fadeSlideIn;
+}
+
+.transition-all.duration-500.transform.opacity-0 {
+  animation-name: fadeSlideOut;
+}
+
+@keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateX(-10px);
+    transform: translateX(20px);
   }
   to {
     opacity: 1;
@@ -339,66 +132,48 @@
   }
 }
 
-@keyframes slideInFromRight {
+@keyframes fadeSlideOut {
   from {
-    opacity: 0;
-    transform: translateX(10px);
-  }
-  to {
     opacity: 1;
     transform: translateX(0);
   }
-}
-
-@keyframes slideInFromTop {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
   to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.shadow-glass {
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-}
-
-/* Dialog Animations */
-.dialog-overlay-enter {
-  animation: fadeIn 0.2s ease-out;
-}
-
-.dialog-content-enter {
-  animation: dialogContentEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes dialogContentEnter {
-  from {
     opacity: 0;
-    transform: translate(-50%, -48%) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translateX(-20px);
   }
 }
 
-/* Fix for mobile menu interactions */
-.mobile-menu-button:active {
-  transform: scale(0.96);
+/* Fix navbar issue with scroll content */
+header {
+  width: calc(100% - 8px);
 }
 
-/* Fix for QR code dialog centering */
-.fixed.inset-0.z-50.flex.items-center.justify-center {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+/* Loading bar animations */
+.loading-progress {
+  position: relative;
+  width: 300px;
+  height: 3px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
 }
 
-/* Center the dialog content */
-[data-radix-popper-content-wrapper] {
-  justify-content: center !important;
-  align-items: center !important;
+.loading-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  transform-origin: left;
+  animation: loadingAnimation 2s linear infinite;
+  background: linear-gradient(90deg, #FF9900, #FF9900);
+}
+
+@keyframes loadingAnimation {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }

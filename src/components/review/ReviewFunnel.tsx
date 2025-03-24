@@ -1,10 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckCircle, ExternalLink, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import ReviewForm, { ReviewFormData } from "./ReviewForm";
 import { useNavigate } from "react-router-dom";
+import { Progress } from "@/components/ui/progress";
 
 interface ReviewFunnelProps {
   campaignId: string;
@@ -50,10 +51,22 @@ const ReviewFunnel = ({
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<ReviewFormData | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    // Update progress indicator based on current step
+    setProgress((step / 3) * 100);
+  }, [step]);
 
   const handleSubmit = (data: ReviewFormData) => {
     setFormData(data);
-    setStep(2);
+    
+    // Animate the step change
+    document.querySelector('.funnel-content')?.classList.add('animate-step-change');
+    setTimeout(() => {
+      setStep(2);
+      document.querySelector('.funnel-content')?.classList.remove('animate-step-change');
+    }, 300);
     
     // Simulate API call to submit the review
     setTimeout(() => {
@@ -89,39 +102,30 @@ const ReviewFunnel = ({
     navigate("/");
   };
 
+  const goToNextStep = () => {
+    // Animate the step change
+    document.querySelector('.funnel-content')?.classList.add('animate-step-change');
+    setTimeout(() => {
+      setStep(3);
+      document.querySelector('.funnel-content')?.classList.remove('animate-step-change');
+    }, 300);
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-2xl mx-auto">
       {/* Step indicator */}
-      <div className="flex justify-center mb-8">
-        <div className="flex items-center">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            step >= 1 ? "bg-[#FF9900] text-white" : "bg-gray-200 text-gray-500"
-          }`}>
-            1
-          </div>
-          <div className={`w-20 h-1 ${
-            step >= 2 ? "bg-[#FF9900]" : "bg-gray-200"
-          } mx-2`}></div>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            step >= 2 ? "bg-[#FF9900] text-white" : "bg-gray-200 text-gray-500"
-          }`}>
-            2
-          </div>
-          <div className={`w-20 h-1 ${
-            step >= 3 ? "bg-[#FF9900]" : "bg-gray-200"
-          } mx-2`}></div>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            step >= 3 ? "bg-[#FF9900] text-white" : "bg-gray-200 text-gray-500"
-          }`}>
-            3
-          </div>
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium">Step {step} of 3</span>
+          <span className="text-sm font-medium">{progress}%</span>
         </div>
+        <Progress value={progress} className="h-2" />
       </div>
 
       {/* Step content */}
-      <div className="relative min-h-[400px] flex flex-col justify-center">
+      <div className="relative min-h-[400px] flex flex-col justify-center funnel-content">
         <FunnelStep isActive={step === 1}>
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 animate-fade-in">
             <h2 className="text-2xl font-semibold mb-2">
               How would you rate your experience?
             </h2>
@@ -156,7 +160,7 @@ const ReviewFunnel = ({
             </p>
             
             {formData && formData.rating < 4 && (
-              <Button onClick={() => setStep(3)} className="mt-6 bg-[#FF9900] text-[#232F3E]">
+              <Button onClick={goToNextStep} className="mt-6 bg-[#FF9900] text-[#232F3E] hover:bg-orange-500">
                 Continue <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             )}
@@ -179,7 +183,7 @@ const ReviewFunnel = ({
                 `We'll send a follow-up email to ${formData.email} to learn more about your experience.`}
             </p>
             <div className="mt-8">
-              <Button onClick={handleGoHome} className="bg-[#FF9900] text-[#232F3E]">
+              <Button onClick={handleGoHome} className="bg-[#FF9900] text-[#232F3E] hover:bg-orange-500">
                 Return to Home
               </Button>
             </div>

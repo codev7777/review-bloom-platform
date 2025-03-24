@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/home/Hero";
@@ -8,8 +8,23 @@ import Pricing from "@/components/home/Pricing";
 import HowItWorks from "@/components/home/HowItWorks";
 import RecentReviews from "@/components/home/RecentReviews";
 import FAQ from "@/components/home/FAQ";
+import { LoadingBar } from "@/components/ui/loading-bar";
+import StatsCounter from "@/components/home/StatsCounter";
+import SupportedCountries from "@/components/home/SupportedCountries";
+import BenefitsSection from "@/components/home/BenefitsSection";
 
 const Index = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Show loading bar on initial page load
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     // Smooth scroll to element when hash changes
     const handleHashChange = () => {
@@ -40,13 +55,45 @@ const Index = () => {
     };
   }, []);
 
+  // Initialize intersection observer for scroll animations
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.1,
+    };
+
+    const handleIntersect = (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-reveal');
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+    
+    // Target all elements with the scroll-reveal class
+    document.querySelectorAll('.scroll-reveal').forEach(element => {
+      observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, [loading]);
+
   return (
     <div className="flex flex-col min-h-screen">
+      {loading && <LoadingBar />}
+      
       <Navbar />
       <main className="flex-grow pt-24 md:pt-28">
         <Hero />
+        <StatsCounter />
         <Features />
+        <BenefitsSection />
         <HowItWorks />
+        <SupportedCountries />
         <RecentReviews />
         <Pricing />
         <FAQ />

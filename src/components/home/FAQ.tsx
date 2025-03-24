@@ -1,57 +1,86 @@
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-
-const faqItems = [
-  {
-    question: "How does the review funnel work?",
-    answer: "Our review funnel guides customers through a simple, step-by-step process to leave authentic reviews for your products. Customers with positive experiences are directed to Amazon to leave a review, while customers with negative experiences provide feedback directly to you."
-  },
-  {
-    question: "Can I customize the QR codes for my products?",
-    answer: "Yes, you can fully customize the QR codes with your branding, colors, and even add your logo. Each QR code is tied to a specific product or campaign for accurate tracking."
-  },
-  {
-    question: "Is ReviewBrothers compliant with Amazon's TOS?",
-    answer: "Absolutely. ReviewBrothers is designed to be 100% compliant with Amazon's Terms of Service. We never incentivize or manipulate reviews, only make it easier for genuine customers to share their honest feedback."
-  },
-  {
-    question: "How do I track the performance of my review campaigns?",
-    answer: "The analytics dashboard provides comprehensive metrics including review conversion rates, average ratings, sentiment analysis, and campaign performance comparisons. You can filter data by date ranges, products, or campaigns."
-  },
-  {
-    question: "Can I integrate ReviewBrothers with my existing tools?",
-    answer: "Yes, ReviewBrothers offers API access (on Enterprise plans) for integration with your CRM, email marketing tools, and other business systems to streamline your workflow."
-  },
-  {
-    question: "What happens if a customer has a negative experience?",
-    answer: "Customers with negative experiences are given the opportunity to provide feedback directly to you, allowing you to address their concerns before they post a public negative review. This helps maintain your positive rating while improving customer satisfaction."
-  }
-];
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { HelpCircle, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const FAQ = () => {
+  const faqItems = [
+    {
+      question: "How does ReviewBrothers help increase my product reviews?",
+      answer: "ReviewBrothers provides a streamlined funnel that makes it easy for customers to leave reviews. We use QR codes that can be included in your product packaging, automating the review collection process and significantly increasing conversion rates."
+    },
+    {
+      question: "Is ReviewBrothers compliant with Amazon's Terms of Service?",
+      answer: "Yes, ReviewBrothers is fully compliant with Amazon's Terms of Service. We follow all marketplace guidelines for review solicitation and never incentivize reviews in ways that violate platform policies."
+    },
+    {
+      question: "Can I offer promotions to customers through ReviewBrothers?",
+      answer: "Yes, you can offer post-purchase promotions like discount codes or loyalty rewards through our platform. These are delivered after a customer submits feedback, not in exchange for reviews, keeping you compliant with marketplace policies."
+    },
+    {
+      question: "What marketplaces does ReviewBrothers support?",
+      answer: "ReviewBrothers supports Amazon, Etsy, Shopify, eBay, and Walmart. We're continuously expanding our marketplace integrations based on customer demand."
+    },
+    {
+      question: "How do I track the performance of my review campaigns?",
+      answer: "Our dashboard provides comprehensive analytics including review conversion rates, sentiment analysis, and detailed reports on campaign performance. You can track all metrics in real-time and export reports as needed."
+    },
+    {
+      question: "Can I customize the review funnel for my brand?",
+      answer: "Absolutely! Our white-label feature allows you to customize the review funnel with your brand colors, logo, and messaging. This creates a seamless experience for your customers, building trust and increasing conversion rates."
+    }
+  ];
+
   return (
-    <section id="faq" className="py-24 bg-gray-50">
+    <section className="py-20 bg-gray-50 scroll-reveal opacity-0" id="faq">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-semibold mb-4">Frequently Asked Questions</h2>
-          <p className="text-lg text-muted-foreground">
-            Everything you need to know about ReviewBrothers
+        <div className="text-center mb-12">
+          <span className="text-[#FF9900] font-medium">FAQ</span>
+          <h2 className="text-3xl font-semibold mt-2 mb-4">Frequently Asked Questions</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Find answers to common questions about ReviewBrothers and how it can help your business.
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-4">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
-              <AccordionItem key={index} value={`item-${index}`} className="bg-white rounded-lg shadow-sm">
-                <AccordionTrigger className="text-base sm:text-lg font-medium px-6 py-4">
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-lg font-medium text-left">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4 text-muted-foreground">
+                <AccordionContent className="text-muted-foreground text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="mb-6 text-lg">
+            Still have questions? Check our help center or contact us
+          </p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button asChild variant="outline" className="gap-2">
+              <Link to="/help">
+                <HelpCircle className="h-4 w-4" />
+                Browse Help Center
+              </Link>
+            </Button>
+            <Button asChild className="gap-2 bg-[#FF9900] text-[#232F3E] hover:bg-orange-500">
+              <a href="mailto:support@reviewbrothers.com">
+                <Mail className="h-4 w-4" />
+                Contact Support
+              </a>
+            </Button>
+          </div>
         </div>
       </div>
     </section>
