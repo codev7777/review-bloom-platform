@@ -91,7 +91,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="#"
+                  to="/about"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   About Us
@@ -107,7 +107,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/privacy"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   Privacy Policy
@@ -115,7 +115,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/careers"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   Careers
@@ -131,7 +131,7 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link
-                  to="#"
+                  to="/help"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   Help Center
@@ -139,7 +139,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/contact"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   Contact Us
@@ -147,7 +147,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="#"
+                  to="/faqs"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   FAQs

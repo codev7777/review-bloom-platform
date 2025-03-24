@@ -6,6 +6,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 const DesktopNav = () => {
@@ -42,6 +44,33 @@ const DesktopNav = () => {
       >
         Pricing
       </Link>
+      
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild className="cursor-pointer">
+          <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
+            <span>Company</span>
+            <ChevronDown size={16} />
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-48">
+          <DropdownMenuGroup>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link to="/about">About Us</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link to="/careers">Careers</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link to="/contract">Contract & Terms</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link to="/privacy">Privacy Policy</Link>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
       <Link
         to="/help"
         className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
@@ -49,7 +78,13 @@ const DesktopNav = () => {
         Help
       </Link>
       <Link
-        to="/#contact"
+        to="/faqs"
+        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
+      >
+        FAQs
+      </Link>
+      <Link
+        to="/contact"
         className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
       >
         Contact
