@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Facebook, Linkedin } from "lucide-react";
 
@@ -8,9 +7,12 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-orange-500">ReviewBrothers</h3>
+            <h3 className="text-lg font-semibold text-orange-500">
+              ReviewBrothers
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Revolutionizing the way Amazon vendors collect and leverage customer reviews.
+              Revolutionizing the way Amazon vendors collect and leverage
+              customer reviews.
             </p>
             <div className="flex space-x-4">
               <a
@@ -57,17 +59,17 @@ const Footer = () => {
                   Review Funnel
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="#"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   QR Code Generator
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
-                  to="#"
+                  to="/vendor-dashboard/analytics"
                   className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
                 >
                   Analytics Dashboard
@@ -167,7 +169,8 @@ const Footer = () => {
 
         <div className="mt-12 pt-8 border-t border-gray-200">
           <p className="text-sm text-muted-foreground text-center">
-            &copy; {new Date().getFullYear()} ReviewBrothers. All rights reserved.
+            &copy; {new Date().getFullYear()} ReviewBrothers. All rights
+            reserved.
           </p>
         </div>
       </div>

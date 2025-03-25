@@ -1,8 +1,7 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { 
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -17,12 +16,12 @@ interface MobileMenuProps {
   isAuthenticated: boolean;
 }
 
-const MobileMenu = ({ 
-  isOpen, 
-  toggleMenu, 
-  isAdmin, 
-  logout, 
-  isAuthenticated 
+const MobileMenu = ({
+  isOpen,
+  toggleMenu,
+  isAdmin,
+  logout,
+  isAuthenticated,
 }: MobileMenuProps) => {
   if (!isOpen) return null;
 
@@ -37,7 +36,7 @@ const MobileMenu = ({
           >
             Home
           </Link>
-          
+
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="features" className="border-none">
               <AccordionTrigger className="text-base font-medium text-white hover:text-[#FF9900] transition-colors py-0">
@@ -52,15 +51,15 @@ const MobileMenu = ({
                   >
                     Review Funnel
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/#qr-code"
                     className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
                     QR Code Integration
-                  </Link>
+                  </Link> */}
                   <Link
-                    to="/#analytics"
+                    to="vendor-dashboard/analytics"
                     className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
@@ -70,7 +69,7 @@ const MobileMenu = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-          
+
           <Link
             to="/#pricing"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
@@ -78,7 +77,7 @@ const MobileMenu = ({
           >
             Pricing
           </Link>
-          
+
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="company" className="border-none">
               <AccordionTrigger className="text-base font-medium text-white hover:text-[#FF9900] transition-colors py-0">
@@ -118,7 +117,7 @@ const MobileMenu = ({
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-          
+
           <Link
             to="/help"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
@@ -126,7 +125,7 @@ const MobileMenu = ({
           >
             Help
           </Link>
-          
+
           <Link
             to="/faqs"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
@@ -134,7 +133,7 @@ const MobileMenu = ({
           >
             FAQs
           </Link>
-          
+
           <Link
             to="/contact"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
@@ -142,19 +141,34 @@ const MobileMenu = ({
           >
             Contact
           </Link>
-          
+
           <div className="pt-4 flex flex-col space-y-3">
             {isAuthenticated ? (
               <>
-                <Button variant="outline" asChild className="w-full border-white/20 text-white">
-                  <Link to="/profile" onClick={toggleMenu}>Profile</Link>
+                <Button
+                  variant="outline"
+                  asChild
+                  className="w-full border-white/20 text-white"
+                >
+                  <Link to="/profile" onClick={toggleMenu}>
+                    Profile
+                  </Link>
                 </Button>
-                <Button variant="outline" asChild className="w-full border-white/20 text-white">
-                  <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"} onClick={toggleMenu}>Dashboard</Link>
+                <Button
+                  variant="outline"
+                  asChild
+                  className="w-full border-white/20 text-white"
+                >
+                  <Link
+                    to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}
+                    onClick={toggleMenu}
+                  >
+                    Dashboard
+                  </Link>
                 </Button>
-                <Button 
-                  variant="default" 
-                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]" 
+                <Button
+                  variant="default"
+                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
                   onClick={() => {
                     logout();
                     toggleMenu();
@@ -165,11 +179,23 @@ const MobileMenu = ({
               </>
             ) : (
               <>
-                <Button variant="outline" asChild className="w-full border-white/20 text-white">
-                  <Link to="/auth/login" onClick={toggleMenu}>Login</Link>
+                <Button
+                  variant="outline"
+                  asChild
+                  className="w-full border-white/20 text-white"
+                >
+                  <Link to="/auth/login" onClick={toggleMenu}>
+                    Login
+                  </Link>
                 </Button>
-                <Button variant="default" asChild className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]">
-                  <Link to="/auth/signup" onClick={toggleMenu}>Sign Up</Link>
+                <Button
+                  variant="default"
+                  asChild
+                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
+                >
+                  <Link to="/auth/signup" onClick={toggleMenu}>
+                    Sign Up
+                  </Link>
                 </Button>
               </>
             )}

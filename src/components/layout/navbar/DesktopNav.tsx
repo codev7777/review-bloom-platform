@@ -27,13 +27,13 @@ const DesktopNav = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
           <DropdownMenuItem className="cursor-pointer">
-            Review Funnel
+            <Link to="review/demo-campaign">Review Funnel</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer">
+          {/* <DropdownMenuItem className="cursor-pointer">
             QR Code Integration
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
           <DropdownMenuItem className="cursor-pointer">
-            Analytics Dashboard
+            <Link to="vendor-dashboard/analytics">Analytics Dashboard</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
