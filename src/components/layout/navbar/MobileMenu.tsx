@@ -118,7 +118,7 @@ const MobileMenu = ({
             </AccordionItem>
           </Accordion>
 
-          <Link
+          {/* <Link
             to="/help"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
             onClick={toggleMenu}
@@ -140,7 +140,7 @@ const MobileMenu = ({
             onClick={toggleMenu}
           >
             Contact
-          </Link>
+          </Link> */}
 
           <div className="pt-4 flex flex-col space-y-3">
             {isAuthenticated ? (
@@ -180,9 +180,9 @@ const MobileMenu = ({
             ) : (
               <>
                 <Button
-                  variant="outline"
+                  variant="default"
                   asChild
-                  className="w-full border-white/20 text-white"
+                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
                 >
                   <Link to="/auth/login" onClick={toggleMenu}>
                     Login

@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,10 +18,18 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
   if (!isAuthenticated) {
     return (
       <>
-        <Button variant="ghost" asChild className="text-[#FF9900] hover:text-orange-400 hover:bg-[#232F3E]/50">
+        <Button
+          variant="ghost"
+          asChild
+          className="text-[#FF9900] hover:text-orange-400 hover:bg-[#232F3E]/50"
+        >
           <Link to="/auth/login">Login</Link>
         </Button>
-        <Button variant="default" asChild className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium">
+        <Button
+          variant="default"
+          asChild
+          className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium"
+        >
           <Link to="/auth/signup">Sign Up</Link>
         </Button>
       </>
@@ -32,7 +39,10 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="rounded-full w-10 h-10 p-0 text-[#FF9900]">
+        <Button
+          variant="ghost"
+          className="rounded-full w-10 h-10 p-0 text-[#FF9900]"
+        >
           <User size={20} />
         </Button>
       </DropdownMenuTrigger>
@@ -41,14 +51,22 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
           <Link to="/profile">Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={isAdmin() ? "/admin-dashboard/settings" : "/vendor-dashboard/settings"}>Settings</Link>
+          <Link
+            to={
+              isAdmin()
+                ? "/admin-dashboard/settings"
+                : "/vendor-dashboard/settings"
+            }
+          >
+            Settings
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}>Dashboard</Link>
+          <Link to={isAdmin() ? "/admin-dashboard" : "/vendor-dashboard"}>
+            Dashboard
+          </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={logout}>
-          Logout
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

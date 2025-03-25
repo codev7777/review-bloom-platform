@@ -3,42 +3,45 @@ import { Instagram, Twitter, Facebook, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-50 border-t">
+    <footer
+      className="bg-secondary border-t text-white"
+      style={{ color: "white !important" }}
+    >
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-orange-500">
               ReviewBrothers
             </h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-gray-400">
               Revolutionizing the way Amazon vendors collect and leverage
               customer reviews.
             </p>
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-gray-400 hover:text-orange-500 transition-colors"
+                className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={20} />
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-orange-500 transition-colors"
+                className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={20} />
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-orange-500 transition-colors"
+                className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
               </a>
               <a
                 href="#"
-                className="text-gray-400 hover:text-orange-500 transition-colors"
+                className="text-white hover:text-orange-500 transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin size={20} />
@@ -47,14 +50,14 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4  text-orange-500">
               Products
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/review/demo-campaign"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Review Funnel
                 </Link>
@@ -62,7 +65,7 @@ const Footer = () => {
               {/* <li>
                 <Link
                   to="#"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   QR Code Generator
                 </Link>
@@ -70,31 +73,31 @@ const Footer = () => {
               <li>
                 <Link
                   to="/vendor-dashboard/analytics"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Analytics Dashboard
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="#"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Review Management
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4  text-orange-500">
               Company
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/about"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   About Us
                 </Link>
@@ -102,7 +105,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/contract"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Contract & Terms
                 </Link>
@@ -110,7 +113,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/privacy"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Privacy Policy
                 </Link>
@@ -118,7 +121,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/careers"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Careers
                 </Link>
@@ -127,14 +130,14 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4  text-orange-500">
               Support
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/help"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Help Center
                 </Link>
@@ -142,7 +145,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/contact"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Contact Us
                 </Link>
@@ -150,25 +153,25 @@ const Footer = () => {
               <li>
                 <Link
                   to="/faqs"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   FAQs
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="#"
-                  className="text-muted-foreground hover:text-orange-500 transition-colors text-sm"
+                  className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Developer API
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-gray-200">
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-gray-400 text-center">
             &copy; {new Date().getFullYear()} ReviewBrothers. All rights
             reserved.
           </p>

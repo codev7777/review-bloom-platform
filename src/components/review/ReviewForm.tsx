@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -29,6 +28,7 @@ export interface ReviewFormData {
   feedback: string;
   email: string;
   country: string;
+  name: string;
   usedMoreThanSevenDays: boolean;
 }
 
@@ -45,9 +45,13 @@ const ReviewForm = ({
     feedback: "",
     email: "",
     country: "",
+    name: "",
     usedMoreThanSevenDays: false,
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ReviewFormData, string>>
+  >({});
+  const [feedbackLength, setFeedbackLength] = useState(0);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -56,6 +60,11 @@ const ReviewForm = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof ReviewFormData]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+
+    // Update feedback length
+    if (name === "feedback") {
+      setFeedbackLength(value.length);
     }
   };
 
@@ -82,43 +91,49 @@ const ReviewForm = ({
 
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
-    
+
     // Validate Order ID (Amazon order numbers format: 11Y-YYYYYYY-YYYYYYY)
     const orderIdPattern = /^\d{3}-\d{7}-\d{7}$/;
     if (!formData.orderId.trim()) {
       newErrors.orderId = "Order ID is required";
     } else if (!orderIdPattern.test(formData.orderId)) {
-      newErrors.orderId = "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
+      newErrors.orderId =
+        "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
     }
-    
+
     if (formData.rating === 0) {
       newErrors.rating = "Please select a rating";
     }
-    
+
     if (!formData.feedback.trim()) {
       newErrors.feedback = "Feedback is required";
+    } else if (formData.feedback.length < 40) {
+      newErrors.feedback = "Feedback must be longer than 40 characters";
     }
-    
+
     if (!formData.country) {
       newErrors.country = "Please select your country";
     }
-    
-    if (!formData.usedMoreThanSevenDays) {
-      newErrors.usedMoreThanSevenDays = "You must have used the product for at least 7 days";
+    if (!formData.email) {
+      newErrors.email = "Your email is required";
     }
-    
+    if (!formData.usedMoreThanSevenDays) {
+      newErrors.usedMoreThanSevenDays =
+        "You must have used the product for at least 7 days";
+    }
+
     // Email is optional, but if provided, should be valid
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (validateForm()) {
       onSubmit(formData);
     } else {
@@ -134,18 +149,25 @@ const ReviewForm = ({
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-muted rounded-lg">
         <img
-          src={productImage || "https://placehold.co/200x200/EEE/31304D?text=Product"}
+          src={
+            productImage ||
+            "https://placehold.co/200x200/EEE/31304D?text=Product"
+          }
           alt={productName}
           className="w-16 h-16 object-contain rounded"
         />
         <div className="text-center sm:text-left">
           <h3 className="font-medium">{productName}</h3>
-          <p className="text-sm text-muted-foreground">Campaign ID: {campaignId}</p>
+          <p className="text-sm text-muted-foreground">
+            Campaign ID: {campaignId}
+          </p>
         </div>
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="orderId">Amazon Order ID</Label>
+        <Label htmlFor="orderId">
+          Amazon Order ID <span className="text-red-500">*</span>
+        </Label>
         <Input
           id="orderId"
           name="orderId"
@@ -163,7 +185,9 @@ const ReviewForm = ({
       </div>
 
       <div className="space-y-3">
-        <Label>Your Rating</Label>
+        <Label>
+          Your Rating <span className="text-red-500">*</span>
+        </Label>
         <div className="flex justify-center sm:justify-start">
           <StarRating onChange={handleRatingChange} />
         </div>
@@ -173,7 +197,9 @@ const ReviewForm = ({
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="feedback">Your Feedback</Label>
+        <Label htmlFor="feedback">
+          Your Feedback <span className="text-red-500">*</span>
+        </Label>
         <Textarea
           id="feedback"
           name="feedback"
@@ -186,10 +212,16 @@ const ReviewForm = ({
         {errors.feedback && (
           <p className="text-sm text-destructive">{errors.feedback}</p>
         )}
+        <p className="text-sm text-muted-foreground">
+          {feedbackLength}/40 characters
+        </p>
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="country">Where did you purchase this product?</Label>
+        <Label htmlFor="country">
+          Where did you purchase this product?{" "}
+          <span className="text-red-500">*</span>
+        </Label>
         <Select onValueChange={handleSelectChange}>
           <SelectTrigger className={errors.country ? "border-destructive" : ""}>
             <SelectValue placeholder="Select your country" />
@@ -210,8 +242,8 @@ const ReviewForm = ({
       </div>
 
       <div className="flex items-start space-x-2">
-        <Checkbox 
-          id="usedMoreThanSevenDays" 
+        <Checkbox
+          id="usedMoreThanSevenDays"
           checked={formData.usedMoreThanSevenDays}
           onCheckedChange={handleCheckboxChange}
           className={errors.usedMoreThanSevenDays ? "border-destructive" : ""}
@@ -224,32 +256,50 @@ const ReviewForm = ({
             I confirm that I have used this product for at least 7 days
           </label>
           {errors.usedMoreThanSevenDays && (
-            <p className="text-sm text-destructive">{errors.usedMoreThanSevenDays}</p>
+            <p className="text-sm text-destructive">
+              {errors.usedMoreThanSevenDays}
+            </p>
           )}
         </div>
       </div>
 
       <div className="space-y-3">
-        <Label htmlFor="email">Email (Optional)</Label>
+        <Label htmlFor="name">Name (Optional)</Label>
+        <Input
+          id="name"
+          name="name"
+          placeholder="Enter your name (optional)"
+          value={formData.name}
+          onChange={handleChange}
+        />
+      </div>
+
+      <div className="space-y-3">
+        <Label htmlFor="email">
+          Email <span className="text-red-500">*</span>
+        </Label>
         <Input
           id="email"
           name="email"
           type="email"
-          placeholder="Enter your email to receive a gift (optional)"
+          placeholder="Enter your email to receive a gift"
           value={formData.email}
           onChange={handleChange}
           className={errors.email ? "border-destructive" : ""}
         />
+        {errors.email && (
+          <p className="text-sm text-destructive">{errors.email}</p>
+        )}
         <p className="text-xs text-muted-foreground">
           We'll send you a thank you gift for your review. Your email won't be
           shared with third parties.
         </p>
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email}</p>
-        )}
       </div>
 
-      <Button type="submit" className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium mt-6">
+      <Button
+        type="submit"
+        className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium mt-6"
+      >
         Submit Review
         <ChevronRight className="ml-2 w-4 h-4" />
       </Button>

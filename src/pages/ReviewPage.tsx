@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -22,46 +21,49 @@ const ReviewPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         // In a real app, this would be an API call
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 800));
-        
+
         // Check if campaignId exists and is valid
         if (!campaignId) {
           throw new Error("Campaign ID is missing");
         }
 
         // Demo campaign data
-        if (campaignId === 'demo-campaign') {
+        if (campaignId === "demo-campaign") {
           setCampaignData({
-            productName: "ReviewBrothers Demo Product",
-            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Demo+Product",
-            vendor: "ReviewBrothers Demo",
+            productName: "Dell Desktop",
+            productImage: "/images/products/dell-computer.jpg",
+            vendor: "Dell Technologies Inc",
           });
           return;
         }
-        
+
         // Placeholder data - in a real app, this would come from the API
         // Simulate different products based on campaign ID
         const productData = {
-          '1': {
+          "1": {
             productName: "Premium Kitchen Knife Set",
-            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
+            productImage:
+              "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
             vendor: "HomeChef Essentials",
           },
-          '2': {
+          "2": {
             productName: "Yoga Mat",
-            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Yoga+Mat",
+            productImage:
+              "https://placehold.co/300x300/FFF5E8/FF9130?text=Yoga+Mat",
             vendor: "Fitness Guru",
           },
-          '3': {
+          "3": {
             productName: "Bluetooth Headphones",
-            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Headphones",
+            productImage:
+              "https://placehold.co/300x300/FFF5E8/FF9130?text=Headphones",
             vendor: "Tech Innovations",
-          }
+          },
         };
-        
+
         // @ts-ignore - This is just for demo purposes
         if (productData[campaignId]) {
           // @ts-ignore - This is just for demo purposes
@@ -69,13 +71,16 @@ const ReviewPage = () => {
         } else {
           setCampaignData({
             productName: "Premium Kitchen Knife Set",
-            productImage: "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
+            productImage:
+              "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
             vendor: "HomeChef Essentials",
           });
         }
       } catch (err) {
         console.error("Error fetching campaign:", err);
-        setError("Failed to load campaign information. Please check the URL and try again.");
+        setError(
+          "Failed to load campaign information. Please check the URL and try again."
+        );
       } finally {
         setLoading(false);
       }
