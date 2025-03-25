@@ -40,7 +40,7 @@ const ReviewForm = ({
 }: ReviewFormProps) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ReviewFormData>({
-    orderId: "123-4567890-1234567",
+    orderId: "110-0000000-0000000",
     rating: 0,
     feedback: "",
     email: "",
@@ -154,11 +154,11 @@ const ReviewForm = ({
             "https://placehold.co/200x200/EEE/31304D?text=Product"
           }
           alt={productName}
-          className="w-16 h-16 object-contain rounded"
+          className="w-32 h-32 object-contain rounded"
         />
         <div className="text-center sm:text-left">
-          <h3 className="font-medium">{productName}</h3>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-medium text-2xl">{productName}</h1>
+          <p className="text-sm text-muted-foreground text-xl">
             Campaign ID: {campaignId}
           </p>
         </div>
@@ -171,13 +171,13 @@ const ReviewForm = ({
         <Input
           id="orderId"
           name="orderId"
-          placeholder="123-4567890-1234567"
+          placeholder="110-0000000-0000000"
           value={formData.orderId}
           onChange={handleChange}
           className={errors.orderId ? "border-destructive" : ""}
         />
         <p className="text-xs text-muted-foreground">
-          Format: 123-4567890-1234567 (found in your Amazon order confirmation)
+          Format: 110-0000000-0000000
         </p>
         {errors.orderId && (
           <p className="text-sm text-destructive">{errors.orderId}</p>
@@ -212,7 +212,7 @@ const ReviewForm = ({
         {errors.feedback && (
           <p className="text-sm text-destructive">{errors.feedback}</p>
         )}
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground text-right">
           {feedbackLength}/40 characters
         </p>
       </div>

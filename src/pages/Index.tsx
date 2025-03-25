@@ -17,11 +17,29 @@ const Index = () => {
 
   useEffect(() => {
     // Show loading bar on initial page load
-    const timer = setTimeout(() => {
+    const timer1 = setTimeout(() => {
       setLoading(false);
+      document.getElementById("isFirstLoad").innerHTML = "0";
     }, 2500);
+    const timer2 = setTimeout(() => {
+      if (document.getElementById("isFirstLoad").innerHTML == "0")
+        setLoading(false);
+    }, 100);
+    console.log(document.getElementById("isFirstLoad").innerHTML);
+    // const timer2 = setTimeout(() => {
+    //   const isFirstLoadingElement = document.getElementById(
+    //     "isFirstLoad"
+    //   ) as HTMLInputElement;
+    //   if (isFirstLoadingElement && isFirstLoadingElement.value === "1") {
+    //     setLoading(false);
+    //     isFirstLoadingElement.value = "0";
+    //   } else isFirstLoadingElement.value = "0";
+    // }, 100);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, []);
 
   useEffect(() => {
