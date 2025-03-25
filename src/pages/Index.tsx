@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -92,7 +91,7 @@ const Index = () => {
       {!loading && (
         <div>
           <Navbar />
-          <main className="flex-grow pt-24 md:pt-28">
+          <main className="flex-grow pt-15 md:pt-10">
             <Hero />
             <StatsCounter />
             <Features />
