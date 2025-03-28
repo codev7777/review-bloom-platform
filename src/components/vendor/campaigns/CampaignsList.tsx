@@ -33,7 +33,7 @@ import {
   BarChart4,
   Eye,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,12 +41,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import GetDomain from "@/lib/GetDomain";
 
 interface CampaignsListProps {
   campaigns: Campaign[];
 }
 
 const CampaignsList = ({ campaigns = [] }: CampaignsListProps) => {
+  const { pathname, hash } = useLocation();
   const [open, setOpen] = useState(false);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(
@@ -280,12 +282,12 @@ const CampaignsList = ({ campaigns = [] }: CampaignsListProps) => {
             {selectedCampaign && (
               <>
                 <QRCodeCanvas
-                  value={selectedCampaign.url}
+                  value={GetDomain() + "/review/" + selectedCampaign.id}
                   size={240}
                   className="border p-2 rounded shadow-sm"
                 />
                 <p className="mt-4 text-sm text-muted-foreground">
-                  URL: {selectedCampaign.url}
+                  URL: {GetDomain() + "/review/" + selectedCampaign.id}
                 </p>
                 <div className="mt-4 flex space-x-2">
                   <Button
@@ -310,7 +312,7 @@ const CampaignsList = ({ campaigns = [] }: CampaignsListProps) => {
                     Download QR Code
                   </Button>
                   <CopyButton
-                    value={selectedCampaign.url}
+                    value={GetDomain() + "/review/" + selectedCampaign.id}
                     className="shrink-0"
                   />
                 </div>
