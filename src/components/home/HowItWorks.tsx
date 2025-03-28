@@ -30,6 +30,8 @@ const AnimatedCard = ({
           setTimeout(() => {
             setIsVisible(true);
           }, delay);
+        } else {
+          setIsVisible(false); // Reset visibility when leaving the viewport
         }
       },
       { threshold: 0.1 }

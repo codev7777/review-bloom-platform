@@ -101,10 +101,14 @@ const RecentReviews = () => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
+          setTimeout(() => {
+            setIsVisible(true);
+          });
+        } else {
+          setIsVisible(false); // Reset visibility when leaving the viewport
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);

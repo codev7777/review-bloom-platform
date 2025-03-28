@@ -20,15 +20,17 @@ const Counter = ({
   const [isVisible, setIsVisible] = useState(false);
   const divRef = React.useRef<HTMLDivElement>(null);
 
+  // Intersection observer to track visibility
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
+          setIsVisible(true); // Set to true when component comes into view
+        } else {
+          setIsVisible(false); // Reset when component goes out of view
         }
       },
-      { threshold: 0.3 } // Slightly increased threshold for better visibility trigger
+      { threshold: 0.3 } // Trigger when 30% of the element is visible
     );
 
     if (divRef.current) {
@@ -38,27 +40,31 @@ const Counter = ({
     return () => observer.disconnect();
   }, []);
 
+  // Trigger animation when the component becomes visible
   useEffect(() => {
     if (!isVisible) return;
 
     let startTime: number | null = null;
     let animationFrame: number;
 
+    // Reset the count to 0 every time we start the animation
+    setCount(0);
+
     const step = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
 
-      setCount(Math.floor(progress * end));
+      setCount(Math.floor(progress * end)); // Increment the count based on progress
 
       if (progress < 1) {
-        animationFrame = requestAnimationFrame(step);
+        animationFrame = requestAnimationFrame(step); // Continue the animation
       }
     };
 
-    animationFrame = requestAnimationFrame(step);
+    animationFrame = requestAnimationFrame(step); // Start the animation
 
-    return () => cancelAnimationFrame(animationFrame);
-  }, [end, duration, isVisible]);
+    return () => cancelAnimationFrame(animationFrame); // Clean up on unmount
+  }, [end, duration, isVisible]); // Re-run whenever end value, duration, or visibility changes
 
   return (
     <div

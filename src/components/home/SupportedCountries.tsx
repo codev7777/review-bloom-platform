@@ -51,6 +51,8 @@ const AnimatedCard = ({
           setTimeout(() => {
             setIsVisible(true);
           }, delay);
+        } else {
+          setIsVisible(false); // Reset visibility when leaving the viewport
         }
       },
       { threshold: 0.1 }
@@ -107,7 +109,7 @@ const SupportedCountries = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-5xl mx-auto">
             {countries.map((country, index) => (
-              <AnimatedCard delay={100 * index}>
+              <AnimatedCard delay={40 * index}>
                 <div
                   key={country.code}
                   className="rounded-lg p-2 flex flex-col items-center text-center  hover:shadow-md transition w-full"
