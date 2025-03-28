@@ -11,6 +11,53 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
+import { useEffect, useRef, useState } from "react";
+
+const AnimatedCard = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setIsVisible(true);
+          }, delay);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [delay]);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`transform transition-all duration-700 ${
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const HowItWorks = () => {
   const steps = [
     {
@@ -73,20 +120,22 @@ const HowItWorks = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           {steps.map((step, index) => (
-            <Card
-              key={index}
-              className="border border-border hover-lift animate-fade-in"
-            >
-              <CardContent className="pt-6">
-                <div
-                  className={`${step.color} p-3 rounded-full w-16 h-16 flex items-center justify-center mb-4`}
-                >
-                  {step.icon}
-                </div>
-                <h3 className="text-xl font-medium mb-2">{step.title}</h3>
-                <p className="text-muted-foreground">{step.description}</p>
-              </CardContent>
-            </Card>
+            <AnimatedCard delay={200 * index}>
+              <Card
+                key={index}
+                className="border border-border hover-lift animate-fade-in"
+              >
+                <CardContent className="pt-6">
+                  <div
+                    className={`${step.color} p-3 rounded-full w-16 h-16 flex items-center justify-center mb-4`}
+                  >
+                    {step.icon}
+                  </div>
+                  <h3 className="text-xl font-medium mb-2">{step.title}</h3>
+                  <p className="text-muted-foreground">{step.description}</p>
+                </CardContent>
+              </Card>
+            </AnimatedCard>
           ))}
         </div>
 

@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReviewFunnel from "@/components/review/ReviewFunnel";
-
+import Navbar from "@/components/layout/Navbar";
+import Logo from "@/components/layout/navbar/Logo";
 const ReviewPage = () => {
   const { campaignId } = useParams<{ campaignId: string }>();
   const navigate = useNavigate();
@@ -90,45 +91,65 @@ const ReviewPage = () => {
   }, [campaignId]);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="container mx-auto max-w-4xl">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="mb-6"
-          onClick={() => navigate("/")}
-        >
-          <ArrowLeft className="mr-2 w-4 h-4" />
-          Back to Home
-        </Button>
-
-        {loading ? (
-          <div className="bg-white rounded-xl shadow-sm border border-border p-8 max-w-2xl mx-auto">
-            <div className="space-y-6 animate-pulse">
-              <div className="h-8 w-3/4 bg-gray-200 rounded mx-auto"></div>
-              <div className="h-4 w-1/2 bg-gray-200 rounded mx-auto"></div>
-              <div className="h-40 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-10 bg-gray-200 rounded"></div>
-              <div className="h-20 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        ) : error ? (
-          <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8 max-w-2xl mx-auto text-center">
-            <h2 className="text-xl font-semibold text-red-600 mb-4">Error</h2>
-            <p className="text-muted-foreground mb-6">{error}</p>
-            <Button onClick={() => navigate("/")}>Return to Home</Button>
-          </div>
-        ) : campaignData ? (
-          <ReviewFunnel
-            campaignId={campaignId || ""}
-            productName={campaignData.productName}
-            productImage={campaignData.productImage}
-            vendor={campaignData.vendor}
-          />
-        ) : null}
+    <>
+      <div className="bg-secondary h-[80px] mx-auto overflow-hidden">
+        <img
+          src="/images/review/navbar.png"
+          style={{ height: "80px", width: "2400px" }}
+        />
       </div>
-    </div>
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="container mx-auto max-w-4xl mt-20">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="mb-6"
+            onClick={() => navigate("/")}
+          >
+            <ArrowLeft className="mr-2 w-4 h-4" />
+            Back to Home
+          </Button>
+
+          {loading ? (
+            <div className="bg-white rounded-xl shadow-sm border border-border p-8 max-w-2xl mx-auto">
+              <div className="space-y-6 animate-pulse">
+                <div className="h-8 w-3/4 bg-gray-200 rounded mx-auto"></div>
+                <div className="h-4 w-1/2 bg-gray-200 rounded mx-auto"></div>
+                <div className="h-40 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-10 bg-gray-200 rounded"></div>
+                <div className="h-20 bg-gray-200 rounded"></div>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8 max-w-2xl mx-auto text-center">
+              <h2 className="text-xl font-semibold text-red-600 mb-4">Error</h2>
+              <p className="text-muted-foreground mb-6">{error}</p>
+              <Button onClick={() => navigate("/")}>Return to Home</Button>
+            </div>
+          ) : campaignData ? (
+            <ReviewFunnel
+              campaignId={campaignId || ""}
+              productName={campaignData.productName}
+              productImage={campaignData.productImage}
+              vendor={campaignData.vendor}
+            />
+          ) : null}
+        </div>
+      </div>
+
+      <div
+        style={{
+          position: "fixed",
+          bottom: "0",
+          right: "0",
+          width: "300px",
+          border: "3px solid #73AD21",
+        }}
+      >
+        This div element has position: fixed;
+      </div>
+    </>
   );
 };
 

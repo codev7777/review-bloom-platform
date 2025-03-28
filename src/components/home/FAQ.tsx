@@ -9,6 +9,51 @@ import { Button } from "@/components/ui/button";
 import { HelpCircle, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
 
+const AnimatedCard = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setIsVisible(true);
+          }, delay);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [delay]);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`transform transition-all duration-700 ${
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const FAQ = () => {
   const faqItems = [
     {
@@ -94,14 +139,16 @@ const FAQ = () => {
         <div className="max-w-2xl mx-auto space-y-4">
           <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-lg font-medium text-left">
-                  {item.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-base">
-                  {item.answer}
-                </AccordionContent>
-              </AccordionItem>
+              <AnimatedCard delay={100 * index}>
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger className="text-lg font-medium text-left">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              </AnimatedCard>
             ))}
           </Accordion>
         </div>

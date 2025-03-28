@@ -8,7 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
+import { useRef } from "react";
 const countries = [
   { name: "United States", code: "us" },
   { name: "United Kingdom", code: "gb" },
@@ -34,6 +34,51 @@ const marketplaces = [
   { name: "eBay", logo: "ebay" },
 ];
 
+const AnimatedCard = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setIsVisible(true);
+          }, delay);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [delay]);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`transform transition-all duration-700 ${
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const SupportedCountries = () => {
   return (
     <section className="py-20 bg-gray-50" id="supported-countries">
@@ -58,21 +103,25 @@ const SupportedCountries = () => {
           </h3> */}
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-5xl mx-auto">
-            {countries.map((country) => (
-              <div
-                key={country.code}
-                className="bg-white rounded-lg p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition w-full"
-              >
-                <div className="w-full h-24 flex items-center justify-center overflow-hidden rounded-md">
-                  <img
-                    src={`https://flagcdn.com/w320/${country.code}.png`}
-                    alt={country.name}
-                    className=" object-cover"
-                    loading="lazy"
-                  />
+            {countries.map((country, index) => (
+              <AnimatedCard delay={100 * index}>
+                <div
+                  key={country.code}
+                  className="bg-white rounded-lg p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition w-full"
+                >
+                  <div className="w-full h-24 flex items-center justify-center overflow-hidden rounded-md">
+                    <img
+                      src={`https://flagcdn.com/w320/${country.code}.png`}
+                      alt={country.name}
+                      className=" object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <span className="text-sm font-medium mt-1">
+                    {country.name}
+                  </span>
                 </div>
-                <span className="text-sm font-medium mt-1">{country.name}</span>
-              </div>
+              </AnimatedCard>
             ))}
           </div>
         </div>

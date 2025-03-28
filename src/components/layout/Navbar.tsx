@@ -45,17 +45,18 @@ const Navbar = () => {
     >
       <div className="container px-4 mx-auto flex items-center justify-between">
         <Logo />
+        <div className="container flex items-center justify-end">
+          {/* Desktop Navigation */}
+          <DesktopNav />
 
-        {/* Desktop Navigation */}
-        <DesktopNav />
-
-        <div className="hidden md:flex items-center space-x-4">
-          {/* <ThemeToggle /> */}
-          <UserMenu
-            isAuthenticated={isAuthenticated}
-            isAdmin={isAdmin}
-            logout={logout}
-          />
+          <div className="hidden md:flex items-center space-x-4 display-inline">
+            {/* <ThemeToggle /> */}
+            <UserMenu
+              isAuthenticated={isAuthenticated}
+              isAdmin={isAdmin}
+              logout={logout}
+            />
+          </div>
         </div>
 
         {/* Mobile Menu Button */}

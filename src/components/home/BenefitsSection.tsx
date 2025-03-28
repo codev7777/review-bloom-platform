@@ -3,6 +3,51 @@ import { ArrowRight, LineChart, Mail, Star, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
+const AnimatedCard = ({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setIsVisible(true);
+          }, delay);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => {
+      if (cardRef.current) {
+        observer.unobserve(cardRef.current);
+      }
+    };
+  }, [delay]);
+
+  return (
+    <div
+      ref={cardRef}
+      className={`transform transition-all duration-700 ${
+        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
 const BenefitsSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -75,22 +120,26 @@ const BenefitsSection = () => {
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
           {benefits.map((benefit, index) => (
-            <div
-              key={index}
-              className={`flex border rounded-lg p-6 bg-white transition-opacity duration-700 ${
-                isVisible
-                  ? "opacity-100 translate-y-0"
-                  : "opacity-0 translate-y-10"
-              }`}
-            >
-              <div className="mr-4 mt-1">
-                <div className="p-3 rounded-lg bg-gray-100">{benefit.icon}</div>
+            <AnimatedCard delay={index * 100}>
+              <div
+                key={index}
+                className={`flex border rounded-lg p-6 bg-white transition-opacity duration-700 ${
+                  isVisible
+                    ? "opacity-100 translate-y-0"
+                    : "opacity-0 translate-y-10"
+                }`}
+              >
+                <div className="mr-4 mt-1">
+                  <div className="p-3 rounded-lg bg-gray-100">
+                    {benefit.icon}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-2">{benefit.title}</h3>
+                  <p className="text-muted-foreground">{benefit.description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-medium mb-2">{benefit.title}</h3>
-                <p className="text-muted-foreground">{benefit.description}</p>
-              </div>
-            </div>
+            </AnimatedCard>
           ))}
         </div>
 

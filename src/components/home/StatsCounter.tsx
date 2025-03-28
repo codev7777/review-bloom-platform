@@ -9,7 +9,13 @@ interface CounterProps {
   icon: React.ReactNode;
 }
 
-const Counter = ({ title, end, suffix = "", duration = 2000, icon }: CounterProps) => {
+const Counter = ({
+  title,
+  end,
+  suffix = "",
+  duration = 2000,
+  icon,
+}: CounterProps) => {
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const divRef = React.useRef<HTMLDivElement>(null);
@@ -65,7 +71,8 @@ const Counter = ({ title, end, suffix = "", duration = 2000, icon }: CounterProp
         {icon}
       </div>
       <h3 className="text-3xl md:text-4xl font-bold text-[#232F3E]">
-        {count.toLocaleString()}{suffix}
+        {count.toLocaleString()}
+        {suffix}
       </h3>
       <p className="text-muted-foreground mt-2 text-center">{title}</p>
     </div>
@@ -78,7 +85,9 @@ const StatsCounter = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <span className="text-[#FF9900] font-medium">Our Impact</span>
-          <h2 className="text-3xl font-semibold mt-2">Trusted by Thousands of Sellers</h2>
+          <h2 className="text-3xl font-semibold mt-2">
+            Trusted by Thousands of Sellers
+          </h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
