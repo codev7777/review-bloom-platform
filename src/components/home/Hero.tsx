@@ -57,7 +57,7 @@ const Hero = () => {
       <div className="container mx-auto px-4  max-w-[400px]">
         <div className="max-w-4xl mx-auto">
           <div className="inline-block mb-6 animate-fade-in">
-            <div className="mt-24 inline-flex items-left px-5 py-5 rounded-full  text-[#FF9900] text-4xl font-medium">
+            <div className="mt-24 inline-flex items-left px-5 py-16 rounded-full  text-[#FF9900] text-4xl font-medium">
               <Link to="/auth/signup">
                 <span className="underline hover:text-[#CC7700]">
                   Boost Reviews

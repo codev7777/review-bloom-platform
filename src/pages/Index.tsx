@@ -109,7 +109,7 @@ const Index = () => {
       {!loading && (
         <div>
           <Navbar />
-          <main className="flex-grow pt-10 md:pt-10">
+          <main className="flex-grow ">
             <Hero />
             <StatsCounter />
             <Features />
