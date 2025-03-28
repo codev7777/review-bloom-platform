@@ -121,7 +121,10 @@ const Pricing = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-muted/50">
+    <section
+      id="pricing"
+      className="py-24 bg-muted/50  bg-gradient-to-b from-[#f9fafb] via-[#146EB4] to-[#f9fafb]"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="mb-4 font-semibold text-foreground text-3xl sm:text-4xl">

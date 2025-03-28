@@ -81,7 +81,10 @@ const AnimatedCard = ({
 
 const SupportedCountries = () => {
   return (
-    <section className="py-20 bg-gray-50" id="supported-countries">
+    <section
+      className="py-20 bg-gray-50 bg-gradient-to-b from-[#ffffff] via-[#FF9900] to-[#f9fafb]"
+      id="supported-countries"
+    >
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           {/* <span className="text-[#FF9900] font-medium">Global Reach</span> */}
@@ -107,7 +110,7 @@ const SupportedCountries = () => {
               <AnimatedCard delay={100 * index}>
                 <div
                   key={country.code}
-                  className="bg-white rounded-lg p-2 flex flex-col items-center text-center shadow-sm hover:shadow-md transition w-full"
+                  className="rounded-lg p-2 flex flex-col items-center text-center  hover:shadow-md transition w-full"
                 >
                   <div className="w-full h-24 flex items-center justify-center overflow-hidden rounded-md">
                     <img
