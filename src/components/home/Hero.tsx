@@ -21,25 +21,31 @@ const Hero = () => {
           className="absolute left-[18%] top-1/3 w-64 animate-floating"
         />
 
-        <div className="container mx-auto px-4 max-w-[400px]">
-          <div className="max-w-4xl mx-auto">
+        <div className="container mx-auto px-4 flex items-center">
+          <div className="max-w-lg mx-auto">
             <div className="inline-block mb-6 animate-fade-in">
-              <div className="mt-24 inline-flex items-left px-5 py-12 rounded-full text-4xl font-medium text-white ">
+              <div className="mt-24 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white ">
                 <div>
-                  1&nbsp;&nbsp;&nbsp;
-                  <Link to="/auth/signup">
-                    <span className="underline hover:text-[#CC7700] text-[#FF9900]">
-                      Boost Reviews
-                    </span>
-                  </Link>
-                  <br />
+                  <span className="inline-flex items-center">
+                    1&nbsp;&nbsp;&nbsp;
+                    <Link to="/auth/signup">
+                      <span className="underline hover:text-[#CC7700] text-[#FF9900]">
+                        Boost Reviews for
+                      </span>
+                      <img
+                        src="/images/amazon-logo-white.png"
+                        alt="Amazon"
+                        className="h-10 ml-4 inline-block align-middle"
+                      />
+                    </Link>
+                  </span>
                   <div className="text-white mt-2">
                     2&nbsp;&nbsp;&nbsp;Collect Emails
                   </div>
                   <div className="text-white mt-2">
                     3&nbsp;&nbsp;&nbsp;Drive Sales
                   </div>
-                  <div className="text-xl text-white mt-8">
+                  <div className="text-xl text-white mt-8 ml-12 ">
                     ...with AI-powered review tunnel
                   </div>
                 </div>
