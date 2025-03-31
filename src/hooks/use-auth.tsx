@@ -1,13 +1,20 @@
-
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from '@/components/ui/use-toast';
-
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios"; // Import Axios
+import { toast } from "@/components/ui/use-toast";
+import api from "@/lib/api/axiosConfig";
+// Define the User and AuthContextType interfaces
 interface User {
   id: string;
   email: string;
   name: string;
-  role: 'vendor' | 'admin';
+  role: "USER" | "ADMIN";
 }
 
 interface AuthContextType {
@@ -29,68 +36,56 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check for saved user in localStorage
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check for saved user in localStorage and JWT token
+    const savedUser = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+
+    if (savedUser && token) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.error("Error parsing user data from localStorage:", error);
+        localStorage.removeItem("user"); // Clear corrupt data
+      }
     }
     setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
+    console.log(0);
     try {
       setIsLoading(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock login validation
-      if (email === 'vendor@example.com' && password === 'password') {
-        const userData: User = {
-          id: '1',
-          email: 'vendor@example.com',
-          name: 'Vendor User',
-          role: 'vendor',
-        };
-        
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        
-        toast({
-          title: "Login successful",
-          description: "Welcome back to ReviewBrothers!",
-        });
-        
-        navigate('/vendor-dashboard');
-      } else if (email === 'admin@example.com' && password === 'admin') {
-        const userData: User = {
-          id: '2',
-          email: 'admin@example.com',
-          name: 'Admin User',
-          role: 'admin',
-        };
-        
-        localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
-        
-        toast({
-          title: "Admin Login successful",
-          description: "Welcome back, Admin!",
-        });
-        
-        navigate('/admin-dashboard');
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: "Invalid email or password",
-        });
+      console.log(1);
+      const response = await api.post("/auth/login", { email, password });
+      console.log(response.data);
+      console.log(2);
+      // Assuming response contains JWT and user data
+      const { tokens, user } = response.data;
+      console.log(tokens);
+      console.log(user);
+      // Save the token and user data to localStorage
+      localStorage.setItem("token", tokens);
+      localStorage.setItem("user", JSON.stringify(user));
+      console.log(3);
+      setUser(user);
+
+      toast({
+        title: "Login successful",
+        description: "Welcome back to ReviewBrothers!",
+      });
+      console.log(4);
+      // Redirect based on user role
+      if (user.role == "USER") {
+        navigate("/vendor-dashboard");
+      } else if (user.role === "ADMIN") {
+        navigate("/admin-dashboard");
       }
+      console.log(5);
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "An error occurred during login",
+        description: "Invalid email or password",
       });
     } finally {
       setIsLoading(false);
@@ -98,59 +93,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    try {
-      setIsLoading(true);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock user creation
-      const userData: User = {
-        id: Math.random().toString(36).substr(2, 9),
-        email,
-        name,
-        role: 'vendor',
-      };
-      
-      localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      
-      toast({
-        title: "Account created",
-        description: "Welcome to ReviewBrothers!",
-      });
-      
-      navigate('/vendor-dashboard');
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Signup failed",
-        description: "An error occurred during signup",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    if (password)
+      try {
+        setIsLoading(true);
+
+        // Make a real API call with Axios
+        const response = await api.post("/auth/register", {
+          name,
+          email,
+          password,
+        });
+
+        // Assuming response contains user data
+        const { userData } = response.data;
+
+        // Save the user data to localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        setUser(userData);
+
+        toast({
+          title: "Account created",
+          description: "Welcome to ReviewBrothers!",
+        });
+
+        navigate("/vendor-dashboard");
+      } catch (error) {
+        console.log(error);
+        toast({
+          variant: "destructive",
+          title: "Signup failed",
+          description: error.response.data.message,
+        });
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
     setUser(null);
-    navigate('/');
-    
+    navigate("/");
+
     toast({
       title: "Logged out",
       description: "You have been successfully logged out",
     });
   };
 
-  const isVendor = () => user?.role === 'vendor';
-  const isAdmin = () => user?.role === 'admin';
+  const isVendor = () => user?.role === "USER";
+  const isAdmin = () => user?.role === "ADMIN";
 
-  // Add static context accessor for use in components that don't have direct access
+  // Static method to access context
   AuthProvider.useContext = () => {
     const context = useContext(AuthContext);
     if (!context) {
-      throw new Error('useAuth must be used within an AuthProvider');
+      throw new Error("useAuth must be used within an AuthProvider");
     }
     return context;
   };
@@ -165,7 +164,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signup,
         logout,
         isVendor,
-        isAdmin
+        isAdmin,
       }}
     >
       {children}
@@ -177,7 +176,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 AuthProvider.useContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -185,7 +184,7 @@ AuthProvider.useContext = () => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
