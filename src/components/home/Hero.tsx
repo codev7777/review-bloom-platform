@@ -38,7 +38,7 @@ const Hero = () => {
     setImageLoaded(false); // Trigger fade-out before changing image
     setTimeout(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length);
-    }, 100); // Delay image change for smooth transition
+    }, 300); // Delay image change for smooth transition
   };
 
   const handleImageLoad = () => {
