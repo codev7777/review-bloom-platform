@@ -90,7 +90,6 @@ const StatsCounter = () => {
     <section className="py-16 bg-orange-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <span className="text-[#FF9900] font-medium">Our Impact</span>
           <h2 className="text-3xl font-semibold mt-2">
             Trusted by Thousands of Sellers
           </h2>

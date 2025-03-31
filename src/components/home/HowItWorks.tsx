@@ -1,157 +1,121 @@
+import { useState, useEffect, useRef } from "react";
 import {
+  ShoppingBag,
   QrCode,
+  Smartphone,
   Star,
   BarChart3,
-  ShoppingBag,
   CheckCircle,
-  Smartphone,
-  ArrowRight,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 
-import { useEffect, useRef, useState } from "react";
+const steps = [
+  {
+    icon: "/images/landing/step-1.png",
+    title: "Make It Easy for Customers to Leave a Review",
+    description:
+      "Select Your Campaign Strategy<br />When shoppers receive a free gift, discount, or bonus content, they're far more likely <br />to leave a positive review. With our Smart Funnel, you can offer these incentives <br />seamlessly — and boost your reviews in no time:<br />🎁 Free Gift – Delight customers with a surprise item<br />💳 Gift Card or Coupon – Reward purchases with instant value <br />📘 Downloadables – Offer manuals, eBooks, or warranty info <br />📧 Email Capture – Build your list while providing added value<br />",
+  },
+  {
+    icon: "/images/landing/step-2.png",
+    title: "Place Your QR Code on an Insert or Inside the Packaging",
+    description:
+      "Guide your customers into the Smart Funnel with a simple scan — whether <br />it’s through a printed insert or directly inside your product packaging.<br />📦 Print the QR code directly inside your packaging<br />📝 Or include a custom insert card with each product <br />🎁 Let customers unlock a free gift and leave a review <br />⚡ Frictionless, user-friendly experience<br />🔄 QR codes are auto-generated for every campaign<br />🖨 Instantly downloadable and ready to use<br />👉 TIP: Want to save on printing costs? Instead of using flyers<br />or business cards, ask your supplier to print the QR code on<br />the inside of the packaging — simple, cost-effective, and just<br />as powerful",
+  },
+  {
+    icon: "/images/landing/step-3.png",
+    title: "Boost Engagement and Reviews in Seconds!",
+    description:
+      "One Simple Scan Turns Customers Into Reviewers.<br />Let customers easily redeem a gift, engage with your brand, <br />and leave a review — all in seconds through your Smart<br />Funnel.",
+  },
+  {
+    icon: "/images/landing/step-4.png",
+    title: "Collect Reviews, Feedback & Emails — Automatically",
+    description:
+      "Our Smart Funnel does the work for you. Depending on your <br />setup, customers can:<br />📝 Leave a Product Review with just a few taps<br />🎁 Claim a Free Gift in exchange for their review (optional) <br />📧 Submit Their Email to grow your mailing list<br />💬 Share Valuable Feedback to improve your product<br />No extra tools needed — everything happens in one smooth <br />flow.",
+  },
+  {
+    icon: "/images/landing/step-5.png",
+    title: "Deliver Your Promotion – Automatically or Manually",
+    description:
+      "🎉 Congratulations! Your customer just completed the <br />funnel and left a review on Amazon.<br />Now it’s time to deliver their reward. Choose what works <br />best for you:<br />⚡ Automatic Delivery: Instantly send their digital gift <br />(like a coupon or download) the moment they complete <br />the funnel.<br />✅ Manual Delivery: Review their submission first, then <br />approve and send the promotion manually.<br />You're in full control — simple, flexible, and effective.",
+  },
+];
 
-const AnimatedCard = ({
-  children,
-  delay = 0,
-}: {
-  children: React.ReactNode;
-  delay?: number;
-}) => {
+const AnimatedStep = ({ step, index }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
+  const stepRef = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setTimeout(() => {
-            setIsVisible(true);
-          }, delay);
+          setIsVisible(true);
         } else {
-          setIsVisible(false); // Reset visibility when leaving the viewport
+          setIsVisible(false);
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.5 }
     );
 
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
+    if (stepRef.current) {
+      observer.observe(stepRef.current);
     }
 
     return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
+      if (stepRef.current) {
+        observer.unobserve(stepRef.current);
       }
     };
-  }, [delay]);
+  }, []);
 
   return (
-    <div
-      ref={cardRef}
-      className={`transform transition-all duration-700 ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
-      }`}
-    >
-      {children}
+    <div ref={stepRef} className="flex justify-center items-center my-10">
+      <div
+        className={`flex items-center w-full max-w-6xl transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"
+        }`}
+      >
+        <img
+          src={step.icon}
+          alt={step.title}
+          className={`w-[500px] object-contain transition-transform duration-700 ${
+            isVisible ? "translate-x-0" : "-translate-x-10"
+          }`}
+        />
+        <div
+          className={`ml-10 transition-transform duration-700 ${
+            isVisible ? "translate-x-0" : "translate-x-10"
+          }`}
+        >
+          <h2 className="text-2xl font-bold mb-2">Step {index + 1}</h2>
+          <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
+          <p
+            className="text-gray-600"
+            dangerouslySetInnerHTML={{ __html: step.description }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
 const HowItWorks = () => {
-  const steps = [
-    {
-      icon: <ShoppingBag className="h-10 w-10 text-[#FF9900]" />,
-      title: "Create Campaigns",
-      description:
-        "Set up review campaigns for specific products in your inventory",
-      color: "bg-orange-50",
-    },
-    {
-      icon: <QrCode className="h-10 w-10 text-[#146EB4]" />,
-      title: "Generate QR Codes",
-      description:
-        "Place QR codes in your product packaging or email them to customers",
-      color: "bg-blue-50",
-    },
-    {
-      icon: <Smartphone className="h-10 w-10 text-[#232F3E]" />,
-      title: "Customers Scan & Review",
-      description:
-        "Customers scan the code and leave their honest feedback about your product",
-      color: "bg-gray-100",
-    },
-    {
-      icon: <Star className="h-10 w-10 text-yellow-500" />,
-      title: "Collect Amazon Reviews",
-      description:
-        "Positive reviews are redirected to post on Amazon, increasing your ratings",
-      color: "bg-yellow-50",
-    },
-    {
-      icon: <BarChart3 className="h-10 w-10 text-emerald-500" />,
-      title: "Review Analytics",
-      description: "Track performance and gain insights from your dashboard",
-      color: "bg-emerald-50",
-    },
-    {
-      icon: <CheckCircle className="h-10 w-10 text-purple-500" />,
-      title: "Grow Your Business",
-      description:
-        "Watch your sales increase as your review count and ratings improve",
-      color: "bg-purple-50",
-    },
-  ];
-
   return (
-    <section className="py-20" id="how-it-works">
+    <section className="py-20 bg-gray-50" id="how-it-works">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          {/* <span className="text-[#FF9900] font-medium">Simple Process</span> */}
-          <h2 className="text-3xl font-semibold mt-2 mb-4">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-[700] my-8">
             Need More Product Reviews?
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
-            ReviewBrothers makes it easy to collect authentic Amazon reviews for
-            your products. Follow these simple steps to boost your review count
-            and product visibility.
+          <p className="text-2xl text-gray-700 font-[700]">
+            Boost Reviews Fast with the Smart Funnel – Just 5 Simple Steps
           </p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div>
           {steps.map((step, index) => (
-            <AnimatedCard delay={200 * index}>
-              <Card
-                key={index}
-                className="border border-border hover-lift animate-fade-in"
-              >
-                <CardContent className="pt-6">
-                  <div
-                    className={`${step.color} p-3 rounded-full w-16 h-16 flex items-center justify-center mb-4`}
-                  >
-                    {step.icon}
-                  </div>
-                  <h3 className="text-xl font-medium mb-2">{step.title}</h3>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </CardContent>
-              </Card>
-            </AnimatedCard>
+            <AnimatedStep key={index} step={step} index={index} />
           ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Button
-            asChild
-            size="lg"
-            className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
-          >
-            <Link to="/auth/signup" className="px-8 group">
-              Start Your Free Trial
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
         </div>
       </div>
     </section>

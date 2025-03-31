@@ -73,18 +73,20 @@ const SupportedCountries = () => {
       id="supported-countries"
     >
       <div className="container mx-auto px-2">
-        <div className="text-center mb-16">
-          <h2 className="text-[45px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-sans font-[700]">
-            {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
-            Tool for all &nbsp;&nbsp;&nbsp;
-            <img src="images/amazon-logo.png" className="h-16" />
-            &nbsp;&nbsp;&nbsp; Marketplaces
-          </h2>
-          {/* <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
+        <AnimatedCard delay={200}>
+          <div className="text-center mb-16">
+            <h2 className="text-[45px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-montserrat font-[700]">
+              {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
+              Tool for all &nbsp;&nbsp;&nbsp;
+              <img src="images/amazon-logo.png" className="h-16" />
+              &nbsp;&nbsp;&nbsp; Marketplaces
+            </h2>
+            {/* <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
             ReviewBrothers works across multiple countries, helping you collect
             reviews wherever your customers shop.
           </p> */}
-        </div>
+          </div>
+        </AnimatedCard>
 
         <div className="mb-16">
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-11 gap-6 max-w-11xl mx-auto">
