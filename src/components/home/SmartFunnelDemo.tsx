@@ -62,7 +62,11 @@ const Demo = () => {
                 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-orange-400 text-white flex items-center justify-center font-bold">
+                <div
+                  className={`flex-shrink-0 w-8 h-8 rounded-full bg-orange-400 text-white flex items-center justify-center font-bold ${
+                    index >= 2 && "opacity-0"
+                  }`}
+                >
                   {index + 1}
                 </div>
                 <div>
@@ -80,7 +84,7 @@ const Demo = () => {
 
         {/* Compliance Section - Fade in from Bottom */}
         <motion.div
-          className="bg-teal-800 text-white p-6 rounded-lg mt-10"
+          className="bg-teal-800 text-white p-6 rounded-lg"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.2 }}
