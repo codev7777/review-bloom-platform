@@ -112,9 +112,11 @@ const Demo = () => {
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           >
-            <Button className="bg-teal-200 hover:bg-teal-300 text-teal-900 font-medium text-lg px-4 py-3 h-auto rounded-full flex items-center gap-2">
-              <Play size={24} /> Watch Demo Now
-            </Button>
+            <Link to="/review/demo-campaign">
+              <Button className="bg-teal-200 hover:bg-teal-300 text-teal-900 font-medium text-lg px-4 py-3 h-auto rounded-full flex items-center gap-2">
+                <Play size={24} /> Watch Demo Now
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
 
