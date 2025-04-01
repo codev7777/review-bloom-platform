@@ -100,15 +100,14 @@ const BenefitsSection = () => {
   ];
 
   return (
-    <section ref={sectionRef} className="py-20">
+    <section ref={sectionRef} className="py-10 bg-gray-50">
       <div className="container mx-auto px-4">
-        {/* Header Section */}
-        <div
+        {/* <div
           className={`text-center mb-12 transition-opacity duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
-          {/* <span className="text-[#FF9900] font-medium">Why Choose ReviewBrothers</span> */}
+          <span className="text-[#FF9900] font-medium">Why Choose ReviewBrothers</span>
           <h2 className="text-3xl font-semibold mt-2 mb-4">
             Boost Your Sales with Better Product Reviews
           </h2>
@@ -119,7 +118,7 @@ const BenefitsSection = () => {
           </p>
         </div>
 
-        {/* Benefits Grid */}
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-12">
           {benefits.map((benefit, index) => (
             <AnimatedCard delay={index * 100}>
@@ -143,7 +142,7 @@ const BenefitsSection = () => {
               </div>
             </AnimatedCard>
           ))}
-        </div>
+        </div> */}
 
         {/* CTA Section */}
         <div

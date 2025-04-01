@@ -1,15 +1,8 @@
+import { useState } from "react";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
-interface PricingTierProps {
-  title: string;
-  price: string;
-  description: string;
-  features: { name: string; included: boolean }[];
-  cta: string;
-  isPopular?: boolean;
-}
+import { motion } from "framer-motion";
 
 const PricingTier = ({
   title,
@@ -17,34 +10,40 @@ const PricingTier = ({
   description,
   features,
   cta,
-  isPopular = false,
-}: PricingTierProps) => {
+  isPopular,
+  color,
+  buttonColor,
+  isAnnual,
+}) => {
   return (
-    <div
-      className={`relative flex flex-col p-8 rounded-xl shadow-sm transition-all duration-300 hover:shadow-hover ${
-        isPopular
-          ? "bg-gradient-to-b from-white to-primary/5 border-2 border-primary/60"
-          : "bg-white border border-border"
-      }`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`w-max-[400px] relative flex flex-col p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl border-2 ${color}`}
     >
       {isPopular && (
-        <span className="absolute top-0 right-8 -translate-y-1/2 bg-primary/80 text-white text-sm font-medium px-3 py-1 rounded-full">
-          Most Popular
-        </span>
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+          <div className="relative bg-primary text-white text-sm font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
+            Most Popular
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rotate-45"></div>
+          </div>
+        </div>
       )}
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <div className="mb-4">
+      <h3 className="text-xl font-semibold mt-6 mb-2 text-center">{title}</h3>
+      <div className="mb-12 text-center">
         <span className="text-3xl font-bold">${price}</span>
-        <span className="text-muted-foreground">/month</span>
-        <div className="text-sm text-muted-foreground">Billed annually</div>
+        <span className="text-muted-foreground">
+          /{isAnnual ? "year" : "month"}
+        </span>
       </div>
       <ul className="space-y-3 mb-8 flex-grow">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
             {feature.included ? (
-              <Check className="w-5 h-5 text-secondary flex-shrink-0 mt-0.5" />
+              <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
             ) : (
-              <X className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5 text-red-500" />
+              <X className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" />
             )}
             <span className="ml-3 text-sm">{feature.name}</span>
           </li>
@@ -52,22 +51,23 @@ const PricingTier = ({
       </ul>
       <Button
         variant={isPopular ? "default" : "outline"}
-        className={`w-full ${
-          isPopular ? "bg-primary/80 hover:bg-primary/60" : ""
-        }`}
+        className={`w-full ${buttonColor}`}
         asChild
       >
         <Link to="/auth/signup">{cta}</Link>
       </Button>
-    </div>
+    </motion.div>
   );
 };
 
 const Pricing = () => {
+  const [isAnnual, setIsAnnual] = useState(false);
+  const toggleBilling = () => setIsAnnual(!isAnnual);
+
   const tiers = [
     {
-      title: "Starter",
-      price: "29",
+      title: "Silver",
+      price: isAnnual ? "232" : "29",
       description: "Great for small vendors starting out",
       features: [
         { name: "Unlimited Reviews", included: true },
@@ -80,11 +80,13 @@ const Pricing = () => {
         { name: "Meta Pixel Support", included: false },
         { name: "Business Features", included: false },
       ],
-      cta: "Start with Starter",
+      cta: "Start with Silver",
+      color: "bg-gray-200 border-gray-400",
+      buttonColor: "bg-gray-400 hover:bg-gray-600",
     },
     {
-      title: "Pro",
-      price: "99",
+      title: "Gold",
+      price: isAnnual ? "792" : "99",
       description: "For growing businesses expanding their reach",
       features: [
         { name: "Unlimited Reviews", included: true },
@@ -97,12 +99,14 @@ const Pricing = () => {
         { name: "Personalized Branding", included: true },
         { name: "Meta Pixel Support", included: true },
       ],
-      cta: "Start with Pro",
+      cta: "Start with Gold",
       isPopular: true,
+      color: "bg-yellow-200 border-yellow-500",
+      buttonColor: "bg-yellow-400 hover:bg-yellow-600",
     },
     {
-      title: "Enterprise",
-      price: "199",
+      title: "Platinum",
+      price: isAnnual ? "1592" : "199",
       description: "For established businesses scaling at full speed",
       features: [
         { name: "Unlimited Reviews", included: true },
@@ -116,45 +120,48 @@ const Pricing = () => {
         { name: "Meta Pixel Support", included: true },
         { name: "Multiple Sub-Accounts", included: true },
       ],
-      cta: "Contact Sales",
+      cta: "Start with Platinum",
+      color: "bg-blue-200 border-blue-500",
+      buttonColor: "bg-blue-400  hover:bg-blue-600",
     },
   ];
 
   return (
-    <section
-      id="pricing"
-      className="py-24 bg-muted/50  bg-gradient-to-b from-[#f9fafb] via-[#146EB4] to-[#f9fafb]"
-    >
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="mb-4 font-semibold text-foreground text-3xl sm:text-4xl">
-            Simple, Transparent Pricing
-          </h2>
-          <p className="text-lg text-muted-foreground text-primary">
-            Choose the plan that fits your business needs, with no hidden fees
-            or long-term commitments.
-          </p>
-        </div>
+    <section id="pricing" className="py-24 bg-muted/50">
+      <div className="container mx-auto px-4 text-center">
+        <h2 className="mb-4 font-semibold text-3xl">
+          Simple, Transparent Pricing
+        </h2>
+        <p className="text-lg text-muted-foreground mb-6">
+          Choose the plan that fits your business needs, with no hidden fees or
+          long-term commitments.
+        </p>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="mb-8 flex items-center justify-center gap-4"
+        >
+          <span className="text-sm font-medium">Monthly</span>
+          <button
+            onClick={toggleBilling}
+            className="relative w-16 h-8 bg-gray-300 rounded-full flex items-center transition-all duration-300 p-1"
+          >
+            <motion.div
+              className="w-7 h-7 bg-white rounded-full shadow-md"
+              animate={{ x: isAnnual ? 32 : 0 }}
+            />
+          </button>
+          <span className="text-sm font-medium">
+            Annually <span className="text-green-600">(Save 20%)</span>
+          </span>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {tiers.map((tier, index) => (
-            <PricingTier key={index} {...tier} />
+            <PricingTier key={index} {...tier} isAnnual={isAnnual} />
           ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground mb-4">
-            All plans are billed annually. 14-day free trial included. No credit
-            card required.
-          </p>
-          <Button variant="link" asChild>
-            <Link
-              to="/pricing-details"
-              className="text-primary hover:underline"
-            >
-              View full pricing details
-            </Link>
-          </Button>
         </div>
       </div>
     </section>

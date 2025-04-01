@@ -127,82 +127,84 @@ const VendorReviews = () => {
   }, []);
 
   return (
-    <section
-      ref={sectionRef}
-      className={`py-20 bg-gray-50 transition-opacity duration-1000 ${
-        isVisible ? "opacity-100 animate-fade-in" : "opacity-0"
-      }`}
-      id="vendor-reviews"
-    >
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-semibold mb-4">
-            What Vendors Say About Our Platform
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
-            See how our Amazon review funnel and dashboard have helped vendors
-            optimize their feedback collection and improve their ratings.
-          </p>
-        </div>
+    <section className="bg-gray-50">
+      <div
+        ref={sectionRef}
+        className={`py-20 bg-gray-50 transition-opacity duration-1000 ${
+          isVisible ? "opacity-100 animate-fade-in" : "opacity-0"
+        }`}
+        id="vendor-reviews"
+      >
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-semibold mb-4">
+              What Vendors Say About Our Platform
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
+              See how our Amazon review funnel and dashboard have helped vendors
+              optimize their feedback collection and improve their ratings.
+            </p>
+          </div>
 
-        <div className="max-w-6xl mx-auto">
-          <Carousel opts={{ align: "start", loop: true }} className="w-full">
-            <CarouselContent>
-              {vendorReviews.length > 0 ? (
-                vendorReviews.map((review) => (
-                  <CarouselItem
-                    key={review.id}
-                    className="md:basis-1/2 lg:basis-1/3"
-                  >
-                    <div className="p-1">
-                      <Card className="h-[340px] flex flex-col">
-                        <CardHeader className="pb-2">
-                          <div className="flex justify-between items-start">
-                            <Avatar className="w-24 h-24">
-                              <AvatarImage
-                                src={review.avatar}
-                                alt={review.vendorName}
-                                className="object-scale-down w-full h-full"
-                              />
-                              <AvatarFallback>
-                                {review.vendorName.charAt(0)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <StarRating rating={review.rating} />
-                          </div>
-                          <CardTitle className="text-base mt-2">
-                            {review.reviewerName}
-                          </CardTitle>
-                          <CardDescription className="text-sm text-muted-foreground">
-                            {review.jobTitle} at {review.vendorName}
-                          </CardDescription>
-                          {/* <CardDescription className="text-sm text-muted-foreground mt-1">
+          <div className="max-w-6xl mx-auto">
+            <Carousel opts={{ align: "start", loop: true }} className="w-full">
+              <CarouselContent>
+                {vendorReviews.length > 0 ? (
+                  vendorReviews.map((review) => (
+                    <CarouselItem
+                      key={review.id}
+                      className="md:basis-1/2 lg:basis-1/3"
+                    >
+                      <div className="p-1">
+                        <Card className="h-[340px] flex flex-col">
+                          <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                              <Avatar className="w-24 h-24">
+                                <AvatarImage
+                                  src={review.avatar}
+                                  alt={review.vendorName}
+                                  className="object-scale-down w-full h-full"
+                                />
+                                <AvatarFallback>
+                                  {review.vendorName.charAt(0)}
+                                </AvatarFallback>
+                              </Avatar>
+                              <StarRating rating={review.rating} />
+                            </div>
+                            <CardTitle className="text-base mt-2">
+                              {review.reviewerName}
+                            </CardTitle>
+                            <CardDescription className="text-sm text-muted-foreground">
+                              {review.jobTitle} at {review.vendorName}
+                            </CardDescription>
+                            {/* <CardDescription className="text-sm text-muted-foreground mt-1">
                             {review.vendorName}
                           </CardDescription> */}
-                        </CardHeader>
+                          </CardHeader>
 
-                        <CardContent className="flex-grow mt-4">
-                          <p className="text-sm text-muted-foreground">
-                            "{review.comment}"
-                          </p>
-                        </CardContent>
+                          <CardContent className="flex-grow mt-4">
+                            <p className="text-sm text-muted-foreground">
+                              "{review.comment}"
+                            </p>
+                          </CardContent>
 
-                        <CardFooter className="flex justify-between items-center py-2 border-t text-xs text-muted-foreground">
-                          <div>{review.date}</div>
-                        </CardFooter>
-                      </Card>
-                    </div>
-                  </CarouselItem>
-                ))
-              ) : (
-                <p>No reviews available</p>
-              )}
-            </CarouselContent>
-            <div className="flex justify-center mt-8 gap-2">
-              <CarouselPrevious className="hidden" />
-              <CarouselNext className="hidden" id="nextbutton" />
-            </div>
-          </Carousel>
+                          <CardFooter className="flex justify-between items-center py-2 border-t text-xs text-muted-foreground">
+                            <div>{review.date}</div>
+                          </CardFooter>
+                        </Card>
+                      </div>
+                    </CarouselItem>
+                  ))
+                ) : (
+                  <p>No reviews available</p>
+                )}
+              </CarouselContent>
+              <div className="flex justify-center mt-8 gap-2">
+                <CarouselPrevious className="hidden" />
+                <CarouselNext className="hidden" id="nextbutton" />
+              </div>
+            </Carousel>
+          </div>
         </div>
       </div>
     </section>
