@@ -116,10 +116,10 @@ const Index = () => {
             <HowItWorks />
             <StatsCounter />
             <Demo />
-            <Features />
-            <BenefitsSection />
             <RecentReviews />
             <Pricing />
+            <Features />
+            <BenefitsSection />
             <FAQ />
           </main>
           <Footer />
