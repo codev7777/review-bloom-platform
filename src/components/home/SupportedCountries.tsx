@@ -75,11 +75,11 @@ const SupportedCountries = () => {
       <div className="container mx-auto px-2">
         <AnimatedCard delay={200}>
           <div className="text-center mb-16">
-            <h2 className="text-[45px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-montserrat font-[700]">
+            <h2 className="text-[45px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
               {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
-              Tool for all &nbsp;&nbsp;&nbsp;
+              Tool for all &nbsp;
               <img src="images/amazon-logo.png" className="h-16" />
-              &nbsp;&nbsp;&nbsp; Marketplaces
+              &nbsp; Marketplaces
             </h2>
             {/* <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
             ReviewBrothers works across multiple countries, helping you collect
