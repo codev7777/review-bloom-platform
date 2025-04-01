@@ -91,7 +91,7 @@ const SupportedCountries = () => {
         <div className="mb-16">
           <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-11 gap-6 max-w-11xl mx-auto">
             {countries.map((country, index) => (
-              <AnimatedCard key={country.code} delay={40 * index}>
+              <AnimatedCard key={country.code} delay={100}>
                 <div className="rounded-lg p-2 flex flex-col items-center text-center hover:shadow-md transition w-full">
                   <div className="w-20 h-20 flex items-center justify-center overflow-hidden rounded-full">
                     <img

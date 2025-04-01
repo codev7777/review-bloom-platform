@@ -12,6 +12,7 @@ import StatsCounter from "@/components/home/StatsCounter";
 import SupportedCountries from "@/components/home/SupportedCountries";
 import BenefitsSection from "@/components/home/BenefitsSection";
 import Demo from "@/components/home/SmartFunnelDemo";
+import MoreSocialProof from "@/components/home/MoreSocialProof";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -119,6 +120,7 @@ const Index = () => {
             <RecentReviews />
             <Pricing />
             <BenefitsSection />
+            <MoreSocialProof />
             <Features />
             <FAQ />
           </main>

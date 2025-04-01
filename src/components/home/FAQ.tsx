@@ -13,7 +13,7 @@ const faqItems = [
   {
     question: "Is the Smart Funnel really safe to use on Amazon?",
     answer:
-      "Absolutely. Our Smart Funnel is 100% compliant with Amazon’s review policies because it avoids the two biggest violations that get sellers in trouble:\n\n No rewards in exchange for reviews – Your customers can claim their free gift without being required to leave a review. The funnel separates the reward from the review process entirely.\n\n No pressure for only positive reviews – We never ask for a 'positive' review — we simply guide happy customers toward the review step, and respectfully stop the funnel if the feedback is negative.\n\n👉 This means: no manipulation, no risk — and fully within Amazon’s Terms of Service.",
+      "Absolutely. Our Smart Funnel is 100% compliant with Amazon’s review policies because it avoids the two biggest violations that get sellers in trouble:\n\n ✅ No rewards in exchange for reviews – Your customers can claim their free gift without being required to leave a review. The funnel separates the reward from the review process entirely.\n\n✅  No pressure for only positive reviews – We never ask for a 'positive' review — we simply guide happy customers toward the review step, and respectfully stop the funnel if the feedback is negative.\n\n👉 This means: no manipulation, no risk — and fully within Amazon’s Terms of Service.",
   },
   {
     question: "Why is it called a Smart Funnel?",
