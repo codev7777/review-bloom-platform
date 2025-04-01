@@ -1,13 +1,16 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Play, QrCode, ArrowDown, CheckCircle } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
+import GetDomain from "@/lib/GetDomain";
+import { Link } from "react-router-dom";
 
 const Demo = () => {
   return (
-    <div className="flex flex-col items-center bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="flex flex-col items-center bg-gray-50">
       {/* Header */}
 
-      <header className="w-full max-w-4xl pt-8 pb-4 px-4 text-center bg-[#faf4f3]">
+      <header className="w-full max-w-4xl pt-20 pb-12 px-4 text-center bg-[#faf4f3]">
         <h1 className="text-3xl md:text-4xl font-bold leading-tight mb-2">
           Boost Reviews —<br />
           The Amazon-Safe Way
@@ -15,7 +18,7 @@ const Demo = () => {
       </header>
 
       {/* Main Content */}
-      <main className="w-full max-w-4xl flex-1 px-4 pb-12 bg-[#faf4f3]">
+      <main className="w-full max-w-4xl flex-1 bg-[#faf4f3]">
         <div className="grid md:grid-cols-2 gap-8 items-center ">
           <div className="flex justify-end md:justify-end">
             <div className="relative pl-20 pb-0 pt-max">
@@ -115,6 +118,26 @@ const Demo = () => {
             <Button className="bg-teal-200 hover:bg-teal-300 text-teal-900 font-medium text-lg px-4 py-3 h-auto rounded-full flex items-center gap-2">
               <Play size={24} /> Watch Demo Now
             </Button>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center space-y-6 py-16 bg-gray-50">
+          <div className="text-4xl font-bold">
+            <h1>Smart Funnel Demo</h1>
+          </div>
+          <div>
+            <QRCodeCanvas
+              value={GetDomain() + "/review/demo-campaign"}
+              size={360}
+              className="border p-2 rounded shadow-sm"
+            />
+          </div>
+          <div>
+            Scan the QR Code or&nbsp;
+            <Link to="/review/demo-campaign" className="text-primary">
+              click here
+            </Link>
+            &nbsp; to see a demo funnel
           </div>
         </div>
       </main>
