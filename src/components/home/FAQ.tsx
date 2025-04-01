@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import {
   Accordion,
   AccordionContent,
@@ -54,10 +54,7 @@ const faqItems = [
 
 const FAQ = () => {
   return (
-    <section
-      className="py-20 bg-gray-50 transition-opacity duration-1000 opacity-100"
-      id="faq"
-    >
+    <section className="py-20 bg-gray-50" id="faq">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-semibold mt-2 mb-4">
@@ -72,18 +69,26 @@ const FAQ = () => {
         <div className="max-w-4xl mx-auto space-y-4">
           <Accordion type="single" collapsible className="w-full">
             {faqItems.map((item, index) => (
-              <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-lg font-medium text-left">
-                  {item.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground text-base">
-                  {item.answer.split("\n").map((text, i) => (
-                    <span key={i}>
-                      {text} <br />
-                    </span>
-                  ))}
-                </AccordionContent>
-              </AccordionItem>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <AccordionItem value={`item-${index}`}>
+                  <AccordionTrigger className="text-lg font-medium text-left">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground text-base">
+                    {item.answer.split("\n").map((text, i) => (
+                      <span key={i}>
+                        {text} <br />
+                      </span>
+                    ))}
+                  </AccordionContent>
+                </AccordionItem>
+              </motion.div>
             ))}
           </Accordion>
         </div>

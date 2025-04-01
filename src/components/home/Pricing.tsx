@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const PricingTier = ({
   title,
@@ -17,18 +17,24 @@ const PricingTier = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`w-max-[400px] relative flex flex-col p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl border-2 ${color}`}
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: false, amount: 0.2 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`relative flex flex-col p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl border-2 ${color}`}
     >
       {isPopular && (
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="absolute -top-3 left-1/2 transform -translate-x-1/2"
+        >
           <div className="relative bg-primary text-white text-sm font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
             Most Popular
             <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-primary rotate-45"></div>
           </div>
-        </div>
+        </motion.div>
       )}
       <h3 className="text-xl font-semibold mt-6 mb-2 text-center">{title}</h3>
       <div className="mb-12 text-center">
@@ -37,25 +43,39 @@ const PricingTier = ({
           /{isAnnual ? "year" : "month"}
         </span>
       </div>
+
       <ul className="space-y-3 mb-8 flex-grow">
         {features.map((feature, index) => (
-          <li key={index} className="flex items-start">
+          <motion.li
+            key={index}
+            className="flex items-start"
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+          >
             {feature.included ? (
               <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-500" />
             ) : (
               <X className="w-5 h-5 flex-shrink-0 mt-0.5 text-red-500" />
             )}
             <span className="ml-3 text-sm">{feature.name}</span>
-          </li>
+          </motion.li>
         ))}
       </ul>
-      <Button
-        variant={isPopular ? "default" : "outline"}
-        className={`w-full ${buttonColor}`}
-        asChild
+
+      <motion.div
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ duration: 0.2 }}
       >
-        <Link to="/auth/signup">{cta}</Link>
-      </Button>
+        <Button
+          variant={isPopular ? "default" : "outline"}
+          className={`w-full ${buttonColor}`}
+          asChild
+        >
+          <Link to="/auth/signup">{cta}</Link>
+        </Button>
+      </motion.div>
     </motion.div>
   );
 };
@@ -122,24 +142,34 @@ const Pricing = () => {
       ],
       cta: "Start with Platinum",
       color: "bg-blue-200 border-blue-500",
-      buttonColor: "bg-blue-400  hover:bg-blue-600",
+      buttonColor: "bg-blue-400 hover:bg-blue-600",
     },
   ];
 
   return (
     <section id="pricing" className="py-24 bg-muted/50">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="mb-4 font-semibold text-3xl">
+        <motion.h2
+          initial={{ opacity: 0, y: -10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-4 font-semibold text-3xl"
+        >
           Simple, Transparent Pricing
-        </h2>
-        <p className="text-lg text-muted-foreground mb-6">
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="text-lg text-muted-foreground mb-6"
+        >
           Choose the plan that fits your business needs, with no hidden fees or
           long-term commitments.
-        </p>
+        </motion.p>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
+          whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
           className="mb-8 flex items-center justify-center gap-4"
         >

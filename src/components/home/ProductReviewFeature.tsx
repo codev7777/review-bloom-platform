@@ -34,9 +34,7 @@ const ProductReviewsFeature: React.FC = () => {
     <div className="max-w-4xl mx-auto p-6">
       {/* <h1 className="text-4xl font-bold text-teal-500 mb-4"> */}
       <h1 className="text-4xl font-bold text-secondary mb-4">
-        Without <span className="font-[900]">ReviewBrothers</span> <br />
-        With <span className="font-[900]">ReviewBrothers</span> <br /> Boost
-        Your Sales with Better Product Reviews
+        Boost Your Sales with Better Product Reviews
       </h1>
 
       <p className="text-gray-600 text-lg mb-12">
