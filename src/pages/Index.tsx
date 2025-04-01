@@ -11,6 +11,7 @@ import { LoadingBar } from "@/components/ui/loading-bar";
 import StatsCounter from "@/components/home/StatsCounter";
 import SupportedCountries from "@/components/home/SupportedCountries";
 import BenefitsSection from "@/components/home/BenefitsSection";
+import Demo from "@/components/home/SmartFunnelDemo";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -104,7 +105,7 @@ const Index = () => {
     return () => observer.disconnect();
   }, [loading]);
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen ">
       {loading && <LoadingBar className="mt-[400px]" />}
       {!loading && (
         <div>
@@ -114,6 +115,7 @@ const Index = () => {
             <SupportedCountries />
             <HowItWorks />
             <StatsCounter />
+            <Demo />
             <Features />
             <BenefitsSection />
             <RecentReviews />

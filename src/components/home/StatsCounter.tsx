@@ -87,7 +87,7 @@ const Counter = ({
 
 const StatsCounter = () => {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="pt-12 bg-gray-50">
       <div className="container mx-auto px-4 bg-gradient-to-r from-[#232F3E] to-[#37475A] py-8 rounded-3xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-semibold mt-2 font-montserrat text-white">
