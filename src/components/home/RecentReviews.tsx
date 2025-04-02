@@ -138,11 +138,11 @@ const VendorReviews = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold mb-4">
-              What Vendors Say About Our Platform
+              From Our Ambassadors
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
-              See how our Amazon review funnel and dashboard have helped vendors
-              optimize their feedback collection and improve their ratings.
+            <p className="max-w-2xl mx-auto text-[#dab159]">
+              Amazon Sellers share how our review funnel helps them boost
+              reviews and grow their business.
             </p>
           </div>
 

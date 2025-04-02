@@ -98,27 +98,27 @@ const StatsCounter = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
           <Counter
             title="Active Vendors"
-            end={5000}
+            end={3864}
             icon={<Users className="h-8 w-8 text-[#FF9900]" />}
           />
           <Counter
             title="Reviews Collected"
-            end={1250000}
+            end={31423}
             icon={<Star className="h-8 w-8 text-[#FF9900]" />}
           />
           <Counter
             title="Leads Collected"
-            end={850000}
+            end={30356}
             icon={<Inbox className="h-8 w-8 text-[#FF9900]" />}
           />
           <Counter
             title="Campaigns Created"
-            end={75000}
+            end={512}
             icon={<ShoppingBag className="h-8 w-8 text-[#FF9900]" />}
           />
           <Counter
             title="Promotions Created"
-            end={125000}
+            end={1067}
             icon={<Gift className="h-8 w-8 text-[#FF9900]" />}
           />
         </div>

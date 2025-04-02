@@ -28,7 +28,7 @@ const faqItems = [
   {
     question: "How are promotional rewards delivered to customers?",
     answer:
-      "The delivery method depends on the type of promotion you offer:\n\nDigital Promotions – for items like coupon codes or downloadable content:\n✅ Automatic Delivery – Sent instantly after the customer completes the funnel\n✅ Manual Approval – You manually review and approve each redemption, then deliver via email through the Claim Center Physical Promotions – for free gifts or physical gift cards:\n✅ The Smart Funnel collects the customer’s shipping address so you can send the item directly\n\nThis flexible setup gives you full control over how and when rewards are delivered — based on your strategy and resources.",
+      "The delivery method depends on the type of promotion you offer:\n\nDigital Promotions – for items like coupon codes or downloadable content:\n\n✅ Automatic Delivery – Sent instantly after the customer completes the funnel\n✅ Manual Approval – You manually review and approve each redemption, then deliver via email through the Claim Center \n\nPhysical Promotions – for free gifts or physical gift cards:\n\n✅ The Smart Funnel collects the customer’s shipping address so you can send the item directly\n\nThis flexible setup gives you full control over how and when rewards are delivered — based on your strategy and resources.",
   },
   {
     question: "How can I verify a customer's redemption request?",

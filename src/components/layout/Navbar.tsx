@@ -43,8 +43,9 @@ const Navbar = () => {
           : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
-      <div className="container px-4 mx-auto flex items-center justify-between">
+      <div className="container px-4 mx-auto flex items-center ">
         <Logo />
+        {/* <div className="" */}
         <div className="container flex items-center justify-end">
           {/* Desktop Navigation */}
           <DesktopNav />

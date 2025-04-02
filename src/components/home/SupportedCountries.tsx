@@ -3,26 +3,26 @@ import { Globe } from "lucide-react";
 
 const countries = [
   { name: "United States", code: "us" },
-  { name: "Turkey", code: "tr" },
   { name: "Canada", code: "ca" },
   { name: "Mexico", code: "mx" },
   { name: "United Kingdom", code: "gb" },
-  { name: "Australia", code: "au" },
   { name: "France", code: "fr" },
   { name: "Germany", code: "de" },
-  { name: "Singapore", code: "sg" },
   { name: "Italy", code: "it" },
   { name: "Spain", code: "es" },
   { name: "India", code: "in" },
   { name: "Japan", code: "jp" },
   { name: "Netherlands", code: "nl" },
+  { name: "Sweden", code: "se" },
+  { name: "Australia", code: "au" },
+  { name: "Brazil", code: "br" },
+  { name: "Singapore", code: "sg" },
+  { name: "Turkey", code: "tr" },
   { name: "Saudi Arabia", code: "sa" },
   { name: "UAE", code: "ae" },
-  { name: "Brazil", code: "br" },
   { name: "Poland", code: "pl" },
   { name: "Egypt", code: "eg" },
   { name: "South Africa", code: "za" },
-  { name: "Sweden", code: "se" },
 ];
 
 const AnimatedCard = ({ children, delay = 0 }) => {
