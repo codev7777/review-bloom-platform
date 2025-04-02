@@ -69,22 +69,21 @@ const AnimatedCard = ({ children, delay = 0 }) => {
 const SupportedCountries = () => {
   return (
     <section
-      className="py-20 bg-gray-50 bg-gradient-to-b from-[#ffffff] via-[#FF9900] to-[#f9fafb]"
+      className="py-20 bg-gradient-to-b to-gray-50 from-[#bedafd]"
       id="supported-countries"
     >
       <div className="container mx-auto px-2">
         <AnimatedCard delay={200}>
           <div className="text-center mb-16">
-            <h2 className="text-[45px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
+            <h2 className="text-[25px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
               {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
-              Tool for all &nbsp;
-              <img src="images/amazon-logo.png" className="h-16" />
-              &nbsp; Marketplaces
+              🚀 The Ultimate Tool for all &nbsp;
+              <img src="images/amazon-logo.png" className="h-12" />
+              &nbsp; <b>Sellers</b> — Across Every Marketplace
             </h2>
-            {/* <p className="text-muted-foreground max-w-2xl mx-auto text-primary">
-            ReviewBrothers works across multiple countries, helping you collect
-            reviews wherever your customers shop.
-          </p> */}
+            <p className="max-w-2xl mx-auto font-bold">
+              One platform. 21 countries. Unlimited insights.
+            </p>
           </div>
         </AnimatedCard>
 
