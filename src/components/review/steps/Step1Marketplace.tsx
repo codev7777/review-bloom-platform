@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,8 +31,10 @@ const Step1Marketplace = ({
   onNextStep,
 }: Step1MarketplaceProps) => {
   const { toast } = useToast();
-  const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
-  
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ReviewFormData, string>>
+  >({});
+
   const handleRatingChange = (rating: number) => {
     updateFormData({ rating });
     if (errors.rating) {
@@ -77,7 +78,8 @@ const Step1Marketplace = ({
     if (!formData.orderId.trim()) {
       newErrors.orderId = "Order ID is required";
     } else if (!orderIdPattern.test(formData.orderId)) {
-      newErrors.orderId = "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
+      newErrors.orderId =
+        "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
     }
 
     if (formData.rating === 0) {
@@ -88,12 +90,13 @@ const Step1Marketplace = ({
       newErrors.country = "Please select your country";
     }
 
-    if (!formData.asin || formData.asin.trim() === '') {
+    if (!formData.asin || formData.asin.trim() === "") {
       newErrors.asin = "ASIN is required";
     }
 
     if (!formData.usedMoreThanSevenDays) {
-      newErrors.usedMoreThanSevenDays = "You must have used the product for at least 7 days";
+      newErrors.usedMoreThanSevenDays =
+        "You must have used the product for at least 7 days";
     }
 
     setErrors(newErrors);
@@ -118,7 +121,10 @@ const Step1Marketplace = ({
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-muted rounded-lg">
         <img
-          src={productImage || "https://placehold.co/200x200/EEE/31304D?text=Product"}
+          src={
+            productImage ||
+            "https://placehold.co/200x200/EEE/31304D?text=Product"
+          }
           alt={productName}
           className="w-32 h-32 object-contain rounded"
         />
@@ -126,26 +132,46 @@ const Step1Marketplace = ({
           <h1 className="font-medium text-2xl">{productName}</h1>
         </div>
       </div>
-      
+
       <div className="space-y-3">
         <Label htmlFor="country">
-          Where did you purchase this product? <span className="text-red-500">*</span>
+          Where did you purchase this product?{" "}
+          <span className="text-red-500">*</span>
         </Label>
-        <Select onValueChange={handleCountryChange} defaultValue={formData.country}>
+        <Select
+          onValueChange={handleCountryChange}
+          defaultValue={formData.country}
+        >
           <SelectTrigger className={errors.country ? "border-destructive" : ""}>
             <SelectValue placeholder="Select your country" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="us">United States (Amazon.com)</SelectItem>
             <SelectItem value="ca">Canada (Amazon.ca)</SelectItem>
-            <SelectItem value="uk">United Kingdom (Amazon.co.uk)</SelectItem>
-            <SelectItem value="de">Germany (Amazon.de)</SelectItem>
+            <SelectItem value="mx">Mexico (Amazon.com.mx)</SelectItem>
+            <SelectItem value="gb">United Kingdom (Amazon.co.uk)</SelectItem>
             <SelectItem value="fr">France (Amazon.fr)</SelectItem>
+            <SelectItem value="de">Germany (Amazon.de)</SelectItem>
+            <SelectItem value="it">Italy (Amazon.it)</SelectItem>
+            <SelectItem value="es">Spain (Amazon.es)</SelectItem>
+            <SelectItem value="in">India (Amazon.in)</SelectItem>
             <SelectItem value="jp">Japan (Amazon.co.jp)</SelectItem>
+            <SelectItem value="nl">Netherlands (Amazon.nl)</SelectItem>
+            <SelectItem value="se">Sweden (Amazon.se)</SelectItem>
             <SelectItem value="au">Australia (Amazon.com.au)</SelectItem>
+            <SelectItem value="br">Brazil (Amazon.com.br)</SelectItem>
+            <SelectItem value="sg">Singapore (Amazon.sg)</SelectItem>
+            <SelectItem value="tr">Turkey (Amazon.com.tr)</SelectItem>
+            <SelectItem value="sa">Saudi Arabia (Amazon.sa)</SelectItem>
+            <SelectItem value="ae">United Arab Emirates (Amazon.ae)</SelectItem>
+            <SelectItem value="pl">Poland (Amazon.pl)</SelectItem>
+            <SelectItem value="eg">Egypt (Amazon.eg)</SelectItem>
+            <SelectItem value="za">South Africa (No Amazon site)</SelectItem>
           </SelectContent>
         </Select>
-        {errors.country && <p className="text-sm text-destructive">{errors.country}</p>}
+        {errors.country && (
+          <p className="text-sm text-destructive">{errors.country}</p>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -163,7 +189,9 @@ const Step1Marketplace = ({
         <p className="text-xs text-muted-foreground">
           The product ID found in the Amazon URL (10 characters)
         </p>
-        {errors.asin && <p className="text-sm text-destructive">{errors.asin}</p>}
+        {errors.asin && (
+          <p className="text-sm text-destructive">{errors.asin}</p>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -181,7 +209,9 @@ const Step1Marketplace = ({
         <p className="text-xs text-muted-foreground">
           Format: 110-0000000-0000000
         </p>
-        {errors.orderId && <p className="text-sm text-destructive">{errors.orderId}</p>}
+        {errors.orderId && (
+          <p className="text-sm text-destructive">{errors.orderId}</p>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -189,9 +219,14 @@ const Step1Marketplace = ({
           Your Rating <span className="text-red-500">*</span>
         </Label>
         <div className="flex justify-center sm:justify-start">
-          <StarRating onChange={handleRatingChange} initialValue={formData.rating} />
+          <StarRating
+            onChange={handleRatingChange}
+            initialValue={formData.rating}
+          />
         </div>
-        {errors.rating && <p className="text-sm text-destructive">{errors.rating}</p>}
+        {errors.rating && (
+          <p className="text-sm text-destructive">{errors.rating}</p>
+        )}
       </div>
 
       <div className="flex items-start space-x-2">
@@ -209,7 +244,9 @@ const Step1Marketplace = ({
             I confirm that I have used this product for at least 7 days
           </label>
           {errors.usedMoreThanSevenDays && (
-            <p className="text-sm text-destructive">{errors.usedMoreThanSevenDays}</p>
+            <p className="text-sm text-destructive">
+              {errors.usedMoreThanSevenDays}
+            </p>
           )}
         </div>
       </div>

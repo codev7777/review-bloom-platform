@@ -129,11 +129,25 @@ const ReviewFunnel = ({
     const domains: Record<string, string> = {
       us: "https://www.amazon.com",
       ca: "https://www.amazon.ca",
-      uk: "https://www.amazon.co.uk",
-      de: "https://www.amazon.de",
+      mx: "https://www.amazon.com.mx",
+      gb: "https://www.amazon.co.uk",
       fr: "https://www.amazon.fr",
+      de: "https://www.amazon.de",
+      it: "https://www.amazon.it",
+      es: "https://www.amazon.es",
+      in: "https://www.amazon.in",
       jp: "https://www.amazon.co.jp",
+      nl: "https://www.amazon.nl",
+      se: "https://www.amazon.se",
       au: "https://www.amazon.com.au",
+      br: "https://www.amazon.com.br",
+      sg: "https://www.amazon.sg",
+      tr: "https://www.amazon.com.tr",
+      sa: "https://www.amazon.sa",
+      ae: "https://www.amazon.ae",
+      pl: "https://www.amazon.pl",
+      eg: "https://www.amazon.eg",
+      za: "", // No official Amazon South Africa site yet
     };
     return domains[countryCode] || domains.us;
   };
