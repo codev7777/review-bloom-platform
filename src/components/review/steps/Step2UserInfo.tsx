@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,12 +11,14 @@ interface Step2UserInfoProps {
   formData: ReviewFormData;
   updateFormData: (data: Partial<ReviewFormData>) => void;
   onNextStep: () => void;
+  onPreviousStep: () => void;
 }
 
 const Step2UserInfo = ({
   formData,
   updateFormData,
   onNextStep,
+  onPreviousStep,
 }: Step2UserInfoProps) => {
   const { toast } = useToast();
   const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
@@ -124,13 +126,24 @@ const Step2UserInfo = ({
         {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium mt-6"
-      >
-        Next Step
-        <ChevronRight className="ml-2 w-4 h-4" />
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-4 pt-4">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onPreviousStep}
+          className="flex-1"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        
+        <Button
+          type="submit"
+          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium"
+        >
+          Next Step
+          <ChevronRight className="ml-2 w-4 h-4" />
+        </Button>
+      </div>
     </form>
   );
 };

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -5,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import ReviewFunnel from "@/components/review/ReviewFunnel";
 import Navbar from "@/components/layout/Navbar";
 import Logo from "@/components/layout/navbar/Logo";
+
 const ReviewPage = () => {
-  const { campaignId } = useParams<{ campaignId: string }>();
+  const { campaignId, step } = useParams<{ campaignId: string, step: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -15,6 +17,13 @@ const ReviewPage = () => {
     productImage: string;
     vendor: string;
   } | null>(null);
+
+  useEffect(() => {
+    // Redirect to step 1 if no step is specified
+    if (campaignId && !step) {
+      navigate(`/review/${campaignId}/step/1`, { replace: true });
+    }
+  }, [campaignId, step, navigate]);
 
   useEffect(() => {
     // Simulate API call to fetch campaign data

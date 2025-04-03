@@ -116,7 +116,7 @@ const Demo = () => {
             viewport={{ once: false, amount: 0.2 }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
           >
-            <Link to="/review/demo-campaign">
+            <Link to="/review/demo-campaign/step/1">
               <Button className="bg-teal-200 hover:bg-teal-300 text-teal-900 font-medium text-lg px-4 py-3 h-auto rounded-full flex items-center gap-2">
                 <Play size={24} /> Watch Demo Now
               </Button>
@@ -137,14 +137,14 @@ const Demo = () => {
           </div>
           <div>
             <QRCodeCanvas
-              value={GetDomain() + "/review/demo-campaign"}
+              value={GetDomain() + "/review/demo-campaign/step/1"}
               size={360}
               className="border p-2 rounded shadow-sm"
             />
           </div>
           <div>
             Scan the QR Code or&nbsp;
-            <Link to="/review/demo-campaign" className="text-primary">
+            <Link to="/review/demo-campaign/step/1" className="text-primary">
               click here
             </Link>
             &nbsp; to see a demo funnel

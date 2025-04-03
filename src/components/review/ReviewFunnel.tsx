@@ -1,9 +1,9 @@
 
-import { useState } from "react";
-import { CheckCircle, ExternalLink, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { CheckCircle, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Step1Marketplace from "./steps/Step1Marketplace";
 import Step2UserInfo from "./steps/Step2UserInfo";
 import Step3Feedback from "./steps/Step3Feedback";
@@ -54,7 +54,9 @@ const ReviewFunnel = ({
 }: ReviewFunnelProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  const location = useLocation();
+  const { step: urlStep } = useParams<{ step: string }>();
+  
   const [formData, setFormData] = useState<ReviewFormData>({
     orderId: "",
     rating: 0,
@@ -67,12 +69,47 @@ const ReviewFunnel = ({
     asin: "",
   });
 
+  // Determine current step based on URL parameter
+  const getCurrentStep = (): number => {
+    if (!urlStep) return 1;
+    const stepNum = parseInt(urlStep);
+    return isNaN(stepNum) || stepNum < 1 || stepNum > 4 ? 1 : stepNum;
+  };
+
+  const [step, setStep] = useState(getCurrentStep());
+
+  // Update URL when step changes
+  useEffect(() => {
+    const currentUrlStep = getCurrentStep();
+    if (currentUrlStep !== step) {
+      navigate(`/review/${campaignId}/step/${step}`, { replace: true });
+    }
+  }, [step, campaignId, navigate]);
+
+  // Update step when URL changes
+  useEffect(() => {
+    const urlStepNumber = getCurrentStep();
+    setStep(urlStepNumber);
+  }, [urlStep]);
+
   const updateFormData = (newData: Partial<ReviewFormData>) => {
     setFormData(prev => ({ ...prev, ...newData }));
   };
 
   const handleNextStep = () => {
-    setStep(prev => prev + 1);
+    const nextStep = step + 1;
+    if (nextStep <= 4) {
+      setStep(nextStep);
+      navigate(`/review/${campaignId}/step/${nextStep}`);
+    }
+  };
+
+  const handlePreviousStep = () => {
+    const prevStep = step - 1;
+    if (prevStep >= 1) {
+      setStep(prevStep);
+      navigate(`/review/${campaignId}/step/${prevStep}`);
+    }
   };
 
   const handleGoToAmazon = () => {
@@ -178,6 +215,7 @@ const ReviewFunnel = ({
             formData={formData}
             updateFormData={updateFormData}
             onNextStep={handleNextStep}
+            onPreviousStep={handlePreviousStep}
           />
         </FunnelStep>
 
@@ -186,6 +224,7 @@ const ReviewFunnel = ({
             formData={formData}
             updateFormData={updateFormData}
             onNextStep={handleNextStep}
+            onPreviousStep={handlePreviousStep}
             onGoToAmazon={handleGoToAmazon}
           />
         </FunnelStep>

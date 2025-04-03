@@ -1,3 +1,4 @@
+
 import {
   BrowserRouter,
   Routes,
@@ -44,7 +45,8 @@ const App = () => {
               {/* Ensure this component is inside BrowserRouter */}
               <Routes>
                 <Route path="/" element={<Index />} />
-                <Route path="/review/:campaignId" element={<ReviewPage />} />
+                <Route path="/review/:campaignId" element={<Navigate to="/review/:campaignId/step/1" replace />} />
+                <Route path="/review/:campaignId/step/:step" element={<ReviewPage />} />
                 <Route path="/auth/login" element={<LoginPage />} />
                 <Route path="/auth/signup" element={<SignupPage />} />
                 <Route
