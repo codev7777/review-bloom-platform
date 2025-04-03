@@ -49,12 +49,12 @@ const Step1Marketplace = ({
     }
   };
 
-  const handleAsinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateFormData({ asin: e.target.value });
-    if (errors.asin) {
-      setErrors((prev) => ({ ...prev, asin: "" }));
-    }
-  };
+  // const handleAsinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   updateFormData({ asin: e.target.value });
+  //   if (errors.asin) {
+  //     setErrors((prev) => ({ ...prev, asin: "" }));
+  //   }
+  // };
 
   const handleOrderIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({ orderId: e.target.value });
@@ -90,9 +90,9 @@ const Step1Marketplace = ({
       newErrors.country = "Please select your country";
     }
 
-    if (!formData.asin || formData.asin.trim() === "") {
-      newErrors.asin = "ASIN is required";
-    }
+    // if (!formData.asin || formData.asin.trim() === "") {
+    //   newErrors.asin = "ASIN is required";
+    // }
 
     if (!formData.usedMoreThanSevenDays) {
       newErrors.usedMoreThanSevenDays =
@@ -174,7 +174,7 @@ const Step1Marketplace = ({
         )}
       </div>
 
-      <div className="space-y-3">
+      {/* <div className="space-y-3">
         <Label htmlFor="asin">
           Amazon ASIN <span className="text-red-500">*</span>
         </Label>
@@ -192,7 +192,7 @@ const Step1Marketplace = ({
         {errors.asin && (
           <p className="text-sm text-destructive">{errors.asin}</p>
         )}
-      </div>
+      </div> */}
 
       <div className="space-y-3">
         <Label htmlFor="orderId">
