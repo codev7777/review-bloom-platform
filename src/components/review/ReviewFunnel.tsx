@@ -1,9 +1,13 @@
+
 import { useState } from "react";
 import { CheckCircle, ExternalLink, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import ReviewForm, { ReviewFormData } from "./ReviewForm";
 import { useNavigate } from "react-router-dom";
+import Step1Marketplace from "./steps/Step1Marketplace";
+import Step2UserInfo from "./steps/Step2UserInfo";
+import Step3Feedback from "./steps/Step3Feedback";
+import Step4Thanks from "./steps/Step4Thanks";
 
 interface ReviewFunnelProps {
   campaignId: string;
@@ -12,15 +16,17 @@ interface ReviewFunnelProps {
   vendor: string;
 }
 
-const amazonDomains: Record<string, string> = {
-  us: "https://www.amazon.com",
-  ca: "https://www.amazon.ca",
-  uk: "https://www.amazon.co.uk",
-  de: "https://www.amazon.de",
-  fr: "https://www.amazon.fr",
-  jp: "https://www.amazon.co.jp",
-  au: "https://www.amazon.com.au",
-};
+export interface ReviewFormData {
+  orderId: string;
+  rating: number;
+  feedback: string;
+  email: string;
+  country: string;
+  name: string;
+  usedMoreThanSevenDays: boolean;
+  phoneNumber: string;
+  asin: string;
+}
 
 const FunnelStep = ({
   isActive,
@@ -49,45 +55,51 @@ const ReviewFunnel = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<ReviewFormData | null>(null);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [formData, setFormData] = useState<ReviewFormData>({
+    orderId: "",
+    rating: 0,
+    feedback: "",
+    email: "",
+    country: "us",
+    name: "",
+    usedMoreThanSevenDays: false,
+    phoneNumber: "",
+    asin: "",
+  });
 
-  const handleSubmit = (data: ReviewFormData) => {
-    setFormData(data);
-    setStep(2);
-
-    // Simulate API call to submit the review
-    setTimeout(() => {
-      // For 4-5 star ratings, automatically redirect to Amazon
-      if (data.rating >= 4) {
-        toast({
-          title: "Thank you for your positive review!",
-          description: "You'll be redirected to Amazon to share your feedback.",
-        });
-
-        // Set a short timeout to allow the toast to be seen before redirect
-        setIsRedirecting(true);
-        setTimeout(() => {
-          redirectToAmazon(data);
-        }, 2000);
-      }
-    }, 1000);
+  const updateFormData = (newData: Partial<ReviewFormData>) => {
+    setFormData(prev => ({ ...prev, ...newData }));
   };
 
-  const redirectToAmazon = (data: ReviewFormData) => {
-    const domain = amazonDomains[data.country] || amazonDomains.us;
+  const handleNextStep = () => {
+    setStep(prev => prev + 1);
+  };
+
+  const handleGoToAmazon = () => {
+    const domain = getAmazonDomain(formData.country);
     // In a real implementation, you would use the actual ASIN to create the correct URL
-    const redirectUrl = `${domain}/review/create-review`;
-
+    const reviewUrl = `${domain}/review/create-review?asin=${formData.asin}`;
+    
     // Open Amazon in a new tab
-    window.open(redirectUrl, "_blank");
-
-    // Redirect back to home page
-    navigate("/");
+    window.open(reviewUrl, "_blank");
   };
 
   const handleGoHome = () => {
     navigate("/");
+  };
+
+  // Helper function to get Amazon domain based on country code
+  const getAmazonDomain = (countryCode: string): string => {
+    const domains: Record<string, string> = {
+      us: "https://www.amazon.com",
+      ca: "https://www.amazon.ca",
+      uk: "https://www.amazon.co.uk",
+      de: "https://www.amazon.de",
+      fr: "https://www.amazon.fr",
+      jp: "https://www.amazon.co.jp",
+      au: "https://www.amazon.com.au",
+    };
+    return domains[countryCode] || domains.us;
   };
 
   return (
@@ -105,7 +117,7 @@ const ReviewFunnel = ({
             1
           </div>
           <div
-            className={`w-20 h-1 ${
+            className={`w-16 h-1 ${
               step >= 2 ? "bg-[#FF9900]" : "bg-gray-200"
             } mx-2`}
           ></div>
@@ -119,7 +131,7 @@ const ReviewFunnel = ({
             2
           </div>
           <div
-            className={`w-20 h-1 ${
+            className={`w-16 h-1 ${
               step >= 3 ? "bg-[#FF9900]" : "bg-gray-200"
             } mx-2`}
           ></div>
@@ -132,82 +144,57 @@ const ReviewFunnel = ({
           >
             3
           </div>
+          <div
+            className={`w-16 h-1 ${
+              step >= 4 ? "bg-[#FF9900]" : "bg-gray-200"
+            } mx-2`}
+          ></div>
+          <div
+            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              step >= 4
+                ? "bg-[#FF9900] text-white"
+                : "bg-gray-200 text-gray-500"
+            }`}
+          >
+            4
+          </div>
         </div>
       </div>
 
       {/* Step content */}
       <div className="relative min-h-[400px] flex flex-col justify-center">
         <FunnelStep isActive={step === 1}>
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-semibold mb-2">
-              How would you rate your experience?
-            </h2>
-            <p className="text-muted-foreground">
-              Your feedback helps {vendor} improve their products and services.
-            </p>
-          </div>
-          <ReviewForm
+          <Step1Marketplace
             productName={productName}
             productImage={productImage}
-            campaignId={campaignId}
-            onSubmit={handleSubmit}
+            formData={formData}
+            updateFormData={updateFormData}
+            onNextStep={handleNextStep}
           />
         </FunnelStep>
 
         <FunnelStep isActive={step === 2}>
-          <div className="text-center space-y-6 py-8 animate-fade-in">
-            <div className="flex justify-center">
-              <CheckCircle className="w-16 h-16 text-green-500" />
-            </div>
-            <h2 className="text-2xl font-semibold">
-              {formData && formData.rating >= 4
-                ? "Thank you for your positive review!"
-                : "Thank you for your feedback!"}
-            </h2>
-            <p className="text-muted-foreground">
-              {formData && formData.rating >= 4
-                ? isRedirecting
-                  ? "Redirecting you to Amazon..."
-                  : "We're delighted that you enjoyed our product. You'll be redirected to Amazon to share your experience."
-                : "We value your honest feedback and will use it to improve our products and services."}
-            </p>
-
-            {formData && formData.rating < 4 && (
-              <Button
-                onClick={() => setStep(3)}
-                className="mt-6 bg-[#FF9900] text-[#232F3E]"
-              >
-                Continue <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            )}
-
-            {isRedirecting && (
-              <div className="flex justify-center mt-4">
-                <div className="w-8 h-8 border-4 border-t-[#FF9900] border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-          </div>
+          <Step2UserInfo
+            formData={formData}
+            updateFormData={updateFormData}
+            onNextStep={handleNextStep}
+          />
         </FunnelStep>
 
         <FunnelStep isActive={step === 3}>
-          <div className="text-center space-y-6 py-8 animate-fade-in">
-            <h2 className="text-2xl font-semibold">
-              We appreciate your feedback!
-            </h2>
-            <p className="text-muted-foreground">
-              {formData &&
-                formData.email &&
-                `We'll send a follow-up email to ${formData.email} to learn more about your experience.`}
-            </p>
-            <div className="mt-8">
-              <Button
-                onClick={handleGoHome}
-                className="bg-[#FF9900] text-[#232F3E]"
-              >
-                Return to Home
-              </Button>
-            </div>
-          </div>
+          <Step3Feedback
+            formData={formData}
+            updateFormData={updateFormData}
+            onNextStep={handleNextStep}
+            onGoToAmazon={handleGoToAmazon}
+          />
+        </FunnelStep>
+
+        <FunnelStep isActive={step === 4}>
+          <Step4Thanks
+            formData={formData}
+            onGoHome={handleGoHome}
+          />
         </FunnelStep>
       </div>
     </div>
