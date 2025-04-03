@@ -74,6 +74,7 @@ const faqItems = [
         <br />
         <strong>Digital Promotions</strong> – for items like coupon codes or
         downloadable content:
+        <br />
         <br />✅ Automatic Delivery – Sent instantly after the customer
         completes the funnel
         <br />✅ Manual Approval – You manually review and approve each
@@ -82,6 +83,7 @@ const faqItems = [
         <br />
         <strong>Physical Promotions</strong> – for free gifts or physical gift
         cards:
+        <br />
         <br />
         ✅ The Smart Funnel collects the customer’s shipping address so you can
         send the item directly
