@@ -21,14 +21,14 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
         <Button
           variant="ghost"
           asChild
-          className="text-[#FF9900] hover:text-orange-400 hover:bg-[#232F3E]/50"
+          className="text-[#FF9900] hover:text-orange-400 hover:bg-[#232F3E]/50  text-lg"
         >
           <Link to="/auth/login">Login</Link>
         </Button>
         <Button
           variant="default"
           asChild
-          className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium"
+          className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium text-lg"
         >
           <Link to="/auth/signup">Sign Up</Link>
         </Button>

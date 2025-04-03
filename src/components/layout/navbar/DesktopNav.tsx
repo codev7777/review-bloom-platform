@@ -5,90 +5,75 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuGroup,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 const DesktopNav = () => {
   return (
-    <nav className="hidden md:flex items-center space-x-8">
-      <Link
-        to="/"
-        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
-      >
-        Home
-      </Link>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="cursor-pointer">
-          <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
+    <div className="flex justify-between pl-8 pr-4">
+      <div className="flex items-center space-x-8">
+        {/* Features */}
+        {/* <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <div className="flex items-center space-x-1 text-lg font-medium text-white hover:text-[#FF9900] transition-colors">
             <span>Features</span>
             <ChevronDown size={16} />
           </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48">
           <DropdownMenuItem className="cursor-pointer">
-            <Link to="/review/demo-campaign">Review Funnel</Link>
+            <a href="#demo"> Review Funnel</a>
           </DropdownMenuItem>
-          {/* <DropdownMenuItem className="cursor-pointer">
-            QR Code Integration
-          </DropdownMenuItem> */}
           <DropdownMenuItem className="cursor-pointer">
             <Link to="/vendor-dashboard/analytics">Analytics Dashboard</Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
-      </DropdownMenu>
-      {/* <Link
-        to="/#pricing"
-        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
-      >
-        Pricing
-      </Link> */}
+      </DropdownMenu> */}
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild className="cursor-pointer">
-          <div className="flex items-center space-x-1 text-sm font-medium text-white hover:text-[#FF9900] transition-colors">
-            <span>Company</span>
-            <ChevronDown size={16} />
-          </div>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-48">
-          <DropdownMenuGroup>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link to="/about">About Us</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link to="/careers">Careers</Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link to="/contract">Contract & Terms</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild className="cursor-pointer">
-              <Link to="/privacy">Privacy Policy</Link>
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+        {/* <span className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors">
+          <a href="#features">Features</a>
+        </span>
+        <span className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors">
+          <a href="#howitworks">How it works</a>
+        </span>
 
-      {/* <Link
-        to="/help"
-        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
-      >
-        Help
-      </Link>
-      <Link
-        to="/faqs"
-        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
-      >
-        FAQs
-      </Link>
-      <Link
-        to="/contact"
-        className="text-sm font-medium text-white hover:text-[#FF9900] transition-colors"
-      >
-        Contact
-      </Link> */}
-    </nav>
+        <span className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors">
+          <a href="#demo"> Demo</a>
+        </span> */}
+
+        <Link
+          to="/#features"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+        >
+          Features
+        </Link>
+        <Link
+          to="/#howitworks"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+        >
+          How it works
+        </Link>
+        <Link
+          to="/#demo"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+        >
+          Demo
+        </Link>
+        <Link
+          to="/#pricing"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+        >
+          Pricing
+        </Link>
+      </div>
+      <div>
+        <Link
+          to="/help"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+        >
+          Help
+        </Link>
+      </div>
+    </div>
   );
 };
 

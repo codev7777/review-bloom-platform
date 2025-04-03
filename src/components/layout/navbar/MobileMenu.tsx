@@ -29,14 +29,7 @@ const MobileMenu = ({
     <div className="fixed inset-0 top-[72px] z-40 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
       <div className="container px-4 py-6 overflow-y-auto max-h-[calc(100vh-72px)]">
         <nav className="flex flex-col space-y-4">
-          <Link
-            to="/"
-            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
-            onClick={toggleMenu}
-          >
-            Home
-          </Link>
-
+          {/* Features */}
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="features" className="border-none">
               <AccordionTrigger className="text-base font-medium text-white hover:text-[#FF9900] transition-colors py-0">
@@ -45,21 +38,14 @@ const MobileMenu = ({
               <AccordionContent>
                 <div className="ml-4 mt-2 flex flex-col space-y-3">
                   <Link
-                    to="/#review-funnel"
+                    to="/review/demo-campaign"
                     className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
                     Review Funnel
                   </Link>
-                  {/* <Link
-                    to="/#qr-code"
-                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
-                    onClick={toggleMenu}
-                  >
-                    QR Code Integration
-                  </Link> */}
                   <Link
-                    to="vendor-dashboard/analytics"
+                    to="/vendor-dashboard/analytics"
                     className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
                     onClick={toggleMenu}
                   >
@@ -70,78 +56,34 @@ const MobileMenu = ({
             </AccordionItem>
           </Accordion>
 
+          {/* How It Works */}
           <Link
-            to="/#pricing"
+            to="/how-it-works"
+            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
+            onClick={toggleMenu}
+          >
+            How It Works
+          </Link>
+
+          {/* Demo */}
+          <Link
+            to="/demo"
+            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
+            onClick={toggleMenu}
+          >
+            Demo
+          </Link>
+
+          {/* Pricing */}
+          <Link
+            to="/pricing"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
             onClick={toggleMenu}
           >
             Pricing
           </Link>
 
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="company" className="border-none">
-              <AccordionTrigger className="text-base font-medium text-white hover:text-[#FF9900] transition-colors py-0">
-                Company
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="ml-4 mt-2 flex flex-col space-y-3">
-                  <Link
-                    to="/about"
-                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
-                    onClick={toggleMenu}
-                  >
-                    About Us
-                  </Link>
-                  <Link
-                    to="/careers"
-                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
-                    onClick={toggleMenu}
-                  >
-                    Careers
-                  </Link>
-                  <Link
-                    to="/contract"
-                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
-                    onClick={toggleMenu}
-                  >
-                    Contract & Terms
-                  </Link>
-                  <Link
-                    to="/privacy"
-                    className="text-sm text-gray-300 hover:text-[#FF9900] transition-colors"
-                    onClick={toggleMenu}
-                  >
-                    Privacy Policy
-                  </Link>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          {/* <Link
-            to="/help"
-            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
-            onClick={toggleMenu}
-          >
-            Help
-          </Link>
-
-          <Link
-            to="/faqs"
-            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
-            onClick={toggleMenu}
-          >
-            FAQs
-          </Link>
-
-          <Link
-            to="/contact"
-            className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
-            onClick={toggleMenu}
-          >
-            Contact
-          </Link> */}
-
+          {/* User Actions */}
           <div className="pt-4 flex flex-col space-y-3">
             {isAuthenticated ? (
               <>

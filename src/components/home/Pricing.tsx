@@ -16,7 +16,10 @@ const PricingTier = ({
   isAnnual,
 }) => {
   return (
-    <div className={isPopular && "transform scale-110 max-w-screen"}>
+    <div
+      id="pricing"
+      className={isPopular && "transform scale-110 max-w-screen"}
+    >
       <motion.div
         initial={{ opacity: 0, y: 150 }}
         whileInView={{ opacity: 1, y: 100 }}
@@ -29,7 +32,7 @@ const PricingTier = ({
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-3 left-[120px] transform -translate-x-1/2"
+            className="absolute -top-3 left-[115px] transform -translate-x-1/2"
           >
             <div className="relative bg-primary text-white text-xl font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
               Most Popular

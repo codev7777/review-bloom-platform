@@ -181,7 +181,11 @@ const AnimatedStep = ({ step, index }) => {
   }, []);
 
   return (
-    <div ref={stepRef} className="flex justify-center items-center my-10">
+    <div
+      ref={stepRef}
+      id="howitworks"
+      className="flex justify-center items-center my-10"
+    >
       <div
         className={`flex items-center w-full max-w-6xl transition-all duration-700 ${
           isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"

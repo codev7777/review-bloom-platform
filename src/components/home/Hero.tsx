@@ -83,7 +83,7 @@ const Hero = () => {
           className="hero-waves "
           xmlns="http://www.w3.org/2000/svg"
           xlinkHref="http://www.w3.org/1999/xlink"
-          viewBox="0 24 150 28 "
+          viewBox="0 30 150 28 "
           preserveAspectRatio="none"
         >
           <defs>

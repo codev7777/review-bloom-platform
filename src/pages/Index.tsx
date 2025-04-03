@@ -15,34 +15,34 @@ import Demo from "@/components/home/SmartFunnelDemo";
 import MoreSocialProof from "@/components/home/MoreSocialProof";
 
 const Index = () => {
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Show loading bar on initial page load
-    const timer1 = setTimeout(() => {
-      setLoading(false);
-      document.getElementById("isFirstLoad").innerHTML = "0";
-    }, 2500);
-    const timer2 = setTimeout(() => {
-      if (document.getElementById("isFirstLoad").innerHTML == "0")
-        setLoading(false);
-    }, 100);
-    console.log(document.getElementById("isFirstLoad").innerHTML);
-    // const timer2 = setTimeout(() => {
-    //   const isFirstLoadingElement = document.getElementById(
-    //     "isFirstLoad"
-    //   ) as HTMLInputElement;
-    //   if (isFirstLoadingElement && isFirstLoadingElement.value === "1") {
-    //     setLoading(false);
-    //     isFirstLoadingElement.value = "0";
-    //   } else isFirstLoadingElement.value = "0";
-    // }, 100);
+  // useEffect(() => {
+  //   // Show loading bar on initial page load
+  //   const timer1 = setTimeout(() => {
+  //     setLoading(false);
+  //     document.getElementById("isFirstLoad").innerHTML = "0";
+  //   }, 2500);
+  //   const timer2 = setTimeout(() => {
+  //     if (document.getElementById("isFirstLoad").innerHTML == "0")
+  //       setLoading(false);
+  //   }, 100);
+  //   console.log(document.getElementById("isFirstLoad").innerHTML);
+  // const timer2 = setTimeout(() => {
+  //   const isFirstLoadingElement = document.getElementById(
+  //     "isFirstLoad"
+  //   ) as HTMLInputElement;
+  //   if (isFirstLoadingElement && isFirstLoadingElement.value === "1") {
+  //     setLoading(false);
+  //     isFirstLoadingElement.value = "0";
+  //   } else isFirstLoadingElement.value = "0";
+  // }, 100);
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
-  }, []);
+  //   return () => {
+  //     clearTimeout(timer1);
+  //     clearTimeout(timer2);
+  //   };
+  // }, []);
 
   useEffect(() => {
     // Smooth scroll to element when hash changes
@@ -77,38 +77,38 @@ const Index = () => {
   }, []);
 
   // Initialize intersection observer for scroll animations
-  useEffect(() => {
-    const observerOptions = {
-      root: null,
-      rootMargin: "0px",
-      threshold: 0.1,
-    };
+  // useEffect(() => {
+  //   const observerOptions = {
+  //     root: null,
+  //     rootMargin: "0px",
+  //     threshold: 0.1,
+  //   };
 
-    const handleIntersect = (
-      entries: IntersectionObserverEntry[],
-      observer: IntersectionObserver
-    ) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate-reveal");
-          observer.unobserve(entry.target);
-        }
-      });
-    };
+  //   const handleIntersect = (
+  //     entries: IntersectionObserverEntry[],
+  //     observer: IntersectionObserver
+  //   ) => {
+  //     entries.forEach((entry) => {
+  //       if (entry.isIntersecting) {
+  //         entry.target.classList.add("animate-reveal");
+  //         observer.unobserve(entry.target);
+  //       }
+  //     });
+  //   };
 
-    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+  //   const observer = new IntersectionObserver(handleIntersect, observerOptions);
 
-    // Target all elements with the scroll-reveal class
-    document.querySelectorAll(".scroll-reveal").forEach((element) => {
-      observer.observe(element);
-    });
+  //   // Target all elements with the scroll-reveal class
+  //   document.querySelectorAll(".scroll-reveal").forEach((element) => {
+  //     observer.observe(element);
+  //   });
 
-    return () => observer.disconnect();
-  }, [loading]);
+  //   return () => observer.disconnect();
+  // }, [loading]);
   return (
     <div className="flex flex-col min-h-screen ">
-      {loading && <LoadingBar className="mt-[400px]" />}
-      {!loading && (
+      {/* {loading && <LoadingBar className="mt-[400px]" />} */}
+      {
         <div>
           <Navbar />
           <main className="flex-grow ">
@@ -117,8 +117,8 @@ const Index = () => {
             <HowItWorks />
             <StatsCounter />
             <Demo />
-            <div className="video-box">
-              <div className="container-xl">
+            <div className="video-box bg-gray-50">
+              <div className="container-xl rounded-[10px]">
                 <iframe
                   src="https://www.youtube.com/embed/QlPkrGA1SBk"
                   title="YouTube video player"
@@ -128,23 +128,24 @@ const Index = () => {
 
                   style={{
                     width: "96%",
-                    maxWidth: "1300px",
+                    maxWidth: "1200px",
                     margin: "0 auto",
                     aspectRatio: "16/9",
+                    borderRadius: "30px",
                   }}
                 ></iframe>
               </div>
             </div>
             <RecentReviews />
-            {/* <Pricing /> */}
+            <Pricing />
             <BenefitsSection />
-            {/* <MoreSocialProof /> */}
+            <MoreSocialProof />
             <Features />
             <FAQ />
           </main>
           <Footer />
         </div>
-      )}
+      }
     </div>
   );
 };

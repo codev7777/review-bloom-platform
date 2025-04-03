@@ -43,15 +43,16 @@ const Navbar = () => {
           : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
-      <div className="container px-4 mx-auto flex items-center ">
+      <div className="container px-4 mx-auto flex items-center justify-between">
+        {/* Logo */}
         <Logo />
-        {/* <div className="" */}
-        <div className="container flex items-center justify-end">
-          {/* Desktop Navigation */}
+        <div className="flex-grow">
           <DesktopNav />
-
+        </div>
+        {/* Desktop Navigation */}
+        <div className="flex items-center space-x-8">
+          {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4 display-inline">
-            {/* <ThemeToggle /> */}
             <UserMenu
               isAuthenticated={isAuthenticated}
               isAdmin={isAdmin}
@@ -62,7 +63,6 @@ const Navbar = () => {
 
         {/* Mobile Menu Button */}
         <div className="flex items-center space-x-2 md:hidden">
-          {/* <ThemeToggle /> */}
           <button
             className="text-white"
             onClick={toggleMenu}
