@@ -115,6 +115,7 @@ const Pricing = () => {
       cta: "Start with Silver",
       color: "bg-gray-200 border-gray-400",
       buttonColor: "bg-gray-400 hover:bg-gray-600",
+      isPopular: false, // Ensure this is explicitly defined
     },
     {
       title: "Gold",
@@ -132,7 +133,7 @@ const Pricing = () => {
         { name: "Meta Pixel Support", included: true },
       ],
       cta: "Start with Gold",
-      isPopular: true,
+      isPopular: true, // This one is popular
       color: "bg-yellow-200 border-yellow-500",
       buttonColor: "bg-yellow-400 hover:bg-yellow-600",
     },
@@ -155,6 +156,7 @@ const Pricing = () => {
       cta: "Start with Platinum",
       color: "bg-blue-200 border-blue-500",
       buttonColor: "bg-blue-400 hover:bg-blue-600",
+      isPopular: false, // Ensure this is explicitly defined
     },
   ];
 
