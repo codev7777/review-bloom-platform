@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { CheckCircle, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -56,7 +55,7 @@ const ReviewFunnel = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { step: urlStep } = useParams<{ step: string }>();
-  
+
   const [formData, setFormData] = useState<ReviewFormData>({
     orderId: "",
     rating: 0,
@@ -93,7 +92,7 @@ const ReviewFunnel = ({
   }, [urlStep]);
 
   const updateFormData = (newData: Partial<ReviewFormData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
+    setFormData((prev) => ({ ...prev, ...newData }));
   };
 
   const handleNextStep = () => {
@@ -116,7 +115,7 @@ const ReviewFunnel = ({
     const domain = getAmazonDomain(formData.country);
     // In a real implementation, you would use the actual ASIN to create the correct URL
     const reviewUrl = `${domain}/review/create-review?asin=${formData.asin}`;
-    
+
     // Open Amazon in a new tab
     window.open(reviewUrl, "_blank");
   };
@@ -140,7 +139,7 @@ const ReviewFunnel = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-2xl mx-auto">
+    <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-xl mx-auto">
       {/* Step indicator */}
       <div className="flex justify-center mb-8">
         <div className="flex items-center">
@@ -230,10 +229,7 @@ const ReviewFunnel = ({
         </FunnelStep>
 
         <FunnelStep isActive={step === 4}>
-          <Step4Thanks
-            formData={formData}
-            onGoHome={handleGoHome}
-          />
+          <Step4Thanks formData={formData} onGoHome={handleGoHome} />
         </FunnelStep>
       </div>
     </div>

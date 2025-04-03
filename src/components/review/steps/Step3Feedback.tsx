@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { ChevronRight, Copy, ArrowLeft } from "lucide-react";
+import { ChevronRight, Copy, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -23,13 +22,20 @@ const Step3Feedback = ({
   onGoToAmazon,
 }: Step3FeedbackProps) => {
   const { toast } = useToast();
-  const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
-  const [feedbackLength, setFeedbackLength] = useState(formData.feedback?.length || 0);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ReviewFormData, string>>
+  >({});
+  const [feedbackLength, setFeedbackLength] = useState(
+    formData.feedback?.length || 0
+  );
   const [isValidFeedback, setIsValidFeedback] = useState(false);
 
   // Validate feedback on component mount and when feedback changes
   useEffect(() => {
-    const valid = formData.feedback && formData.feedback.trim() !== "" && formData.feedback.length >= 40;
+    const valid =
+      formData.feedback &&
+      formData.feedback.trim() !== "" &&
+      formData.feedback.length >= 40;
     setIsValidFeedback(!!valid);
   }, [formData.feedback]);
 
@@ -63,7 +69,8 @@ const Step3Feedback = ({
     } else {
       toast({
         title: "Please check the form",
-        description: "Please provide detailed feedback (at least 40 characters).",
+        description:
+          "Please provide detailed feedback (at least 40 characters).",
         variant: "destructive",
       });
     }
@@ -74,20 +81,23 @@ const Step3Feedback = ({
     if (!isValidFeedback) {
       toast({
         title: "Feedback required",
-        description: "Please provide detailed feedback (at least 40 characters) before copying.",
+        description:
+          "Please provide detailed feedback (at least 40 characters) before copying.",
         variant: "destructive",
       });
       return;
     }
 
     // Copy the feedback text to clipboard
-    navigator.clipboard.writeText(formData.feedback)
+    navigator.clipboard
+      .writeText(formData.feedback)
       .then(() => {
         toast({
           title: "Copied to clipboard!",
-          description: "Your review text has been copied. We'll redirect you to Amazon now.",
+          description:
+            "Your review text has been copied. We'll redirect you to Amazon now.",
         });
-        
+
         // Short delay before redirecting
         setTimeout(() => {
           onGoToAmazon();
@@ -122,39 +132,42 @@ const Step3Feedback = ({
           onChange={handleFeedbackChange}
           className={errors.feedback ? "border-destructive" : ""}
         />
-        {errors.feedback && <p className="text-sm text-destructive">{errors.feedback}</p>}
+        {errors.feedback && (
+          <p className="text-sm text-destructive">{errors.feedback}</p>
+        )}
         <p className="text-sm text-muted-foreground text-right">
           {feedbackLength}/40 characters minimum
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 pt-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onPreviousStep}
-          className="flex-1"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
-        </Button>
-
+      <div className="flex flex-col gap-4 pt-4 items-center">
         {formData.rating >= 4 && (
           <Button
             type="button"
             onClick={handleCopyAndShare}
             disabled={!isValidFeedback}
-            className={`flex-1 bg-[#232F3E] hover:bg-[#374151] text-white font-medium ${!isValidFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex-1 bg-[#232F3E] hover:bg-[#374151] text-white font-medium  w-[500px] ${
+              !isValidFeedback ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
             <Copy className="mr-2 h-4 w-4" /> Copy & Share on Amazon
           </Button>
         )}
-        
+
         <Button
           type="submit"
-          className={`${formData.rating >= 4 ? 'flex-1' : 'w-full'} bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium`}
+          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium pl-10  w-[500px]"
         >
-          Continue to Receive Gift
-          <ChevronRight className="ml-2 h-4 w-4" />
+          Continue
+          <ChevronRight className="ml-0 w-4 h-4" />
+        </Button>
+        <Button
+          type="button"
+          // variant="outline"
+          onClick={onPreviousStep}
+          className="flex-1 bg-white hover:bg-gray-200 w-[500px]"
+        >
+          <ChevronLeft className="mr-0 h-4 w-4" /> Back
         </Button>
       </div>
     </form>

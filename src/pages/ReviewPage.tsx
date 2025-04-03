@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -8,7 +7,10 @@ import Navbar from "@/components/layout/Navbar";
 import Logo from "@/components/layout/navbar/Logo";
 
 const ReviewPage = () => {
-  const { campaignId, step } = useParams<{ campaignId: string, step: string }>();
+  const { campaignId, step } = useParams<{
+    campaignId: string;
+    step: string;
+  }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,6 @@ const ReviewPage = () => {
         // In a real app, this would be an API call
         // Simulate network delay
         await new Promise((resolve) => setTimeout(resolve, 800));
-
         // Check if campaignId exists and is valid
         if (!campaignId) {
           throw new Error("Campaign ID is missing");

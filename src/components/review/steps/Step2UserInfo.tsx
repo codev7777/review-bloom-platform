@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { ChevronRight, ArrowLeft } from "lucide-react";
+import { ChevronRight, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +20,9 @@ const Step2UserInfo = ({
   onPreviousStep,
 }: Step2UserInfoProps) => {
   const { toast } = useToast();
-  const [errors, setErrors] = useState<Partial<Record<keyof ReviewFormData, string>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ReviewFormData, string>>
+  >({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,7 +48,10 @@ const Step2UserInfo = ({
     }
 
     // Phone number validation (optional)
-    if (formData.phoneNumber && !/^\+?[\d\s-()]{7,15}$/.test(formData.phoneNumber)) {
+    if (
+      formData.phoneNumber &&
+      !/^\+?[\d\s-()]{7,15}$/.test(formData.phoneNumber)
+    ) {
       newErrors.phoneNumber = "Please enter a valid phone number";
     }
 
@@ -88,7 +92,9 @@ const Step2UserInfo = ({
           onChange={handleInputChange}
           className={errors.name ? "border-destructive" : ""}
         />
-        {errors.name && <p className="text-sm text-destructive">{errors.name}</p>}
+        {errors.name && (
+          <p className="text-sm text-destructive">{errors.name}</p>
+        )}
       </div>
 
       <div className="space-y-3">
@@ -104,9 +110,12 @@ const Step2UserInfo = ({
           onChange={handleInputChange}
           className={errors.email ? "border-destructive" : ""}
         />
-        {errors.email && <p className="text-sm text-destructive">{errors.email}</p>}
+        {errors.email && (
+          <p className="text-sm text-destructive">{errors.email}</p>
+        )}
         <p className="text-xs text-muted-foreground">
-          We'll send your gift to this email address. Your email won't be shared with third parties.
+          We'll send your gift to this email address. Your email won't be shared
+          with third parties.
         </p>
       </div>
 
@@ -123,25 +132,26 @@ const Step2UserInfo = ({
           onChange={handleInputChange}
           className={errors.phoneNumber ? "border-destructive" : ""}
         />
-        {errors.phoneNumber && <p className="text-sm text-destructive">{errors.phoneNumber}</p>}
+        {errors.phoneNumber && (
+          <p className="text-sm text-destructive">{errors.phoneNumber}</p>
+        )}
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 pt-4">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onPreviousStep}
-          className="flex-1"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" /> Back
-        </Button>
-        
+      <div className="flex flex-col gap-4 pt-4 items-center">
         <Button
           type="submit"
-          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium"
+          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium pl-10  w-[500px]"
         >
-          Next Step
-          <ChevronRight className="ml-2 w-4 h-4" />
+          Continue
+          <ChevronRight className="ml-0 w-4 h-4" />
+        </Button>
+        <Button
+          type="button"
+          // variant="outline"
+          onClick={onPreviousStep}
+          className="flex-1 bg-white hover:bg-gray-200 w-[500px]"
+        >
+          <ChevronLeft className="mr-0 h-4 w-4" /> Back
         </Button>
       </div>
     </form>
