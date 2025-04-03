@@ -117,10 +117,28 @@ const Index = () => {
             <HowItWorks />
             <StatsCounter />
             <Demo />
+            <div className="video-box">
+              <div className="container-xl">
+                <iframe
+                  src="https://www.youtube.com/embed/QlPkrGA1SBk"
+                  title="YouTube video player"
+                  // frameborder="0"
+                  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  // allowfullscreen
+
+                  style={{
+                    width: "96%",
+                    maxWidth: "1300px",
+                    margin: "0 auto",
+                    aspectRatio: "16/9",
+                  }}
+                ></iframe>
+              </div>
+            </div>
             <RecentReviews />
-            <Pricing />
+            {/* <Pricing /> */}
             <BenefitsSection />
-            <MoreSocialProof />
+            {/* <MoreSocialProof /> */}
             <Features />
             <FAQ />
           </main>

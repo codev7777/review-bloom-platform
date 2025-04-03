@@ -7,7 +7,7 @@ const Hero = () => {
   return (
     <section className="relative bg-[#2F3C4D]">
       <div
-        className="relative w-full aspect-[24/7] bg-cover bg-no-repeat transition-opacity duration-500 bg-secondary"
+        className="h-[600px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-secondary bg-bottom"
         style={{
           backgroundImage: `url('/images/landing/hero/landing.png')`,
         }}
@@ -18,7 +18,7 @@ const Hero = () => {
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
-          className="absolute left-[18%] top-1/3 w-64 animate-floating"
+          className="absolute left-[18%] top-1/4 w-64 animate-floating"
         />
 
         <div className="container mx-auto px-4 flex items-center">
@@ -46,7 +46,7 @@ const Hero = () => {
                     3&nbsp;&nbsp;&nbsp;Drive Sales
                   </div>
                   <div className="text-xl text-white mt-8 ml-12 ">
-                    ...with AI-powered review tunnel
+                    ...with AI-powered review funnel
                   </div>
                 </div>
               </div>
@@ -61,25 +61,60 @@ const Hero = () => {
                   Learn More
                 </Link>
               </Button>
-              {/* <Button
-                size="lg"
-                asChild
-                className="w-full sm:w-auto group bg-[#FF9900] hover:bg-orange-600 text-[#232F3E]"
-              >
-                <Link
-                  to="/review/demo-campaign"
-                  className="px-8 flex items-center"
-                >
-                  Try Demo
-                  <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
-                </Link>
-              </Button> */}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tailwind animation */}
+      {/* Moving Wave Effect */}
+      <div className="absolute bottom-[0px] left-0 w-full overflow-hidden leading-none">
+        {/* <svg
+          className="animate-wave w-[200%] h-20 md:h-24 lg:h-32"
+          viewBox="0 0 1490 100"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,50 C150,100 350,0 500,50 C650,100 850,0 1000,50 C1150,100 1300,0 1500,50 L1500,100 L0,100 Z"
+            fill="#c2dcfd"
+          />
+        </svg> */}
+
+        <svg
+          className="hero-waves "
+          xmlns="http://www.w3.org/2000/svg"
+          xlinkHref="http://www.w3.org/1999/xlink"
+          viewBox="0 24 150 28 "
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <path
+              id="wave-path"
+              d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+            ></path>
+          </defs>
+          <g className="wave1">
+            <use
+              xlinkHref="#wave-path"
+              x="50"
+              y="3"
+              fill="rgba(255,255,255, .1)"
+            ></use>
+          </g>
+          <g className="wave2">
+            <use
+              xlinkHref="#wave-path"
+              x="50"
+              y="0"
+              fill="rgba(255,255,255, .2)"
+            ></use>
+          </g>
+          <g className="wave3">
+            <use xlinkHref="#wave-path" x="50" y="9" fill="#c2dcfd"></use>
+          </g>
+        </svg>
+      </div>
+
+      {/* Tailwind Animations */}
       <style>
         {`
           @keyframes floating {
@@ -88,7 +123,60 @@ const Hero = () => {
             100% { transform: translateY(0px); }
           }
           .animate-floating {
-            animation: floating 2s ease-in-out infinite;
+            animation: floating 6s ease-in-out infinite;
+          }
+          .hero-waves {
+              display: block;
+              margin-top: 60px;
+              width: 100%;
+              height: 60px;
+              z-index: 5;
+              position: relative
+          }
+
+          .wave1 use {
+              animation: move-forever1 10s linear infinite;
+              animation-delay: -2s
+          }
+
+          .wave2 use {
+              animation: move-forever2 8s linear infinite;
+              animation-delay: -2s
+          }
+
+          .wave3 use {
+              animation: move-forever3 6s linear infinite;
+              animation-delay: -2s
+          }
+
+          @keyframes move-forever1 {
+              0% {
+                  transform: translate(85px)
+              }
+
+              to {
+                  transform: translate(-90px)
+              }
+          }
+
+          @keyframes move-forever2 {
+              0% {
+                  transform: translate(-90px)
+              }
+
+              to {
+                  transform: translate(85px)
+              }
+          }
+
+          @keyframes move-forever3 {
+              0% {
+                  transform: translate(-90px)
+              }
+
+              to {
+                  transform: translate(85px)
+              }
           }
         `}
       </style>
