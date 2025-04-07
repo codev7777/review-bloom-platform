@@ -46,7 +46,7 @@ const Navbar = () => {
       <div className="container px-4 mx-auto flex items-center justify-between">
         {/* Logo */}
         <Logo />
-        <div className="flex-grow md:hidden flex">
+        <div className="flex-grow hidden md:block">
           <DesktopNav />
         </div>
         {/* Desktop Navigation */}

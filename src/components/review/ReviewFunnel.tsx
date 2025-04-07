@@ -154,6 +154,9 @@ const ReviewFunnel = ({
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-xl mx-auto">
+      <div className="text-xl font-bold mt-8 mb-10">
+        Don’t miss out – tell us where to send your free gift!
+      </div>
       {/* Step indicator */}
       <div className="flex justify-center mb-8">
         <div className="flex items-center">
@@ -210,7 +213,6 @@ const ReviewFunnel = ({
           </div>
         </div>
       </div>
-
       {/* Step content */}
       <div className="relative min-h-[400px] flex flex-col justify-center">
         <FunnelStep isActive={step === 1}>

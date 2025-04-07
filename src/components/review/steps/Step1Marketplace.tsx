@@ -3,8 +3,6 @@ import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -30,7 +28,6 @@ const Step1Marketplace = ({
   updateFormData,
   onNextStep,
 }: Step1MarketplaceProps) => {
-  const { toast } = useToast();
   const [errors, setErrors] = useState<
     Partial<Record<keyof ReviewFormData, string>>
   >({});
@@ -49,13 +46,6 @@ const Step1Marketplace = ({
     }
   };
 
-  // const handleAsinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   updateFormData({ asin: e.target.value });
-  //   if (errors.asin) {
-  //     setErrors((prev) => ({ ...prev, asin: "" }));
-  //   }
-  // };
-
   const handleOrderIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateFormData({ orderId: e.target.value });
     if (errors.orderId) {
@@ -63,8 +53,15 @@ const Step1Marketplace = ({
     }
   };
 
-  const handleCheckboxChange = (checked: boolean) => {
-    updateFormData({ usedMoreThanSevenDays: checked });
+  const handleProductChange = (value: string) => {
+    updateFormData({ product: value });
+    if (errors.product) {
+      setErrors((prev) => ({ ...prev, product: "" }));
+    }
+  };
+
+  const handleUsageChange = (value: string) => {
+    updateFormData({ usedMoreThanSevenDays: value === "Yes" });
     if (errors.usedMoreThanSevenDays) {
       setErrors((prev) => ({ ...prev, usedMoreThanSevenDays: "" }));
     }
@@ -72,8 +69,6 @@ const Step1Marketplace = ({
 
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
-
-    // Validate Order ID (Amazon order numbers format: 11Y-YYYYYYY-YYYYYYY)
     const orderIdPattern = /^\d{3}-\d{7}-\d{7}$/;
     if (!formData.orderId.trim()) {
       newErrors.orderId = "Order ID is required";
@@ -90,14 +85,14 @@ const Step1Marketplace = ({
       newErrors.country = "Please select your country";
     }
 
-    // if (!formData.asin || formData.asin.trim() === "") {
-    //   newErrors.asin = "ASIN is required";
-    // }
-
-    if (!formData.usedMoreThanSevenDays) {
-      newErrors.usedMoreThanSevenDays =
-        "You must have used the product for at least 7 days";
+    if (!formData.product) {
+      newErrors.product = "Please select a product";
     }
+
+    // if (!formData.usedMoreThanSevenDays) {
+    //   newErrors.usedMoreThanSevenDays =
+    //     "Please confirm if you've used the product for at least 7 days";
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -109,33 +104,45 @@ const Step1Marketplace = ({
     if (validateForm()) {
       onNextStep();
     } else {
-      toast({
-        title: "Please check the form",
-        description: "Please fill in all required fields correctly.",
-        variant: "destructive",
-      });
+      alert("Please check the form and fill in all required fields correctly.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-      <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-muted rounded-lg">
+      <div className="flex justify-center items-center">
         <img
-          src={
-            productImage ||
-            "https://placehold.co/200x200/EEE/31304D?text=Product"
-          }
-          alt={productName}
-          className="w-32 h-32 object-contain rounded"
+          src="/images/funnel/amazon-gift-card-5.png"
+          className="h-[200px] object-contain rounded"
         />
-        <div className="text-center sm:text-left">
-          <h1 className="font-medium text-2xl">{productName}</h1>
-        </div>
       </div>
 
+      {/* Select Product */}
+      <div className="space-y-3">
+        <Label htmlFor="product">
+          Which product did you buy? <span className="text-red-500">*</span>
+        </Label>
+        <Select
+          onValueChange={handleProductChange}
+          defaultValue={formData.product}
+        >
+          <SelectTrigger className={errors.product ? "border-destructive" : ""}>
+            <SelectValue placeholder="Select a product" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="product1">Product 1</SelectItem>
+            <SelectItem value="product2">Product 2</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.product && (
+          <p className="text-sm text-destructive">{errors.product}</p>
+        )}
+      </div>
+
+      {/* Select Marketplace */}
       <div className="space-y-3">
         <Label htmlFor="country">
-          Where did you purchase this product?{" "}
+          Select the marketplace you purchased from{" "}
           <span className="text-red-500">*</span>
         </Label>
         <Select
@@ -174,29 +181,10 @@ const Step1Marketplace = ({
         )}
       </div>
 
-      {/* <div className="space-y-3">
-        <Label htmlFor="asin">
-          Amazon ASIN <span className="text-red-500">*</span>
-        </Label>
-        <Input
-          id="asin"
-          name="asin"
-          placeholder="B00EXAMPLE"
-          value={formData.asin}
-          onChange={handleAsinChange}
-          className={errors.asin ? "border-destructive" : ""}
-        />
-        <p className="text-xs text-muted-foreground">
-          The product ID found in the Amazon URL (10 characters)
-        </p>
-        {errors.asin && (
-          <p className="text-sm text-destructive">{errors.asin}</p>
-        )}
-      </div> */}
-
+      {/* Amazon Order ID */}
       <div className="space-y-3">
         <Label htmlFor="orderId">
-          Amazon Order ID <span className="text-red-500">*</span>
+          Amazon order number <span className="text-red-500">*</span>
         </Label>
         <Input
           id="orderId"
@@ -214,6 +202,7 @@ const Step1Marketplace = ({
         )}
       </div>
 
+      {/* Rating */}
       <div className="space-y-3">
         <Label>
           Your Rating <span className="text-red-500">*</span>
@@ -229,26 +218,31 @@ const Step1Marketplace = ({
         )}
       </div>
 
-      <div className="flex items-start space-x-2">
-        <Checkbox
-          id="usedMoreThanSevenDays"
-          checked={formData.usedMoreThanSevenDays}
-          onCheckedChange={handleCheckboxChange}
-          className={errors.usedMoreThanSevenDays ? "border-destructive" : ""}
-        />
-        <div className="grid gap-1.5 leading-none">
-          <label
-            htmlFor="usedMoreThanSevenDays"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+      {/* Product Usage Confirmation */}
+      <div className="space-y-3">
+        <Label htmlFor="usedMoreThanSevenDays">
+          Have you been using this product for more than 7 days?{" "}
+          <span className="text-red-500">*</span>
+        </Label>
+        <Select
+          onValueChange={handleUsageChange}
+          defaultValue={formData.usedMoreThanSevenDays ? "Yes" : "No"}
+        >
+          <SelectTrigger
+            className={errors.usedMoreThanSevenDays ? "border-destructive" : ""}
           >
-            I confirm that I have used this product for at least 7 days
-          </label>
-          {errors.usedMoreThanSevenDays && (
-            <p className="text-sm text-destructive">
-              {errors.usedMoreThanSevenDays}
-            </p>
-          )}
-        </div>
+            <SelectValue placeholder="Select Yes or No" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Yes">Yes</SelectItem>
+            <SelectItem value="No">No</SelectItem>
+          </SelectContent>
+        </Select>
+        {errors.usedMoreThanSevenDays && (
+          <p className="text-sm text-destructive">
+            {errors.usedMoreThanSevenDays}
+          </p>
+        )}
       </div>
 
       <Button

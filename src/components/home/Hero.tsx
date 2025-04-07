@@ -6,12 +6,7 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="relative bg-[#232f3e]  max-w-screen">
-      <div
-        className="h-[600px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom"
-        // style={{
-        //   backgroundImage: `url('/images/landing/hero/landing.png')`,
-        // }}
-      >
+      <div className="h-[800px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom">
         <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
 
         {/* Floating Image */}
@@ -24,7 +19,7 @@ const Hero = () => {
         <div className="container mx-auto px-4 flex items-center">
           <div className="max-w-lg mx-auto">
             <div className="inline-block mb-6 animate-fade-in">
-              <div className="mt-24 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white ">
+              <div className="mt-36 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white ">
                 <div>
                   <span className="inline-flex items-center">
                     1&nbsp;&nbsp;&nbsp;

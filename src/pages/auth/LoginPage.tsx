@@ -81,7 +81,7 @@ const LoginPage = () => {
             </div>
 
             {/* 👇 Add reCAPTCHA here */}
-            <div>
+            <div className="flex items-center justify-center">
               <ReCAPTCHA
                 sitekey={SITE_KEY}
                 ref={recaptchaRef}
@@ -127,12 +127,6 @@ const LoginPage = () => {
             </Button>
           </div>
         </form>
-
-        <div className="mt-4 text-center text-sm">
-          <p>For demo, use:</p>
-          <p className="text-[#FF9900] mt-1">vendor@example.com / password</p>
-          <p className="text-[#FF9900]">admin@example.com / admin</p>
-        </div>
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-500">
