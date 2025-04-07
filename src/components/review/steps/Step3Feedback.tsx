@@ -155,7 +155,7 @@ const Step3Feedback = ({
           <p className="text-sm text-destructive">{errors.feedback}</p>
         )}
         <p className="text-sm text-muted-foreground text-right">
-          {feedbackLength}/40 characters minimum
+          {feedbackLength}/40 Characters
         </p>
       </div>
 
