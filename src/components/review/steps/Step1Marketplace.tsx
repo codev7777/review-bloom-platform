@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,9 +55,9 @@ const Step1Marketplace = ({
   };
 
   const handleProductChange = (value: string) => {
-    updateFormData({ product: value });
-    if (errors.product) {
-      setErrors((prev) => ({ ...prev, product: "" }));
+    updateFormData({ productType: value });
+    if (errors.productType) {
+      setErrors((prev) => ({ ...prev, productType: "" }));
     }
   };
 
@@ -85,14 +86,9 @@ const Step1Marketplace = ({
       newErrors.country = "Please select your country";
     }
 
-    if (!formData.product) {
-      newErrors.product = "Please select a product";
+    if (!formData.productType) {
+      newErrors.productType = "Please select a product";
     }
-
-    // if (!formData.usedMoreThanSevenDays) {
-    //   newErrors.usedMoreThanSevenDays =
-    //     "Please confirm if you've used the product for at least 7 days";
-    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -124,18 +120,18 @@ const Step1Marketplace = ({
         </Label>
         <Select
           onValueChange={handleProductChange}
-          defaultValue={formData.product}
+          defaultValue={formData.productType}
         >
-          <SelectTrigger className={errors.product ? "border-destructive" : ""}>
+          <SelectTrigger className={errors.productType ? "border-destructive" : ""}>
             <SelectValue placeholder="Select a product" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="product1">Product 1</SelectItem>
-            <SelectItem value="product2">Product 2</SelectItem>
+            <SelectItem value="dell-desktop">Dell Desktop</SelectItem>
+            <SelectItem value="lenovo-laptop">Lenovo Laptop</SelectItem>
           </SelectContent>
         </Select>
-        {errors.product && (
-          <p className="text-sm text-destructive">{errors.product}</p>
+        {errors.productType && (
+          <p className="text-sm text-destructive">{errors.productType}</p>
         )}
       </div>
 

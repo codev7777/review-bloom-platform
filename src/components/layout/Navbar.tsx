@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -43,7 +44,7 @@ const Navbar = () => {
           : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
-      <div className="container px-4 mx-auto flex items-center justify-between">
+      <div className="container px-4 mx-auto flex items-center justify-between max-w-[1920px] 2xl:max-w-[2560px] 3xl:max-w-[3200px]">
         {/* Logo */}
         <Logo />
         <div className="flex-grow hidden md:block">

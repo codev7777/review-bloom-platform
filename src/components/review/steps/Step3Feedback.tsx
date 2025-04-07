@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { ChevronRight, Copy, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,11 @@ const Step3Feedback = ({
     formData.feedback?.length || 0
   );
   const [isValidFeedback, setIsValidFeedback] = useState(false);
+
+  // Product image based on selection in Step 1
+  const productImage = formData.productType === "dell-desktop" 
+    ? "/images/products/dell-computer.jpg" 
+    : "https://placehold.co/300x300/FFF5E8/FF9130?text=Lenovo+Laptop";
 
   // Validate feedback on component mount and when feedback changes
   useEffect(() => {
@@ -118,6 +124,15 @@ const Step3Feedback = ({
       <p className="text-center text-muted-foreground">
         Please share your honest experience with this product
       </p>
+      
+      {/* Product Image */}
+      <div className="flex justify-center items-center my-6">
+        <img 
+          src={productImage} 
+          alt={formData.productType === "dell-desktop" ? "Dell Desktop" : "Lenovo Laptop"} 
+          className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
+        />
+      </div>
 
       <div className="space-y-3">
         <Label htmlFor="feedback">
@@ -146,7 +161,7 @@ const Step3Feedback = ({
             type="button"
             onClick={handleCopyAndShare}
             disabled={!isValidFeedback}
-            className={`flex-1 bg-[#232F3E] hover:bg-[#374151] text-white font-medium  w-[500px] ${
+            className={`flex-1 bg-[#232F3E] hover:bg-[#374151] text-white font-medium w-full sm:w-[500px] ${
               !isValidFeedback ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
@@ -156,16 +171,15 @@ const Step3Feedback = ({
 
         <Button
           type="submit"
-          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium pl-10  w-[500px]"
+          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium pl-10 w-full sm:w-[500px]"
         >
           Continue
           <ChevronRight className="ml-0 w-4 h-4" />
         </Button>
         <Button
           type="button"
-          // variant="outline"
           onClick={onPreviousStep}
-          className="flex-1 bg-white hover:bg-gray-200 w-[500px]"
+          className="flex-1 bg-white hover:bg-gray-200 w-full sm:w-[500px]"
         >
           <ChevronLeft className="mr-0 h-4 w-4" /> Back
         </Button>

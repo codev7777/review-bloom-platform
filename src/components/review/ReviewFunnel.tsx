@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { CheckCircle, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export interface ReviewFormData {
   usedMoreThanSevenDays: boolean;
   phoneNumber: string;
   asin: string;
+  productType?: string;
 }
 
 const FunnelStep = ({
@@ -66,6 +68,7 @@ const ReviewFunnel = ({
     usedMoreThanSevenDays: false,
     phoneNumber: "",
     asin: "",
+    productType: "",
   });
 
   // Determine current step based on URL parameter
@@ -155,7 +158,7 @@ const ReviewFunnel = ({
   return (
     <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-xl mx-auto">
       <div className="text-xl font-bold mt-8 mb-10">
-        Don’t miss out – tell us where to send your free gift!
+        Don't miss out – tell us where to send your free gift!
       </div>
       {/* Step indicator */}
       <div className="flex justify-center mb-8">
