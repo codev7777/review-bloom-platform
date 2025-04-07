@@ -127,7 +127,7 @@ const VendorReviews = () => {
   }, []);
 
   return (
-    <section className="bg-gray-50">
+    <section className="bg-gray-50  max-w-screen">
       <div
         ref={sectionRef}
         className={`py-20 bg-gray-50 transition-opacity duration-1000 ${

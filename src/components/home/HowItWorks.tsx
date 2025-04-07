@@ -187,19 +187,19 @@ const AnimatedStep = ({ step, index }) => {
       className="flex justify-center items-center my-10"
     >
       <div
-        className={`flex items-center w-full max-w-6xl transition-all duration-700 ${
+        className={`flex flex-col md:flex-row items-center w-full max-w-6xl transition-all duration-700 ${
           isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"
         }`}
       >
         <img
           src={step.icon}
           alt={step.title}
-          className={`w-[500px] object-contain transition-transform duration-700 ${
+          className={`max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain transition-transform duration-700 ${
             isVisible ? "translate-x-0" : "-translate-x-10"
           }`}
         />
         <div
-          className={`ml-10 transition-transform duration-700 ${
+          className={`mt-10 md:mt-0 ml-10 transition-transform duration-700 ${
             isVisible ? "translate-x-0" : "translate-x-10"
           }`}
         >
@@ -224,7 +224,7 @@ const AnimatedStep = ({ step, index }) => {
 
 const HowItWorks = () => {
   return (
-    <section className="py-20 bg-gray-50" id="how-it-works">
+    <section className="py-20 bg-gray-50 max-w-screen" id="how-it-works">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-[700] my-8">

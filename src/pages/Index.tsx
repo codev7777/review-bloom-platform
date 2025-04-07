@@ -140,8 +140,8 @@ const Index = () => {
             <Pricing />
             <BenefitsSection />
             <MoreSocialProof />
-            <Features />
-            <FAQ />
+            {/*      <Features />
+            <FAQ /> */}
           </main>
           <Footer />
         </div>

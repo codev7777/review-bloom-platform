@@ -18,21 +18,25 @@ const PricingTier = ({
   return (
     <div
       id="pricing"
-      className={isPopular && "transform scale-110 max-w-screen"}
+      className={
+        isPopular
+          ? "transform lg:scale-110 flex justify-center"
+          : "flex justify-center"
+      }
     >
       <motion.div
         initial={{ opacity: 0, y: 150 }}
         whileInView={{ opacity: 1, y: 100 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`w-[400px] h-[880px] relative flex flex-col p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl border-2 bg-[url('/images/landing/pricing-background.png')]  bg-cover mb-20`}
+        className={`w-[500px] lg:w-[320px] xl:w-[400px] h-[880px] relative flex flex-col p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl border-2 bg-[url('/images/landing/pricing-background.png')]  bg-cover mb-20 bg-center`}
       >
         {isPopular && (
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-3 left-[115px] transform -translate-x-1/2"
+            className="absolute -top-3 xl:left-[115px] transform -translate-x-1/2 left-[155px] lg:left-[75px] "
           >
             <div className="relative bg-primary text-white text-xl font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
               Most Popular
@@ -53,7 +57,6 @@ const PricingTier = ({
             {/* {isAnnual ? "(Annually Billing)" : ""} */}
           </span>
         </div>
-
         <ul className="space-y-3 mb-8 flex-grow ml-7">
           {features.map((feature, index) => (
             <motion.li
@@ -72,7 +75,6 @@ const PricingTier = ({
             </motion.li>
           ))}
         </ul>
-
         <motion.div
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -81,12 +83,13 @@ const PricingTier = ({
         >
           <Button
             // variant={isPopular ? "default" : "outline"}
-            className={` w-full bg-[#3c5efd] hover:bg-[#4c6eff] inline text-white px-10 py-5 text-3xl`}
+            className={` w-full bg-[#3c5efd] hover:bg-[#4c6eff] inline text-white px-10 py-5 xl:text-2xl text-2xl lg:text-xl`}
             asChild
           >
-            <Link to="/auth/signup">B u y&nbsp;&nbsp; N o w</Link>
+            <Link to="/auth/signup">Get Started for Free</Link>
           </Button>
         </motion.div>
+        <span className="text-white">* No credit card required</span>
       </motion.div>
     </div>
   );
@@ -161,7 +164,7 @@ const Pricing = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-muted/50">
+    <section id="pricing" className="py-24 bg-muted/50  max-w-screen">
       <div className="container mx-auto px-4 text-center">
         <motion.h2
           initial={{ opacity: 0, y: -10 }}
@@ -205,7 +208,7 @@ const Pricing = () => {
           <span className="text-green-600">(Save 20%)</span>
         </motion.div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-auto">
           {tiers.map((tier, index) => (
             <PricingTier key={index} {...tier} isAnnual={isAnnual} />
           ))}

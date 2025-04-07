@@ -8,7 +8,10 @@ import { Link } from "react-router-dom";
 
 const Demo = () => {
   return (
-    <div id="demo" className="flex flex-col items-center bg-gray-50 pb-20">
+    <div
+      id="demo"
+      className="flex flex-col items-center bg-gray-50 pb-20  max-w-screen"
+    >
       {/* Header */}
       <motion.header
         className="w-full max-w-4xl pt-20 pb-12 px-4 text-center bg-[#faf4f3]"

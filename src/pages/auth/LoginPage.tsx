@@ -1,18 +1,32 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha"; // 👈 Add this line
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+
+const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
 
 const LoginPage = () => {
   const [email, setEmail] = useState("vendor@example.com");
   const [password, setPassword] = useState("password");
   const { login, isLoading } = useAuth();
 
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login(email, password);
+
+    if (!recaptchaToken) {
+      alert("Please verify you're not a robot.");
+      return;
+    }
+
+    // Optionally verify token on server before login
+    await login(email, password, recaptchaToken);
+    recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
   };
 
   return (
@@ -41,7 +55,6 @@ const LoginPage = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="vendor@example.com"
                 required
-                className="mt-1"
               />
             </div>
 
@@ -64,7 +77,16 @@ const LoginPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="password"
                 required
-                className="mt-1"
+              />
+            </div>
+
+            {/* 👇 Add reCAPTCHA here */}
+            <div>
+              <ReCAPTCHA
+                sitekey={SITE_KEY}
+                ref={recaptchaRef}
+                onChange={(token) => setRecaptchaToken(token)}
+                onExpired={() => setRecaptchaToken(null)}
               />
             </div>
           </div>

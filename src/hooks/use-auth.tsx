@@ -6,10 +6,10 @@ import {
   ReactNode,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Import Axios
-import { toast } from "@/components/ui/use-toast";
+import { AxiosError } from "axios";
 import api from "@/lib/api/axiosConfig";
-// Define the User and AuthContextType interfaces
+import { toast } from "@/components/ui/use-toast";
+
 interface User {
   id: string;
   email: string;
@@ -21,7 +21,11 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    recaptchaToken: string
+  ) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isVendor: () => boolean;
@@ -35,8 +39,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  const DEBUG = false; // Set to true for console logs
+
   useEffect(() => {
-    // Check for saved user in localStorage and JWT token
     const savedUser = localStorage.getItem("user");
     const token = localStorage.getItem("token");
 
@@ -44,48 +49,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         setUser(JSON.parse(savedUser));
       } catch (error) {
-        console.error("Error parsing user data from localStorage:", error);
-        localStorage.removeItem("user"); // Clear corrupt data
+        console.error("Invalid user data in localStorage:", error);
+        localStorage.removeItem("user");
       }
     }
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    console.log(0);
+  const login = async (
+    email: string,
+    password: string,
+    recaptchaToken: string
+  ) => {
     try {
       setIsLoading(true);
-      console.log(1);
-      const response = await api.post("/auth/login", { email, password });
-      console.log(response.data);
-      console.log(2);
-      // Assuming response contains JWT and user data
+      if (DEBUG) console.log("Attempting login...");
+
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+        recaptchaToken,
+      });
+
       const { tokens, user } = response.data;
-      console.log(tokens);
-      console.log(user);
-      // Save the token and user data to localStorage
       localStorage.setItem("token", tokens);
       localStorage.setItem("user", JSON.stringify(user));
-      console.log(3);
       setUser(user);
 
       toast({
         title: "Login successful",
         description: "Welcome back to ReviewBrothers!",
       });
-      console.log(4);
-      // Redirect based on user role
-      if (user.role == "USER") {
+
+      if (user.role === "USER") {
         navigate("/vendor-dashboard");
-      } else if (user.role === "ADMIN") {
+      } else {
         navigate("/admin-dashboard");
       }
-      console.log(5);
-    } catch (error) {
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "Invalid email or password",
+        description:
+          error?.response?.data?.message || "Invalid email or password",
       });
     } finally {
       setIsLoading(false);
@@ -93,41 +100,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signup = async (name: string, email: string, password: string) => {
-    if (password)
-      try {
-        setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-        // Make a real API call with Axios
-        const response = await api.post("/auth/register", {
-          name,
-          email,
-          password,
-        });
+      const response = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-        // Assuming response contains user data
-        const { userData } = response.data;
+      const { userData } = response.data;
+      localStorage.setItem("user", JSON.stringify(userData));
+      setUser(userData);
 
-        // Save the user data to localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
+      toast({
+        title: "Account created",
+        description: "Welcome to ReviewBrothers!",
+      });
 
-        setUser(userData);
-
-        toast({
-          title: "Account created",
-          description: "Welcome to ReviewBrothers!",
-        });
-
-        navigate("/vendor-dashboard");
-      } catch (error) {
-        console.log(error);
-        toast({
-          variant: "destructive",
-          title: "Signup failed",
-          description: error.response.data.message,
-        });
-      } finally {
-        setIsLoading(false);
-      }
+      navigate("/vendor-dashboard");
+    } catch (err) {
+      const error = err as AxiosError<{ message?: string }>;
+      toast({
+        variant: "destructive",
+        title: "Signup failed",
+        description: error?.response?.data?.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
@@ -138,21 +139,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     toast({
       title: "Logged out",
-      description: "You have been successfully logged out",
+      description: "You have been successfully logged out.",
     });
   };
 
   const isVendor = () => user?.role === "USER";
   const isAdmin = () => user?.role === "ADMIN";
-
-  // Static method to access context
-  AuthProvider.useContext = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-      throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-  };
 
   return (
     <AuthContext.Provider
@@ -170,15 +162,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
-
-// Static method to access context
-AuthProvider.useContext = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
 };
 
 export const useAuth = () => {

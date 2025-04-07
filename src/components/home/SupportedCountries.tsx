@@ -69,7 +69,7 @@ const AnimatedCard = ({ children, delay = 0 }) => {
 const SupportedCountries = () => {
   return (
     <section
-      className="py-20 bg-gradient-to-b to-gray-50 from-[#bedafd]"
+      className="py-20 bg-gradient-to-b to-gray-50 from-[#bedafd]  max-w-screen"
       id="supported-countries"
     >
       <div className="container mx-auto px-2">

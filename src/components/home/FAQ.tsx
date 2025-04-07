@@ -157,7 +157,7 @@ const faqItems = [
 
 const FAQ = () => {
   return (
-    <section className="py-20 bg-gray-50" id="faq">
+    <section className="py-20 bg-gray-50  max-w-screen" id="faq">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-semibold mt-2 mb-4">

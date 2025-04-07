@@ -4,8 +4,8 @@ import ProductReviewsFeature from "./ProductReviewFeature";
 
 const MoreSocialProof: React.FC = () => {
   return (
-    <div className="bg-gray-50">
-      <div className="container mx-auto flex flex-row items-center bg-gray-50 max-w-screen">
+    <div className="bg-gray-50 max-w-screen">
+      <div className="container mx-auto flex lg:flex-row items-center bg-gray-50 flex-col">
         {/* Image - Appears from Left */}
         <motion.div
           className="w-[37%]"
@@ -23,7 +23,7 @@ const MoreSocialProof: React.FC = () => {
 
         {/* Product Review Feature - Appears from Right */}
         <motion.div
-          className="w-[55%]"
+          // className="lg:w-[55%]"
           initial={{ opacity: 0, x: 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: false, amount: 0.2 }}

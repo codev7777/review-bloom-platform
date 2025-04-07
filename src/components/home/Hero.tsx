@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative bg-[#2F3C4D]">
+    <section className="relative bg-[#2F3C4D]  max-w-screen">
       <div
         className="h-[600px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-secondary bg-bottom"
         style={{
