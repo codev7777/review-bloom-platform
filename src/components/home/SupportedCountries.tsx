@@ -69,7 +69,7 @@ const AnimatedCard = ({ children, delay = 0 }) => {
 const SupportedCountries = () => {
   return (
     <section
-      className="py-20 bg-gradient-to-b to-gray-50 from-[#bedafd]  max-w-screen"
+      className="py-20 bg-gradient-to-b to-gray-50 from-[#bedafd] max-x-screen"
       id="supported-countries"
     >
       <div className="container mx-auto px-2">
@@ -88,7 +88,7 @@ const SupportedCountries = () => {
         </AnimatedCard>
 
         <div className="mb-16">
-          <div className="flex flex-wrap justify-center gap-6 max-w-8xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-[1400px] mx-auto">
             {countries.map((country, index) => (
               <AnimatedCard key={country.code} delay={100}>
                 <div className="rounded-lg p-2 flex flex-col items-center text-center hover:shadow-md transition w-full max-w-[100px]">

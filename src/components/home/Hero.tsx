@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative bg-[#232f3e] max-w-screen">
+    <section className="relative bg-[#232f3e]  max-w-screen">
       <div className="h-[800px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom">
         <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
 
@@ -14,13 +13,13 @@ const Hero = () => {
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
-          className="absolute left-[18%] top-1/4 w-64 xl:w-72 2xl:w-80 3xl:w-96 animate-floating"
+          className="absolute left-[18%] top-1/4 w-64 animate-floating"
         />
 
-        <div className="container mx-auto px-4 flex items-center max-w-[1920px] 2xl:max-w-[2560px] 3xl:max-w-[3200px]">
-          <div className="max-w-lg mx-auto xl:max-w-xl 2xl:max-w-2xl 3xl:max-w-3xl">
+        <div className="container mx-auto px-4 flex items-center">
+          <div className="max-w-lg mx-auto">
             <div className="inline-block mb-6 animate-fade-in">
-              <div className="mt-36 inline-flex items-left px-5 py-12 rounded-full text-3xl xl:text-4xl 2xl:text-5xl 3xl:text-6xl font-medium text-white">
+              <div className="mt-36 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white ">
                 <div>
                   <span className="inline-flex items-center">
                     1&nbsp;&nbsp;&nbsp;
@@ -31,7 +30,7 @@ const Hero = () => {
                       <img
                         src="/images/amazon-logo-white.png"
                         alt="Amazon"
-                        className="h-10 xl:h-12 2xl:h-14 3xl:h-16 ml-4 inline-block align-middle"
+                        className="h-10 ml-4 inline-block align-middle"
                       />
                     </Link>
                   </span>
@@ -41,7 +40,7 @@ const Hero = () => {
                   <div className="text-white mt-2">
                     3&nbsp;&nbsp;&nbsp;Drive Sales
                   </div>
-                  <div className="text-xl xl:text-2xl 2xl:text-3xl 3xl:text-4xl text-white mt-8 ml-12">
+                  <div className="text-xl text-white mt-8 ml-12 ">
                     ...with AI-powered review funnel
                   </div>
                 </div>
@@ -51,7 +50,7 @@ const Hero = () => {
               <Button
                 size="lg"
                 asChild
-                className="ml-16 w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full xl:text-lg 2xl:text-xl 3xl:text-2xl xl:py-6 2xl:py-7 3xl:py-8"
+                className="ml-16 w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full"
               >
                 <Link to="/help" className="px-8">
                   Learn More
@@ -64,11 +63,22 @@ const Hero = () => {
 
       {/* Moving Wave Effect */}
       <div className="absolute bottom-[0px] left-0 w-full overflow-hidden leading-none">
+        {/* <svg
+          className="animate-wave w-[200%] h-20 md:h-24 lg:h-32"
+          viewBox="0 0 1490 100"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,50 C150,100 350,0 500,50 C650,100 850,0 1000,50 C1150,100 1300,0 1500,50 L1500,100 L0,100 Z"
+            fill="#c2dcfd"
+          />
+        </svg> */}
+
         <svg
-          className="hero-waves"
+          className="hero-waves "
           xmlns="http://www.w3.org/2000/svg"
           xlinkHref="http://www.w3.org/1999/xlink"
-          viewBox="0 30 150 28"
+          viewBox="0 30 150 28 "
           preserveAspectRatio="none"
         >
           <defs>
@@ -162,38 +172,6 @@ const Hero = () => {
               to {
                   transform: translate(85px)
               }
-          }
-          
-          /* Add support for 3XL breakpoint */
-          @media (min-width: 2000px) {
-            .3xl\\:max-w-3xl {
-              max-width: 48rem;
-            }
-            .3xl\\:max-w-\\[3200px\\] {
-              max-width: 3200px;
-            }
-            .3xl\\:text-6xl {
-              font-size: 3.75rem;
-              line-height: 1;
-            }
-            .3xl\\:text-4xl {
-              font-size: 2.25rem;
-              line-height: 2.5rem;
-            }
-            .3xl\\:text-2xl {
-              font-size: 1.5rem;
-              line-height: 2rem;
-            }
-            .3xl\\:h-16 {
-              height: 4rem;
-            }
-            .3xl\\:w-96 {
-              width: 24rem;
-            }
-            .3xl\\:py-8 {
-              padding-top: 2rem;
-              padding-bottom: 2rem;
-            }
           }
         `}
       </style>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ChevronRight, Copy, ArrowLeft, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -32,9 +31,10 @@ const Step3Feedback = ({
   const [isValidFeedback, setIsValidFeedback] = useState(false);
 
   // Product image based on selection in Step 1
-  const productImage = formData.productType === "dell-desktop" 
-    ? "/images/products/dell-computer.jpg" 
-    : "https://placehold.co/300x300/FFF5E8/FF9130?text=Lenovo+Laptop";
+  const productImage =
+    formData.productType === "dell-desktop"
+      ? "/images/products/dell-desktop.jpg"
+      : "/images/products/lenovo-laptop.webp";
 
   // Validate feedback on component mount and when feedback changes
   useEffect(() => {
@@ -124,12 +124,16 @@ const Step3Feedback = ({
       <p className="text-center text-muted-foreground">
         Please share your honest experience with this product
       </p>
-      
+
       {/* Product Image */}
       <div className="flex justify-center items-center my-6">
-        <img 
-          src={productImage} 
-          alt={formData.productType === "dell-desktop" ? "Dell Desktop" : "Lenovo Laptop"} 
+        <img
+          src={productImage}
+          alt={
+            formData.productType === "dell-desktop"
+              ? "Dell Desktop"
+              : "Lenovo Laptop"
+          }
           className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
         />
       </div>

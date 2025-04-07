@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import ReviewFunnel from "@/components/review/ReviewFunnel";
 import Navbar from "@/components/layout/Navbar";
 import Logo from "@/components/layout/navbar/Logo";
-
+import { Link } from "react-router-dom";
 const ReviewPage = () => {
   const { campaignId, step } = useParams<{
     campaignId: string;
@@ -102,11 +102,10 @@ const ReviewPage = () => {
 
   return (
     <>
-      <div className="bg-secondary h-[80px] mx-auto overflow-hidden">
-        <img
-          src="/images/review/navbar.png"
-          style={{ height: "80px", width: "2400px" }}
-        />
+      <div className="bg-[#232f3e] h-[80px] mx-auto overflow-hidden flex items-center pl-20">
+        <Link to="/">
+          <Logo />
+        </Link>
       </div>
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="container mx-auto max-w-4xl mt-20">
