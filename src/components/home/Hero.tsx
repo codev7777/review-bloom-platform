@@ -5,12 +5,12 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative bg-[#2F3C4D]  max-w-screen">
+    <section className="relative bg-[#232f3e]  max-w-screen">
       <div
-        className="h-[600px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-secondary bg-bottom"
-        style={{
-          backgroundImage: `url('/images/landing/hero/landing.png')`,
-        }}
+        className="h-[600px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom"
+        // style={{
+        //   backgroundImage: `url('/images/landing/hero/landing.png')`,
+        // }}
       >
         <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
 

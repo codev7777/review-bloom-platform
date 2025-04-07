@@ -75,23 +75,23 @@ const SupportedCountries = () => {
       <div className="container mx-auto px-2">
         <AnimatedCard delay={200}>
           <div className="text-center mb-16">
-            <h2 className="text-[25px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
+            <h2 className="text-[35px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
               {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
               🚀 The Ultimate Tool for all &nbsp;
-              <img src="images/amazon-logo.png" className="h-12" />
+              <img src="images/amazon-logo.png" className="h-16 mt-2" />
               &nbsp; <b>Sellers</b> — Across Every Marketplace
             </h2>
-            <p className="max-w-2xl mx-auto font-bold">
+            <p className="max-w-2xl mx-auto font-bold text-2xl">
               One platform. 21 countries. Unlimited insights.
             </p>
           </div>
         </AnimatedCard>
 
         <div className="mb-16">
-          <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-11 gap-6 max-w-11xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-6 max-w-8xl mx-auto">
             {countries.map((country, index) => (
               <AnimatedCard key={country.code} delay={100}>
-                <div className="rounded-lg p-2 flex flex-col items-center text-center hover:shadow-md transition w-full">
+                <div className="rounded-lg p-2 flex flex-col items-center text-center hover:shadow-md transition w-full max-w-[100px]">
                   <div className="w-20 h-20 flex items-center justify-center overflow-hidden rounded-full">
                     <img
                       src={`https://flagcdn.com/w320/${country.code}.png`}

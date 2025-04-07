@@ -194,16 +194,16 @@ const AnimatedStep = ({ step, index }) => {
         <img
           src={step.icon}
           alt={step.title}
-          className={`max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain transition-transform duration-700 ${
+          className={`self-center max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain transition-transform duration-700 ${
             isVisible ? "translate-x-0" : "-translate-x-10"
           }`}
         />
         <div
-          className={`mt-10 md:mt-0 ml-10 transition-transform duration-700 ${
+          className={`self-start mt-10 md:mt-0 ml-10 transition-transform duration-700 ${
             isVisible ? "translate-x-0" : "translate-x-10"
           }`}
         >
-          <h2 className="text-2xl font-bold mb-2 bg-[#FF9900] inline-block rounded-full px-3">
+          <h2 className="mt-5 text-2xl font-bold mb-2 bg-[#FF9900] inline-block rounded-full px-3">
             Step {index + 1}
           </h2>
           <h3 className="text-2xl font-bold mb-2">{step.title}</h3>
