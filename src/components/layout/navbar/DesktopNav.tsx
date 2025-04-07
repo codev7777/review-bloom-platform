@@ -42,25 +42,25 @@ const DesktopNav = () => {
 
         <Link
           to="/#features"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           Features
         </Link>
         <Link
           to="/#howitworks"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           How it works
         </Link>
         <Link
           to="/#demo"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           Demo
         </Link>
         <Link
           to="/#pricing"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           Pricing
         </Link>
@@ -68,7 +68,7 @@ const DesktopNav = () => {
       <div>
         <Link
           to="/help"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors"
+          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           Help
         </Link>

@@ -6,20 +6,20 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="relative bg-[#232f3e]  max-w-screen">
-      <div className="h-[800px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom">
+      <div className="h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom">
         <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
 
         {/* Floating Image */}
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
-          className="absolute left-[18%] top-1/4 w-64 animate-floating"
+          className="absolute left-[18%] top-1/4 w-64 animate-floating 3xl:w-96"
         />
 
         <div className="container mx-auto px-4 flex items-center">
-          <div className="max-w-lg mx-auto">
+          <div className="max-w-4xl mx-auto">
             <div className="inline-block mb-6 animate-fade-in">
-              <div className="mt-36 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white ">
+              <div className="3xl:mt-44 mt-24 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white 3xl:text-5xl">
                 <div>
                   <span className="inline-flex items-center">
                     1&nbsp;&nbsp;&nbsp;
@@ -30,7 +30,7 @@ const Hero = () => {
                       <img
                         src="/images/amazon-logo-white.png"
                         alt="Amazon"
-                        className="h-10 ml-4 inline-block align-middle"
+                        className="h-10 ml-4 inline-block align-middle 3xl:h-16"
                       />
                     </Link>
                   </span>
@@ -40,7 +40,7 @@ const Hero = () => {
                   <div className="text-white mt-2">
                     3&nbsp;&nbsp;&nbsp;Drive Sales
                   </div>
-                  <div className="text-xl text-white mt-8 ml-12 ">
+                  <div className="text-xl text-white mt-8 ml-12 3xl:text-3xl">
                     ...with AI-powered review funnel
                   </div>
                 </div>
@@ -50,9 +50,9 @@ const Hero = () => {
               <Button
                 size="lg"
                 asChild
-                className="ml-16 w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full"
+                className="ml-16 w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full 3xl:text-3xl"
               >
-                <Link to="/help" className="px-8">
+                <Link to="/help" className="px-8 3xl:py-8">
                   Learn More
                 </Link>
               </Button>

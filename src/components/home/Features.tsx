@@ -61,7 +61,7 @@ const Features = () => {
       id="features"
       className="py-24 bg-gradient-to-b from-gray-50 to-white  max-w-screen"
     >
-      <div className="container px-4 mx-auto">
+      <div className="container px-4 mx-auto 3xl:max-w-[1500px]">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-semibold mb-4">
             Powerful Features

@@ -101,7 +101,7 @@ const BenefitsSection = () => {
 
   return (
     <section ref={sectionRef} className="py-10 bg-gray-50 max-w-screen">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 2xl:max-w-[1500px]">
         {/* <div
           className={`text-center mb-12 transition-opacity duration-700 ${
             isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"

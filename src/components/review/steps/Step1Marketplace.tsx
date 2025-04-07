@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -122,7 +121,9 @@ const Step1Marketplace = ({
           onValueChange={handleProductChange}
           defaultValue={formData.productType}
         >
-          <SelectTrigger className={errors.productType ? "border-destructive" : ""}>
+          <SelectTrigger
+            className={errors.productType ? "border-destructive" : ""}
+          >
             <SelectValue placeholder="Select a product" />
           </SelectTrigger>
           <SelectContent>
@@ -180,7 +181,17 @@ const Step1Marketplace = ({
       {/* Amazon Order ID */}
       <div className="space-y-3">
         <Label htmlFor="orderId">
-          Amazon order number <span className="text-red-500">*</span>
+          Amazon order number<span className="text-red-500">*</span>
+          {"   "}
+          <a
+            href="https://www.amazon.com/gp/css/order-history"
+            target="_new"
+            id="order_number_link"
+            className="hover:text-[#f97316] text-[#ff9900]"
+          >
+            What is this&nbsp;
+            <HelpCircle className="mb-1 w-4 h-4 inline" />
+          </a>{" "}
         </Label>
         <Input
           id="orderId"

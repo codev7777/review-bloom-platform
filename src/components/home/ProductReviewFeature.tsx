@@ -31,7 +31,7 @@ const FeatureItem: React.FC<FeatureItemProps> = ({
 
 const ProductReviewsFeature: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-6 3xl:mx-0 3xl:px-0">
       {/* <h1 className="text-4xl font-bold text-teal-500 mb-4"> */}
       <h1 className="text-4xl font-bold text-secondary mb-4">
         Boost Your Sales with Better Product Reviews

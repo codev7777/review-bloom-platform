@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -22,6 +21,7 @@ export default {
     extend: {
       screens: {
         "3xl": "2000px",
+        "4xl": "3000px",
       },
       colors: {
         border: "hsl(var(--border))",
