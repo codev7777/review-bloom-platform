@@ -19,6 +19,9 @@ export default {
       },
     },
     extend: {
+      boxShadow: {
+        custom: "0 30px 30px -3px rgba(0, 0, 0, 0.5)",
+      },
       screens: {
         "3xl": "2000px",
         "4xl": "3000px",
@@ -64,6 +67,10 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
+        colorSwap: {
+          "0%, 100%": { color: "#2e3a48" },
+          "50%": { color: "#ff9900" },
+        },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -98,6 +105,7 @@ export default {
         },
       },
       animation: {
+        colorSwap: "colorSwap 2s ease-in-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in": "fade-in 0.3s ease-out forwards",

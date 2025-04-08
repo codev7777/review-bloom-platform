@@ -6,20 +6,17 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section className="relative bg-[#232f3e]  max-w-screen">
-      <div className="h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom">
-        <div className="absolute inset-0 bg-gradient-radial from-white to-gray-50 z-[-1]"></div>
-
-        {/* Floating Image */}
+      <div className="h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom  flex items-center justify-center">
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
           className="absolute left-[18%] top-1/4 w-64 animate-floating 3xl:w-96"
         />
 
-        <div className="container mx-auto px-4 flex items-center">
-          <div className="max-w-4xl mx-auto">
+        <div className="container px-4 xl:max-w-[1300px] xl:pl-[500px] max-w-[1200px] pl-[600px] 3xl:pb-40">
+          <div className=" ">
             <div className="inline-block mb-6 animate-fade-in">
-              <div className="3xl:mt-44 mt-24 inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white 3xl:text-5xl">
+              <div className=" inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white 3xl:text-5xl">
                 <div>
                   <span className="inline-flex items-center">
                     1&nbsp;&nbsp;&nbsp;
@@ -27,10 +24,11 @@ const Hero = () => {
                       <span className="underline hover:text-[#CC7700] text-[#FF9900]">
                         Boost Reviews for
                       </span>
+                      {"  "}
                       <img
                         src="/images/amazon-logo-white.png"
                         alt="Amazon"
-                        className="h-10 ml-4 inline-block align-middle 3xl:h-16"
+                        className="h-10 ml-4 inline-block align-middle 3xl:h-16 mt-3"
                       />
                     </Link>
                   </span>
