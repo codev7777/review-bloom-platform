@@ -32,6 +32,10 @@ const Step4Thanks = ({ formData, onGoHome }: Step4ThanksProps) => {
         <p className="text-amber-800 mb-4">
           Thank you for your valuable feedback! As a token of our appreciation,
           we're sending you a free gift: <br />a $5 Amazon Gift Card!
+          <span className="text-secondary mt-6 block">
+            We truly appreciate your support and hope you continue to enjoy our
+            products!
+          </span>
         </p>
         <div className="bg-white border border-amber-300 rounded-md p-3 text-center">
           <p className="font-mono font-semibold text-lg">GIFT-XXXX-XXXX-XXXX</p>
