@@ -1,11 +1,31 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, CreditCard, Tag, Download, Edit, Plus, Search } from 'lucide-react';
+import { 
+  Gift, 
+  CreditCard, 
+  Tag, 
+  Download, 
+  Edit, 
+  Plus, 
+  Search, 
+  SlidersHorizontal,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 // Mock promotions data
 const MOCK_PROMOTIONS = [
@@ -43,6 +63,9 @@ const MOCK_PROMOTIONS = [
   },
 ];
 
+type SortField = 'name' | 'type' | 'createdAt';
+type SortOrder = 'asc' | 'desc';
+
 const PromotionTypeIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'Gift Card or eGift Card':
@@ -61,11 +84,47 @@ const PromotionTypeIcon = ({ type }: { type: string }) => {
 const PromotionsList = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('createdAt');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   
-  const filteredPromotions = MOCK_PROMOTIONS.filter(promotion => 
-    promotion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    promotion.type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Get unique promotion types for filtering
+  const promotionTypes = [...new Set(MOCK_PROMOTIONS.map(promo => promo.type))];
+  
+  // Filter promotions
+  const filteredPromotions = MOCK_PROMOTIONS.filter(promotion => {
+    const matchesSearch = promotion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      promotion.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      promotion.description.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesType = typeFilter === null || promotion.type === typeFilter;
+    
+    return matchesSearch && matchesType;
+  });
+  
+  // Sort promotions
+  const sortedPromotions = [...filteredPromotions].sort((a, b) => {
+    let comparison = 0;
+    
+    if (sortField === 'name') {
+      comparison = a.name.localeCompare(b.name);
+    } else if (sortField === 'type') {
+      comparison = a.type.localeCompare(b.type);
+    } else if (sortField === 'createdAt') {
+      comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
   
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -94,19 +153,86 @@ const PromotionsList = () => {
         </Button>
       </div>
       
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search promotions..."
-          className="pl-10"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search promotions..."
+            className="pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <SlidersHorizontal className="h-4 w-4" />
+                {typeFilter ? `Type: ${typeFilter.split(' ')[0]}` : "Filter by Type"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Filter by Type</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setTypeFilter(null)}>
+                All Types
+              </DropdownMenuItem>
+              {promotionTypes.map((type) => (
+                <DropdownMenuItem key={type} onClick={() => setTypeFilter(type)}>
+                  <div className="flex items-center gap-2">
+                    <PromotionTypeIcon type={type} />
+                    <span>{type}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <ArrowUpDown className="h-4 w-4" />
+                Sort
+                {sortField ===  'name' ? ' by Name' : sortField === 'type' ? ' by Type' : ' by Date'}
+                {sortOrder === 'asc' ? ' (A-Z)' : ' (Z-A)'}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleSort('name')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Name</span>
+                  {sortField === 'name' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('type')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Type</span>
+                  {sortField === 'type' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('createdAt')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Date Created</span>
+                  {sortField === 'createdAt' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredPromotions.map((promotion) => (
-          <Card key={promotion.id} className="overflow-hidden hover:shadow-md transition-shadow duration-200">
+        {sortedPromotions.map((promotion) => (
+          <Card key={promotion.id} className="overflow-hidden hover:shadow-md transition-shadow duration-200 h-full">
             <div className="aspect-video w-full overflow-hidden bg-orange-50">
               <img
                 src={promotion.image}
@@ -116,14 +242,14 @@ const PromotionsList = () => {
             </div>
             <CardContent className="p-5">
               <div className="flex items-start justify-between">
-                <div>
+                <div className="flex-1">
                   <h3 className="font-medium line-clamp-1 text-base">{promotion.name}</h3>
                   <div className="flex items-center mt-1 gap-1">
                     <PromotionTypeIcon type={promotion.type} />
-                    <span className="text-xs text-muted-foreground">{promotion.type}</span>
+                    <span className="text-xs text-muted-foreground line-clamp-1">{promotion.type}</span>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs whitespace-nowrap ml-2">
                   {formatDate(promotion.createdAt)}
                 </Badge>
               </div>
@@ -146,12 +272,12 @@ const PromotionsList = () => {
         ))}
       </div>
       
-      {filteredPromotions.length === 0 && (
+      {sortedPromotions.length === 0 && (
         <div className="text-center py-12">
           <Gift className="mx-auto h-12 w-12 text-muted-foreground opacity-30" />
           <h3 className="mt-4 text-lg font-medium">No promotions found</h3>
           <p className="text-muted-foreground">
-            {searchQuery ? 'Try a different search term' : 'Get started by creating a promotion'}
+            {searchQuery || typeFilter ? 'Try different search or filter criteria' : 'Get started by creating a promotion'}
           </p>
           <Button
             className="mt-4 bg-orange-500 hover:bg-orange-600"

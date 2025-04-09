@@ -52,7 +52,7 @@ const CampaignCard = ({
         <h3 className="font-medium line-clamp-1 text-base">{name}</h3>
         
         <div className="flex items-center mt-2 gap-1.5">
-          <StarRating value={rating} onChange={() => {}} size={16} readOnly />
+          <StarRating rating={rating} size={16} readonly />
           <span className="text-sm text-muted-foreground">({reviews})</span>
         </div>
         

@@ -6,7 +6,11 @@ import {
   Trash2, 
   Plus, 
   Search,
-  Info
+  Info,
+  SlidersHorizontal,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -29,7 +33,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 // Mock data
 const MOCK_PRODUCTS = [
@@ -80,18 +93,57 @@ const MOCK_PRODUCTS = [
   },
 ];
 
+type SortField = 'name' | 'asin' | 'category' | 'dateAdded';
+type SortOrder = 'asc' | 'desc';
+
 const ProductsList = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState(MOCK_PRODUCTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('dateAdded');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   
-  // Filter products based on search term
-  const filteredProducts = products.filter(product => 
-    product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    product.asin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Get unique categories for filter
+  const categories = [...new Set(products.map(product => product.category))];
+  
+  // Filter products based on search term and category
+  const filteredProducts = products.filter(product => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      product.asin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.category.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesCategory = categoryFilter === null || product.category === categoryFilter;
+    
+    return matchesSearch && matchesCategory;
+  });
+  
+  // Sort products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    let comparison = 0;
+    
+    if (sortField === 'name') {
+      comparison = a.name.localeCompare(b.name);
+    } else if (sortField === 'asin') {
+      comparison = a.asin.localeCompare(b.asin);
+    } else if (sortField === 'category') {
+      comparison = a.category.localeCompare(b.category);
+    } else if (sortField === 'dateAdded') {
+      comparison = new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
   
   const handleDeleteProduct = () => {
     if (productToDelete) {
@@ -106,8 +158,11 @@ const ProductsList = () => {
   
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-semibold">Products</h1>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold">Products</h1>
+          <p className="text-muted-foreground">Manage your product catalog</p>
+        </div>
         <Button 
           className="bg-orange-500 hover:bg-orange-600"
           onClick={() => navigate('/vendor-dashboard/products/new')}
@@ -117,27 +172,48 @@ const ProductsList = () => {
         </Button>
       </div>
       
-      <div className="flex justify-between items-center">
-        <div className="relative w-full max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search products..."
-            className="pl-8 w-full max-w-sm"
+            className="pl-9"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              {categoryFilter ? `Category: ${categoryFilter}` : "Filter by Category"}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setCategoryFilter(null)}>
+              All Categories
+            </DropdownMenuItem>
+            {categories.map((category) => (
+              <DropdownMenuItem key={category} onClick={() => setCategoryFilter(category)}>
+                {category}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
-      {filteredProducts.length === 0 ? (
+      {sortedProducts.length === 0 ? (
         <div className="text-center py-10 border rounded-lg">
           <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
           <h3 className="mt-4 text-lg font-medium">No products found</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            {searchTerm ? "Try a different search term" : "Add a product to get started"}
+            {searchTerm || categoryFilter ? "Try a different search term or filter" : "Add a product to get started"}
           </p>
-          {!searchTerm && (
+          {!searchTerm && !categoryFilter && (
             <Button 
               variant="outline" 
               className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
@@ -154,15 +230,39 @@ const ProductsList = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
-                <TableHead>ASIN</TableHead>
-                <TableHead>Category</TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('asin')}>
+                  <div className="flex items-center">
+                    ASIN
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    {sortField === 'asin' && (
+                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </div>
+                </TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('category')}>
+                  <div className="flex items-center">
+                    Category
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    {sortField === 'category' && (
+                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Date Added</TableHead>
+                <TableHead className="cursor-pointer" onClick={() => handleSort('dateAdded')}>
+                  <div className="flex items-center">
+                    Date Added
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    {sortField === 'dateAdded' && (
+                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
+                    )}
+                  </div>
+                </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredProducts.map((product) => (
+              {sortedProducts.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center">
@@ -171,11 +271,20 @@ const ProductsList = () => {
                         alt={product.name}
                         className="h-10 w-10 rounded object-cover mr-3"
                       />
-                      <span>{product.name}</span>
+                      <div>
+                        <div className="font-medium">{product.name}</div>
+                        <div className="text-xs text-muted-foreground hidden sm:block">
+                          {product.asin}
+                        </div>
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell>{product.asin}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell className="hidden md:table-cell">{product.asin}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="font-normal">
+                      {product.category}
+                    </Badge>
+                  </TableCell>
                   <TableCell>{product.price}</TableCell>
                   <TableCell>{product.dateAdded}</TableCell>
                   <TableCell className="text-right">

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -10,7 +11,11 @@ import {
   CheckCircle,
   XCircle,
   Filter,
-  SlidersHorizontal
+  SlidersHorizontal,
+  ArrowUpDown,
+  ChevronUp,
+  ChevronDown,
+  Download
 } from 'lucide-react';
 import { Campaign } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -39,15 +44,30 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { QRCode } from '@/components/ui/QRCode';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface CampaignsListProps {
   campaigns: Campaign[];
 }
 
+type SortField = 'name' | 'status' | 'reviews' | 'lastUpdated';
+type SortOrder = 'asc' | 'desc';
+
 const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('lastUpdated');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [selectedQrCode, setSelectedQrCode] = useState<{ url: string, name: string } | null>(null);
+  const [qrDialogOpen, setQrDialogOpen] = useState(false);
   
   const extendedCampaigns = campaigns.map(campaign => ({
     ...campaign,
@@ -62,6 +82,7 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
     reviews: Math.floor(Math.random() * 200) + 10,
   }));
   
+  // Filter campaigns
   const filteredCampaigns = extendedCampaigns.filter(campaign => {
     const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       campaign.code.toLowerCase().includes(searchQuery.toLowerCase());
@@ -71,12 +92,46 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
     return matchesSearch && matchesStatus;
   });
   
+  // Sort campaigns
+  const sortedCampaigns = [...filteredCampaigns].sort((a, b) => {
+    let comparison = 0;
+    
+    if (sortField === 'name') {
+      comparison = a.name.localeCompare(b.name);
+    } else if (sortField === 'status') {
+      comparison = a.status.localeCompare(b.status);
+    } else if (sortField === 'reviews') {
+      comparison = a.reviews - b.reviews;
+    } else if (sortField === 'lastUpdated') {
+      comparison = new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
+    }
+    
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+  
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('asc');
+    }
+  };
+  
   const handleCopyUrl = (url: string) => {
     navigator.clipboard.writeText(url);
     toast({
       title: "URL Copied",
       description: "Campaign URL has been copied to clipboard",
     });
+  };
+  
+  const showQrCode = (campaign: any) => {
+    setSelectedQrCode({
+      url: campaign.url,
+      name: campaign.name
+    });
+    setQrDialogOpen(true);
   };
   
   const formatDate = (dateString: string) => {
@@ -106,7 +161,7 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
         </Button>
       </div>
       
-      <div className="flex flex-wrap gap-4 items-center">
+      <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -117,34 +172,81 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
           />
         </div>
         
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <Filter className="h-4 w-4" />
-              {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Filter Status</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setStatusFilter(null)}>
-              All Statuses
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('active')}>
-              Active
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter('paused')}>
-              Paused
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Filter className="h-4 w-4" />
+                {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Filter Status</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+                All Statuses
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('active')}>
+                Active
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter('paused')}>
+                Paused
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <ArrowUpDown className="h-4 w-4" />
+                Sort
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleSort('name')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Campaign Name</span>
+                  {sortField === 'name' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('status')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Status</span>
+                  {sortField === 'status' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('reviews')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Reviews</span>
+                  {sortField === 'reviews' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSort('lastUpdated')}>
+                <div className="flex items-center justify-between w-full">
+                  <span>Last Updated</span>
+                  {sortField === 'lastUpdated' && (
+                    sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                  )}
+                </div>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Campaign</TableHead>
+              <TableHead className="min-w-[200px]">Campaign</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="hidden md:table-cell">Products</TableHead>
               <TableHead className="hidden lg:table-cell">Promotion</TableHead>
@@ -154,7 +256,7 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredCampaigns.map((campaign) => (
+            {sortedCampaigns.map((campaign) => (
               <TableRow key={campaign.id}>
                 <TableCell className="font-medium">
                   <div>
@@ -194,6 +296,24 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex items-center justify-end gap-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => showQrCode(campaign)}
+                          >
+                            <QrCode className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>View QR Code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -252,7 +372,7 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
               </TableRow>
             ))}
             
-            {filteredCampaigns.length === 0 && (
+            {sortedCampaigns.length === 0 && (
               <TableRow>
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
@@ -279,6 +399,64 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
           </TableBody>
         </Table>
       </div>
+      
+      <Dialog open={qrDialogOpen} onOpenChange={setQrDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center">{selectedQrCode?.name} QR Code</DialogTitle>
+          </DialogHeader>
+          
+          {selectedQrCode && (
+            <div className="flex flex-col items-center justify-center p-4">
+              <QRCode
+                url={selectedQrCode.url}
+                size={280}
+                title={`${selectedQrCode.name} Campaign QR Code`}
+                showDialog={false}
+              />
+              
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Scan this code to access the review funnel for <strong>{selectedQrCode.name}</strong>
+              </p>
+              
+              <div className="flex gap-2 mt-6">
+                <Button 
+                  variant="outline"
+                  onClick={() => {
+                    const canvas = document.getElementById("qr-canvas") as HTMLCanvasElement;
+                    if (canvas) {
+                      const link = document.createElement("a");
+                      link.download = `${selectedQrCode.name.replace(/\s+/g, '-').toLowerCase()}-qr-code.png`;
+                      link.href = canvas.toDataURL("image/png");
+                      link.click();
+                      
+                      toast({
+                        title: "QR Code downloaded",
+                        description: "The QR code has been saved to your device.",
+                      });
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Download
+                </Button>
+                
+                <Button 
+                  onClick={() => {
+                    window.open(selectedQrCode.url, '_blank');
+                    setQrDialogOpen(false);
+                  }}
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Open URL
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
