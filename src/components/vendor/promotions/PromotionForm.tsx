@@ -6,7 +6,7 @@ import {
   Upload, 
   Image as ImageIcon, 
   X, 
-  GiftCard, 
+  CreditCard, 
   Tag, 
   Gift, 
   Download 
@@ -72,7 +72,7 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 const PromotionTypeIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'Gift Card or eGift Card':
-      return <GiftCard className="h-5 w-5" />;
+      return <CreditCard className="h-5 w-5" />;
     case 'Discount Code, Promo Code or Virtual Gift Card':
       return <Tag className="h-5 w-5" />;
     case 'Free Product':

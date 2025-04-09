@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Gift, GiftCard, Tag, Download, Edit, Plus, Search } from 'lucide-react';
+import { Gift, CreditCard, Tag, Download, Edit, Plus, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -46,7 +46,7 @@ const MOCK_PROMOTIONS = [
 const PromotionTypeIcon = ({ type }: { type: string }) => {
   switch (type) {
     case 'Gift Card or eGift Card':
-      return <GiftCard className="h-5 w-5 text-orange-500" />;
+      return <CreditCard className="h-5 w-5 text-orange-500" />;
     case 'Discount Code, Promo Code or Virtual Gift Card':
       return <Tag className="h-5 w-5 text-emerald-500" />;
     case 'Free Product':

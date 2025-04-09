@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -50,7 +49,6 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   
-  // Extended mock data with more details
   const extendedCampaigns = campaigns.map(campaign => ({
     ...campaign,
     products: ['Kitchen Knife Set', 'Coffee Maker'],
@@ -167,7 +165,7 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={campaign.status === 'active' ? "success" : "secondary"} className="capitalize">
+                  <Badge variant={campaign.status === 'active' ? "default" : "secondary"} className="capitalize">
                     {campaign.status === 'active' ? (
                       <CheckCircle className="mr-1 h-3 w-3" />
                     ) : (
