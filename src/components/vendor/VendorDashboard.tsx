@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -60,16 +59,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
         </button>
       )}
       
-      <div className="flex flex-col h-full py-6">
-        <div className="px-6 mb-8">
-          <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
-            ReviewBrothers
-          </h2>
-          <p className="text-xs text-muted-foreground mt-1">
-            Vendor Dashboard
-          </p>
-        </div>
-        
+      <div className="flex flex-col h-full py-6 mt-16">
         <nav className="flex-1 space-y-1 px-3">
           {menuItems.map((item, index) => (
             <Button
@@ -217,7 +207,7 @@ const VendorDashboard = () => {
           </button>
         )}
         
-        <div className="px-6 py-8 max-w-7xl mx-auto w-full">
+        <div className="px-6 py-8 max-w-7xl mx-auto w-full mt-16">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/analytics" element={<AnalyticsPanel />} />

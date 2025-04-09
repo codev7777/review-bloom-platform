@@ -15,12 +15,14 @@ const VendorNavbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="flex items-center justify-between w-full bg-white border-b border-border h-16 px-6">
+    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full bg-white border-b border-border h-16 px-6">
       <div>
         <Link to="/vendor-dashboard" className="flex items-center">
-          <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
-            ReviewBrothers
-          </h2>
+          <img
+            src="/images/logo/logo.png"
+            alt="ReviewBrothers Logo"
+            style={{ height: "40px" }}
+          />
         </Link>
       </div>
 

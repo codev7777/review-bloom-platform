@@ -3,21 +3,32 @@ import { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 
 interface StarRatingProps {
-  onChange: (rating: number) => void;
+  onChange?: (rating: number) => void;
   initialValue?: number;
+  size?: number;
+  readonly?: boolean;
+  rating?: number;
 }
 
-const StarRating = ({ onChange, initialValue = 0 }: StarRatingProps) => {
-  const [rating, setRating] = useState(initialValue);
+const StarRating = ({ onChange, initialValue = 0, size = 24, readonly = false, rating }: StarRatingProps) => {
+  const [internalRating, setInternalRating] = useState(initialValue);
   const [hover, setHover] = useState(0);
 
+  // Use the rating prop if provided, otherwise use internal state
+  const displayRating = rating !== undefined ? rating : internalRating;
+
   useEffect(() => {
-    setRating(initialValue);
+    if (initialValue !== undefined) {
+      setInternalRating(initialValue);
+    }
   }, [initialValue]);
 
   const handleClick = (value: number) => {
-    setRating(value);
-    onChange(value);
+    if (readonly) return;
+    setInternalRating(value);
+    if (onChange) {
+      onChange(value);
+    }
   };
 
   return (
@@ -25,13 +36,14 @@ const StarRating = ({ onChange, initialValue = 0 }: StarRatingProps) => {
       {[1, 2, 3, 4, 5].map((value) => (
         <Star
           key={value}
-          className={`w-8 h-8 cursor-pointer transition-colors ${
-            value <= (hover || rating)
+          className={`cursor-${readonly ? 'default' : 'pointer'} transition-colors ${
+            value <= (hover || displayRating)
               ? "text-[#FF9900] fill-[#FF9900]"
               : "text-gray-300"
           }`}
-          onMouseEnter={() => setHover(value)}
-          onMouseLeave={() => setHover(0)}
+          size={size}
+          onMouseEnter={() => !readonly && setHover(value)}
+          onMouseLeave={() => !readonly && setHover(0)}
           onClick={() => handleClick(value)}
         />
       ))}

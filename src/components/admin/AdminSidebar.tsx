@@ -56,27 +56,11 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
   return (
     <div
       className={cn(
-        "bg-[#232F3E] border-r border-sidebar-border fixed inset-y-0 z-40 flex flex-col transition-all duration-300 lg:relative lg:left-0",
+        "bg-[#232F3E] border-r border-sidebar-border fixed inset-y-0 z-40 flex flex-col transition-all duration-300 lg:relative lg:left-0 pt-16",
         open ? "left-0" : "-left-full lg:w-20"
       )}
     >
       <div className="sticky top-0 z-10 flex h-16 items-center justify-between bg-[#232F3E] px-4">
-        <Link to="/admin-dashboard" className="flex items-center gap-2">
-          {open ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#FF9900] to-orange-400">
-                ReviewBrothers
-              </span>
-              <span className="text-sm text-white/80 font-medium px-2 py-0.5 rounded-md bg-[#FF9900]/10">
-                Admin
-              </span>
-            </div>
-          ) : (
-            <div className="w-8 h-8 flex items-center justify-center rounded-md bg-[#FF9900]/10">
-              <span className="text-[#FF9900] font-bold">A</span>
-            </div>
-          )}
-        </Link>
         <Button
           variant="ghost"
           size="icon"

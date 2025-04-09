@@ -39,7 +39,7 @@ const AdminHeader = ({ sidebarOpen, onSidebarOpenChange }: AdminHeaderProps) => 
   }, [location]);
 
   return (
-    <header className="flex h-16 items-center gap-4 border-b bg-white px-4 sm:px-6">
+    <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center gap-4 border-b bg-white px-4 sm:px-6">
       <Button
         variant="ghost"
         size="icon"
