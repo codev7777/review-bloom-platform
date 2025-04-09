@@ -7,11 +7,11 @@ import {
   BarChart4, 
   ShoppingBag, 
   QrCode, 
-  Settings as SettingsIcon, 
-  LogOut,
+  Settings as SettingsIcon,
   Menu,
   X,
-  Plus
+  Plus,
+  Gift
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
@@ -24,17 +24,20 @@ import CampaignsList from "./campaigns/CampaignsList";
 import CampaignForm from "./campaigns/CampaignForm";
 import AnalyticsPanel from "./analytics/AnalyticsPanel";
 import SettingsPanel from "./settings/SettingsPanel";
+import VendorNavbar from "./VendorNavbar";
+import PromotionsList from "./promotions/PromotionsList";
+import PromotionForm from "./promotions/PromotionForm";
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { logout, user } = useAuth();
   
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: "Dashboard", path: "/vendor-dashboard" },
     { icon: <BarChart4 size={20} />, label: "Analytics", path: "/vendor-dashboard/analytics" },
     { icon: <ShoppingBag size={20} />, label: "Products", path: "/vendor-dashboard/products" },
     { icon: <QrCode size={20} />, label: "Campaigns", path: "/vendor-dashboard/campaigns" },
+    { icon: <Gift size={20} />, label: "Promotions", path: "/vendor-dashboard/promotions" },
     { icon: <SettingsIcon size={20} />, label: "Settings", path: "/vendor-dashboard/settings" },
   ];
 
@@ -62,11 +65,9 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-600">
             ReviewBrothers
           </h2>
-          {user && (
-            <p className="text-xs text-muted-foreground mt-1">
-              {user.name} | {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Vendor Dashboard
+          </p>
         </div>
         
         <nav className="flex-1 space-y-1 px-3">
@@ -85,17 +86,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             </Button>
           ))}
         </nav>
-        
-        <div className="px-3 mt-auto">
-          <Button
-            variant="outline"
-            className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={() => logout()}
-          >
-            <LogOut size={20} className="mr-3" />
-            Logout
-          </Button>
-        </div>
       </div>
     </aside>
   );
@@ -215,7 +205,9 @@ const VendorDashboard = () => {
     <div className="flex h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
       
-      <main className="flex-1 overflow-y-auto bg-gray-50">
+      <main className="flex-1 overflow-y-auto bg-gray-50 flex flex-col">
+        <VendorNavbar />
+        
         {isMobile && (
           <button
             onClick={toggleSidebar}
@@ -225,7 +217,7 @@ const VendorDashboard = () => {
           </button>
         )}
         
-        <div className="px-6 py-8 max-w-7xl mx-auto">
+        <div className="px-6 py-8 max-w-7xl mx-auto w-full">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/analytics" element={<AnalyticsPanel />} />
@@ -235,6 +227,9 @@ const VendorDashboard = () => {
             <Route path="/campaigns" element={<CampaignsList campaigns={mockCampaigns} />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
+            <Route path="/promotions" element={<PromotionsList />} />
+            <Route path="/promotions/new" element={<PromotionForm />} />
+            <Route path="/promotions/edit/:id" element={<PromotionForm />} />
             <Route path="/settings" element={<SettingsPanel />} />
           </Routes>
         </div>

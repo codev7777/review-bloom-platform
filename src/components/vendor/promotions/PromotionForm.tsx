@@ -1,9 +1,20 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { 
+  AlertCircle, 
+  Upload, 
+  Image as ImageIcon, 
+  X, 
+  GiftCard, 
+  Tag, 
+  Gift, 
+  Download 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Select,
   SelectContent,
@@ -11,40 +22,69 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { 
+  RadioGroup,
+  RadioGroupItem
+} from '@/components/ui/radio-group';
 import { toast } from '@/components/ui/use-toast';
-import { AlertCircle, Upload, Image, X } from 'lucide-react';
-import axios from 'axios';
 
-const MOCK_PRODUCTS = [
-  { 
-    id: '1', 
-    name: 'Kitchen Knife Set', 
-    asin: 'B08N5LNQCV', 
-    category: 'Kitchen', 
-    image: 'https://placehold.co/300x300/FFF5E8/FF9130?text=Knife+Set',
+// Mock promotions for edit mode
+const MOCK_PROMOTIONS = [
+  {
+    id: '1',
+    name: 'Summer Gift Card',
+    type: 'Gift Card or eGift Card',
+    description: 'A $10 Amazon Gift Card for summer purchases',
+    image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Gift+Card',
   },
-  { 
-    id: '2', 
-    name: 'Yoga Mat', 
-    asin: 'B07D9YYQ8V', 
-    category: 'Fitness', 
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat',
+  {
+    id: '2',
+    name: 'Holiday Discount',
+    type: 'Discount Code, Promo Code or Virtual Gift Card',
+    description: '15% off discount code for holiday shopping',
+    image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Discount',
   },
-  { 
-    id: '3', 
-    name: 'Bluetooth Headphones', 
-    asin: 'B07Q5NDZBD', 
-    category: 'Electronics', 
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones',
-  }
+  {
+    id: '3',
+    name: 'Product Giveaway',
+    type: 'Free Product',
+    description: 'Free kitchen gadget for selected customers',
+    image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Free+Product',
+  },
+  {
+    id: '4',
+    name: 'Cookbook PDF',
+    type: 'Digital Download',
+    description: 'Exclusive cookbook PDF with recipes',
+    image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Digital+Download',
+  },
 ];
 
-const CATEGORIES = ['Electronics', 'Kitchen', 'Fitness', 'Home & Garden', 'Beauty', 'Toys', 'Clothing', 'Books', 'Other'];
+const PROMOTION_TYPES = [
+  'Gift Card or eGift Card',
+  'Discount Code, Promo Code or Virtual Gift Card',
+  'Free Product',
+  'Digital Download'
+];
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
-const BACKEND_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:3000';
 
-const ProductForm = () => {
+const PromotionTypeIcon = ({ type }: { type: string }) => {
+  switch (type) {
+    case 'Gift Card or eGift Card':
+      return <GiftCard className="h-5 w-5" />;
+    case 'Discount Code, Promo Code or Virtual Gift Card':
+      return <Tag className="h-5 w-5" />;
+    case 'Free Product':
+      return <Gift className="h-5 w-5" />;
+    case 'Digital Download':
+      return <Download className="h-5 w-5" />;
+    default:
+      return <Gift className="h-5 w-5" />;
+  }
+};
+
+const PromotionForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
@@ -52,9 +92,9 @@ const ProductForm = () => {
   
   const [formData, setFormData] = useState({
     name: '',
-    asin: '',
-    category: '',
-    image: 'https://placehold.co/300x300/FFF5E8/FF9130?text=Product+Image'
+    type: '',
+    description: '',
+    image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Promotion'
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -64,20 +104,20 @@ const ProductForm = () => {
   
   useEffect(() => {
     if (isEditMode) {
-      const product = MOCK_PRODUCTS.find(p => p.id === id);
-      if (product) {
+      const promotion = MOCK_PROMOTIONS.find(p => p.id === id);
+      if (promotion) {
         setFormData({
-          name: product.name,
-          asin: product.asin,
-          category: product.category,
-          image: product.image
+          name: promotion.name,
+          type: promotion.type,
+          description: promotion.description,
+          image: promotion.image
         });
-        setPreviewImage(product.image);
+        setPreviewImage(promotion.image);
       }
     }
   }, [id, isEditMode]);
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
@@ -153,7 +193,7 @@ const ProductForm = () => {
     setPreviewImage(null);
     setFormData(prev => ({ 
       ...prev, 
-      image: 'https://placehold.co/300x300/FFF5E8/FF9130?text=Product+Image' 
+      image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Promotion' 
     }));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -165,24 +205,23 @@ const ProductForm = () => {
     setIsLoading(true);
     
     try {
-      // Submit to backend API
-      await axios.post(`${BACKEND_URL}/v1/product/`, formData);
+      // In a real app, you would submit to an API here
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast({
-        title: isEditMode ? "Product updated" : "Product added",
+        title: isEditMode ? "Promotion updated" : "Promotion created",
         description: isEditMode 
-          ? "Your product has been updated successfully" 
-          : "Your product has been added to your catalog",
+          ? "Your promotion has been updated successfully" 
+          : "Your promotion has been created successfully",
         variant: "default",
       });
       
-      navigate('/vendor-dashboard/products');
+      navigate('/vendor-dashboard/promotions');
     } catch (error) {
-      console.error('Error submitting product:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "There was an error saving the product",
+        description: "There was an error saving the promotion",
       });
     } finally {
       setIsLoading(false);
@@ -190,13 +229,13 @@ const ProductForm = () => {
   };
   
   return (
-    <div className="space-y-6 animate-in fade-in-50 duration-500">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">{isEditMode ? 'Edit Product' : 'Add New Product'}</h1>
+        <h1 className="text-2xl font-semibold">{isEditMode ? 'Edit Promotion' : 'Create Promotion'}</h1>
         <p className="text-muted-foreground">
           {isEditMode 
-            ? 'Update your product information' 
-            : 'Add a new product to your catalog'}
+            ? 'Update your promotion details' 
+            : 'Create a new promotion for your review campaigns'}
         </p>
       </div>
       
@@ -204,57 +243,58 @@ const ProductForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Product Name</Label>
+              <Label htmlFor="name">Promotion Name</Label>
               <Input 
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g. Premium Kitchen Knife Set"
+                placeholder="e.g. Summer Gift Card"
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="asin">Amazon ASIN</Label>
-              <Input 
-                id="asin"
-                name="asin"
-                value={formData.asin}
-                onChange={handleChange}
-                placeholder="e.g. B08N5LNQCV"
-                required
-                className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
-              />
-              <p className="text-xs text-muted-foreground">
-                The unique Amazon Standard Identification Number for your product
-              </p>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Select 
-                value={formData.category} 
-                onValueChange={(value) => handleSelectChange('category', value)}
+              <Label htmlFor="type">Promotion Type</Label>
+              <RadioGroup
+                value={formData.type}
+                onValueChange={(value) => handleSelectChange('type', value)}
+                className="grid gap-3"
               >
-                <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent className="animate-in zoom-in-95 duration-100">
-                  {CATEGORIES.map(category => (
-                    <SelectItem key={category} value={category}>
-                      {category}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                {PROMOTION_TYPES.map((type) => (
+                  <div key={type} className="flex items-center space-x-2 rounded-md border p-3 transition-colors hover:bg-muted">
+                    <RadioGroupItem value={type} id={type.replace(/\s+/g, '-').toLowerCase()} />
+                    <Label
+                      htmlFor={type.replace(/\s+/g, '-').toLowerCase()}
+                      className="flex flex-1 items-center gap-2 font-normal"
+                    >
+                      <PromotionTypeIcon type={type} />
+                      {type}
+                    </Label>
+                  </div>
+                ))}
+              </RadioGroup>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea 
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe your promotion..."
+                rows={5}
+                className="resize-none transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
+                required
+              />
             </div>
           </div>
           
           <div className="space-y-6">
             <div className="space-y-2">
-              <Label>Product Image</Label>
+              <Label>Promotion Image</Label>
               <div 
                 className={`mt-2 relative border-2 border-dashed rounded-lg p-6 transition-all duration-200 
                   ${isDragging ? 'border-orange-500 bg-orange-50' : 'border-gray-300 hover:border-orange-300 hover:bg-orange-50/30'}`}
@@ -276,8 +316,8 @@ const ProductForm = () => {
                   <div className="relative">
                     <img 
                       src={previewImage}
-                      alt="Product preview"
-                      className="mx-auto h-64 w-64 object-contain rounded-lg animate-in zoom-in-95 duration-200"
+                      alt="Promotion preview"
+                      className="mx-auto h-64 w-full object-contain rounded-lg animate-in zoom-in-95 duration-200"
                     />
                     <button
                       type="button"
@@ -289,7 +329,7 @@ const ProductForm = () => {
                   </div>
                 ) : (
                   <div className="text-center space-y-4">
-                    <Image className="mx-auto h-16 w-16 text-gray-400" />
+                    <ImageIcon className="mx-auto h-16 w-16 text-gray-400" />
                     <div className="flex flex-col items-center text-sm text-muted-foreground">
                       <p>Drag and drop your image here, or</p>
                       <label
@@ -311,6 +351,30 @@ const ProductForm = () => {
                 </div>
               )}
             </div>
+
+            <div className="space-y-2 mt-4">
+              <Label>Image Guidelines</Label>
+              <div className="rounded-lg border p-4 space-y-2">
+                <div className="flex items-start space-x-2">
+                  <div className="h-5 w-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-medium text-orange-600">1</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Use high-quality images for better customer engagement</p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="h-5 w-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-medium text-orange-600">2</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Recommend 3:2 aspect ratio for optimal display</p>
+                </div>
+                <div className="flex items-start space-x-2">
+                  <div className="h-5 w-5 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-medium text-orange-600">3</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground">Maximum file size is 2MB</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         
@@ -318,7 +382,7 @@ const ProductForm = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate('/vendor-dashboard/products')}
+            onClick={() => navigate('/vendor-dashboard/promotions')}
             className="transition-all duration-200 hover:bg-gray-100"
           >
             Cancel
@@ -334,10 +398,10 @@ const ProductForm = () => {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                {isEditMode ? 'Saving...' : 'Adding...'}
+                {isEditMode ? 'Saving...' : 'Creating...'}
               </span>
             ) : (
-              isEditMode ? 'Save Changes' : 'Add Product'
+              isEditMode ? 'Save Changes' : 'Create Promotion'
             )}
           </Button>
         </div>
@@ -346,4 +410,4 @@ const ProductForm = () => {
   );
 };
 
-export default ProductForm;
+export default PromotionForm;
