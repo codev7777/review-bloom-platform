@@ -80,9 +80,9 @@ const App = () => {
                 <Route
                   path="/admin-dashboard/*"
                   element={
-                    <PrivateRoute>
-                      <AdminDashboard />
-                    </PrivateRoute>
+                    // <PrivateRoute>
+                    <AdminDashboard />
+                    // </PrivateRoute>
                   }
                 />
 
