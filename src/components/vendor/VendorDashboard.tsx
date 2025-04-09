@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
@@ -15,6 +16,8 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
 import { Campaign } from "@/types"; // Import Campaign type
+import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
+import { useToast } from "@/components/ui/use-toast";
 import CampaignCard from "./CampaignCard";
 import StatsCard from "./StatsCard";
 import ProductsList from "./products/ProductsList";
@@ -26,6 +29,31 @@ import SettingsPanel from "./settings/SettingsPanel";
 import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
+
+// Mock campaigns data with proper status types
+const mockCampaigns: Campaign[] = [
+  {
+    id: "1",
+    name: "Summer Kitchen Sale",
+    code: "KITCHEN2023",
+    url: "https://example.com/review/KITCHEN2023",
+    status: "active",
+  },
+  {
+    id: "2",
+    name: "Yoga Promotion",
+    code: "YOGA2023",
+    url: "https://example.com/review/YOGA2023",
+    status: "active",
+  },
+  {
+    id: "3",
+    name: "Tech Gadgets Campaign",
+    code: "TECH2023",
+    url: "https://example.com/review/TECH2023",
+    status: "paused",
+  }
+];
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const navigate = useNavigate();
@@ -83,6 +111,35 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const data = await getCampaigns();
+        if (data && data.length > 0) {
+          setCampaigns(data);
+        } else {
+          // Fallback to mock data if API returns empty array
+          setCampaigns(mockCampaigns);
+        }
+      } catch (error) {
+        console.error("Error fetching campaigns:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to load campaigns",
+          description: "Using sample data. Please check your backend connection.",
+        });
+        setCampaigns(mockCampaigns);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchCampaigns();
+  }, [toast]);
   
   return (
     <div className="space-y-8">
@@ -127,32 +184,27 @@ const Dashboard = () => {
       
       <div className="mt-8">
         <h2 className="text-xl font-medium mb-4">Recent Campaigns</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          <CampaignCard 
-            name="Kitchen Knife Set" 
-            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Kitchen+Set"
-            status="active"
-            reviews={156}
-            rating={4.8}
-            date="2023-05-15"
-          />
-          <CampaignCard 
-            name="Yoga Mat" 
-            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Yoga+Mat"
-            status="active"
-            reviews={98}
-            rating={4.5}
-            date="2023-06-20"
-          />
-          <CampaignCard 
-            name="Bluetooth Headphones" 
-            image="https://placehold.co/200x200/FFF5E8/FF9130?text=Headphones"
-            status="active"
-            reviews={212}
-            rating={4.7}
-            date="2023-04-10"
-          />
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
+            <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
+            <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {campaigns.slice(0, 3).map((campaign) => (
+              <CampaignCard 
+                key={campaign.id}
+                name={campaign.name}
+                image={campaign.image || `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(campaign.name)}`}
+                status={campaign.status}
+                reviews={156} // This would come from campaign data in a real implementation
+                rating={4.8} // This would come from campaign data in a real implementation
+                date={campaign.startDate?.toString() || "2023-05-15"}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -161,31 +213,44 @@ const Dashboard = () => {
 const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
+  const { toast } = useToast();
 
-  // Mock campaigns data with proper status types
-  const mockCampaigns: Campaign[] = [
-    {
-      id: "1",
-      name: "Summer Kitchen Sale",
-      code: "KITCHEN2023",
-      url: "https://example.com/review/KITCHEN2023",
-      status: "active",
-    },
-    {
-      id: "2",
-      name: "Yoga Promotion",
-      code: "YOGA2023",
-      url: "https://example.com/review/YOGA2023",
-      status: "active",
-    },
-    {
-      id: "3",
-      name: "Tech Gadgets Campaign",
-      code: "TECH2023",
-      url: "https://example.com/review/TECH2023",
-      status: "paused",
-    }
-  ];
+  // Check connectivity to backend on component mount
+  useEffect(() => {
+    const checkBackendConnection = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/v1/health");
+        if (response.ok) {
+          toast({
+            title: "Backend connection successful",
+            description: "Connected to localhost:3000 backend API",
+          });
+          
+          // If connection is successful, try to fetch campaigns
+          try {
+            const campaignsData = await getCampaigns();
+            if (campaignsData && campaignsData.length > 0) {
+              setCampaigns(campaignsData);
+            }
+          } catch (error) {
+            console.error("Error fetching initial campaigns:", error);
+          }
+        } else {
+          throw new Error("Failed to connect to backend");
+        }
+      } catch (error) {
+        console.error("Backend connection error:", error);
+        toast({
+          variant: "destructive",
+          title: "Backend connection failed",
+          description: "Using mock data. Please ensure localhost:3000 is running.",
+        });
+      }
+    };
+
+    checkBackendConnection();
+  }, [toast]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -214,7 +279,7 @@ const VendorDashboard = () => {
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
             <Route path="/products/edit/:id" element={<ProductForm />} />
-            <Route path="/campaigns" element={<CampaignsList campaigns={mockCampaigns} />} />
+            <Route path="/campaigns" element={<CampaignsList campaigns={campaigns} />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
             <Route path="/promotions" element={<PromotionsList />} />
