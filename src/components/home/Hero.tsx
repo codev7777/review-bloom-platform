@@ -5,15 +5,15 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative bg-[#232f3e]  max-w-screen">
+    <section className="relative bg-[#232f3e]  max-w-screen lg:">
       <div className="h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom  flex items-center justify-center">
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
-          className="absolute left-[18%] top-1/4 w-64 animate-floating 3xl:w-96"
+          className="absolute xl:left-[18%] top-1/4 w-64 animate-floating 3xl:w-96 left-[10%]"
         />
 
-        <div className="container px-4 xl:max-w-[1300px] xl:pl-[500px] max-w-[1200px] pl-[600px] 3xl:pb-40">
+        <div className="container px-4 xl:max-w-[1300px] xl:pl-[500px] max-w-[1200px] lg:pl-[400px] pl-[350px] 3xl:pb-40">
           <div className=" ">
             <div className="inline-block mb-6 animate-fade-in">
               <div className=" inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white 3xl:text-5xl">
@@ -35,7 +35,7 @@ const Hero = () => {
                   <div className="text-white mt-2">
                     2&nbsp;&nbsp;&nbsp;Collect Emails
                   </div>
-                  <div className="text-white mt-2">
+                  <div className="text-white mt-4">
                     3&nbsp;&nbsp;&nbsp;Drive Sales
                   </div>
                   <div className="text-xl text-white mt-8 ml-12 3xl:text-3xl">
@@ -61,17 +61,6 @@ const Hero = () => {
 
       {/* Moving Wave Effect */}
       <div className="absolute bottom-[0px] left-0 w-full overflow-hidden leading-none">
-        {/* <svg
-          className="animate-wave w-[200%] h-20 md:h-24 lg:h-32"
-          viewBox="0 0 1490 100"
-          preserveAspectRatio="none"
-        >
-          <path
-            d="M0,50 C150,100 350,0 500,50 C650,100 850,0 1000,50 C1150,100 1300,0 1500,50 L1500,100 L0,100 Z"
-            fill="#c2dcfd"
-          />
-        </svg> */}
-
         <svg
           className="hero-waves "
           xmlns="http://www.w3.org/2000/svg"

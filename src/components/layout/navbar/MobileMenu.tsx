@@ -26,7 +26,7 @@ const MobileMenu = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 top-[72px] z-40 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg animate-in fade-in-0 duration-200">
+    <div className="fixed inset-0 top-[72px] relative z-40  animate-in fade-in-0 duration-200">
       <div className="container px-4 py-6 overflow-y-auto max-h-[calc(100vh-72px)]">
         <nav className="flex flex-col space-y-4">
           {/* Features */}
