@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import FloatingStar from "../ui/floatingStar";
+import FloatingRocket from "../ui/floatingRocket";
 const RandomStars = ({ count = 8 }) => {
   const stars = Array.from({ length: count }, (_, i) => {
     const size = Math.floor(Math.random() * 10) + 12; // 12 to 22 px
@@ -17,6 +19,50 @@ const RandomStars = ({ count = 8 }) => {
   });
 
   return <>{stars}</>;
+};
+
+const RandomRockets = ({ count }) => {
+  const [rockets, setRockets] = useState([]);
+
+  // Random position generator function
+  const generateRocketPositions = () => {
+    return Array.from({ length: count }, (_, i) => {
+      const size = Math.floor(Math.random() * 20) + 30; // 40px to 90px size
+      const top = Math.random() * 90 + "%"; // 0-90% from top
+      const left = Math.random() * 90 + "%"; // 0-90% from left
+      const delay = Math.random() * 5; // 0 to 5 seconds delay
+      const imgSrc = `/images/landing/rocket-${
+        Math.floor(Math.random() * 4) + 1
+      }.png`;
+
+      return {
+        id: i,
+        size,
+        delay,
+        style: { top, left },
+        imgSrc,
+      };
+    });
+  };
+
+  // On component mount and every render, generate rocket positions
+  useEffect(() => {
+    setRockets(generateRocketPositions());
+  }, [count]); // Re-run when `count` changes
+
+  return (
+    <>
+      {rockets.map((rocket) => (
+        <FloatingRocket
+          key={rocket.id}
+          size={rocket.size}
+          delay={rocket.delay}
+          style={rocket.style}
+          imgSrc={rocket.imgSrc}
+        />
+      ))}
+    </>
+  );
 };
 
 const PricingTier = ({
@@ -48,12 +94,13 @@ const PricingTier = ({
         className={`w-[500px] lg:w-[320px] xl:w-[400px] relative flex flex-col rounded-xl shadow-xl transition-all duration-300 hover:shadow-custom border-2 bg-white mb-20 pb-8`}
       >
         <RandomStars count={50} />
+        <RandomRockets count={3} />
         {isPopular && (
           <motion.div
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-3 xl:left-[115px] transform -translate-x-1/2 left-[155px] lg:left-[75px] z-10   z-20"
+            className="absolute -top-5 xl:left-[115px] transform -translate-x-1/2 left-[155px] lg:left-[75px] z-50"
           >
             <div className="relative bg-[#ff0000] text-white text-xl font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
               Most Popular
@@ -62,7 +109,7 @@ const PricingTier = ({
           </motion.div>
         )}
         <div className="bg-[#2e3a48] h-[100px] mx-auto w-full p-8 rounded-t-xl">
-          <h3 className="text-5xl font-semibold mt-0 mb-0 text-center text-white  z-10 bg-[#2e3a48]">
+          <h3 className="text-4xl font-semibold mt-0 mb-0 text-center text-white  z-10 bg-[#2e3a48]">
             {title}
           </h3>
         </div>
@@ -119,16 +166,21 @@ const PricingTier = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="mb-10 mt-10"
+          className="mb-10 mt-10 z-50"
         >
+          {/* <img
+            src="images/landing/rocket.png"
+            className="absolute -bottom-0 right-0 w-80 h-80 z-40"
+            alt="rocket"
+          /> */}
           <Button
-            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-10 py-5 xl:text-2xl text-2xl lg:text-xl z-10`}
+            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-10 py-5 xl:text-2xl text-2xl lg:text-xl z-50`}
             asChild
           >
             <Link to="/auth/signup">Get Started for Free</Link>
           </Button>
         </motion.div>
-        <span className="text-[#2e3a48]">* No credit card required</span>
+        <span className="text-[#2e3a48] z-50">* No credit card required</span>
       </motion.div>
     </div>
   );

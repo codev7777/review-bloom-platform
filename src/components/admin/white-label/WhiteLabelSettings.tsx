@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +19,7 @@ const WhiteLabelSettings = () => {
     logoUrl: "https://placehold.co/200x80/FF9900/FFFFFF?text=ReviewBrothers",
     primaryColor: "#FF9900",
     secondaryColor: "#232F3E",
-    emailFooter: "© 2023 ReviewBrothers. All rights reserved.",
+    emailFooter: "© 2025 ReviewBrothers. All rights reserved.",
     supportEmail: "support@ReviewBrothers.com",
     customCss: "",
   });
@@ -62,7 +61,7 @@ const WhiteLabelSettings = () => {
           <TabsTrigger value="emails">Email Templates</TabsTrigger>
           <TabsTrigger value="dashboard">Dashboard Customization</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="branding" className="space-y-6">
           <Card>
             <CardHeader>
@@ -82,7 +81,7 @@ const WhiteLabelSettings = () => {
                     onChange={handleInputChange}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="supportEmail">Support Email</Label>
                   <Input
@@ -94,7 +93,7 @@ const WhiteLabelSettings = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Logo</Label>
                 <div className="border rounded-md p-4 flex flex-col items-center space-y-4">
@@ -114,7 +113,8 @@ const WhiteLabelSettings = () => {
                         onChange={() => {
                           toast({
                             title: "Upload functionality",
-                            description: "This would open a file picker in a real app",
+                            description:
+                              "This would open a file picker in a real app",
                           });
                         }}
                       />
@@ -128,7 +128,7 @@ const WhiteLabelSettings = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="primaryColor">Primary Color</Label>
@@ -148,7 +148,7 @@ const WhiteLabelSettings = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="secondaryColor">Secondary Color</Label>
                   <div className="flex items-center space-x-2">
@@ -171,7 +171,7 @@ const WhiteLabelSettings = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="emails" className="space-y-6">
           <Card>
             <CardHeader>
@@ -190,22 +190,25 @@ const WhiteLabelSettings = () => {
                   onChange={handleInputChange}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label>Email Templates</Label>
                 <div className="border rounded-md divide-y">
                   <div className="p-4 flex items-center justify-between">
                     <div>
                       <h4 className="font-medium">Welcome Email</h4>
-                      <p className="text-sm text-gray-500">Sent when a vendor creates an account</p>
+                      <p className="text-sm text-gray-500">
+                        Sent when a vendor creates an account
+                      </p>
                     </div>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         toast({
                           title: "Edit template",
-                          description: "This would open the email template editor in a real app",
+                          description:
+                            "This would open the email template editor in a real app",
                         });
                       }}
                     >
@@ -215,15 +218,18 @@ const WhiteLabelSettings = () => {
                   <div className="p-4 flex items-center justify-between">
                     <div>
                       <h4 className="font-medium">Review Confirmation</h4>
-                      <p className="text-sm text-gray-500">Sent when a customer submits a review</p>
+                      <p className="text-sm text-gray-500">
+                        Sent when a customer submits a review
+                      </p>
                     </div>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         toast({
                           title: "Edit template",
-                          description: "This would open the email template editor in a real app",
+                          description:
+                            "This would open the email template editor in a real app",
                         });
                       }}
                     >
@@ -233,15 +239,18 @@ const WhiteLabelSettings = () => {
                   <div className="p-4 flex items-center justify-between">
                     <div>
                       <h4 className="font-medium">Review Report</h4>
-                      <p className="text-sm text-gray-500">Weekly review summary sent to vendors</p>
+                      <p className="text-sm text-gray-500">
+                        Weekly review summary sent to vendors
+                      </p>
                     </div>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         toast({
                           title: "Edit template",
-                          description: "This would open the email template editor in a real app",
+                          description:
+                            "This would open the email template editor in a real app",
                         });
                       }}
                     >
@@ -253,7 +262,7 @@ const WhiteLabelSettings = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="dashboard" className="space-y-6">
           <Card>
             <CardHeader>
@@ -275,10 +284,11 @@ const WhiteLabelSettings = () => {
                   onChange={handleInputChange}
                 ></textarea>
                 <p className="text-xs text-gray-500">
-                  Add custom CSS to further customize the vendor dashboard appearance.
+                  Add custom CSS to further customize the vendor dashboard
+                  appearance.
                 </p>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <div className="space-y-2">
                   <Label>Dashboard Preview</Label>
@@ -286,13 +296,14 @@ const WhiteLabelSettings = () => {
                     See how your customizations will appear to vendors
                   </p>
                 </div>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="flex items-center"
                   onClick={() => {
                     toast({
                       title: "Preview functionality",
-                      description: "This would open a dashboard preview in a real app",
+                      description:
+                        "This would open a dashboard preview in a real app",
                     });
                   }}
                 >
@@ -300,12 +311,12 @@ const WhiteLabelSettings = () => {
                   Preview Dashboard
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="mr-2"
                       checked
                       onChange={() => {}}
@@ -316,11 +327,11 @@ const WhiteLabelSettings = () => {
                     Display "Powered by ReviewBrothers" in the footer
                   </p>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="mr-2"
                       checked
                       onChange={() => {}}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
@@ -38,13 +37,13 @@ const Navbar = () => {
 
   return (
     <header
-      className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={` w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "py-3 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
           : "py-5 bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
-      <div className="container px-4 mx-auto flex items-center justify-between max-w-[1920px] 2xl:max-w-[2560px] 3xl:max-w-[3200px]">
+      <div className="container px-4 mx-auto flex items-center justify-between max-w-[1920px] 2xl:max-w-[2560px] 3xl:max-w-[3200px] 3xl:h-[100px]">
         {/* Logo */}
         <Logo />
         <div className="flex-grow hidden md:block">

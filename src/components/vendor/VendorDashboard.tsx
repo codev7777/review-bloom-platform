@@ -1,17 +1,16 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  BarChart4, 
-  ShoppingBag, 
-  QrCode, 
+import {
+  LayoutDashboard,
+  BarChart4,
+  ShoppingBag,
+  QrCode,
   Settings as SettingsIcon,
   Menu,
   X,
   Plus,
-  Gift
+  Gift,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
@@ -52,20 +51,50 @@ const mockCampaigns: Campaign[] = [
     code: "TECH2023",
     url: "https://example.com/review/TECH2023",
     status: "paused",
-  }
+  },
 ];
 
-const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
+const Sidebar = ({
+  isOpen,
+  toggleSidebar,
+}: {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  
+
   const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: "Dashboard", path: "/vendor-dashboard" },
-    { icon: <BarChart4 size={20} />, label: "Analytics", path: "/vendor-dashboard/analytics" },
-    { icon: <ShoppingBag size={20} />, label: "Products", path: "/vendor-dashboard/products" },
-    { icon: <QrCode size={20} />, label: "Campaigns", path: "/vendor-dashboard/campaigns" },
-    { icon: <Gift size={20} />, label: "Promotions", path: "/vendor-dashboard/promotions" },
-    { icon: <SettingsIcon size={20} />, label: "Settings", path: "/vendor-dashboard/settings" },
+    {
+      icon: <LayoutDashboard size={20} />,
+      label: "Dashboard",
+      path: "/vendor-dashboard",
+    },
+    {
+      icon: <BarChart4 size={20} />,
+      label: "Analytics",
+      path: "/vendor-dashboard/analytics",
+    },
+    {
+      icon: <ShoppingBag size={20} />,
+      label: "Products",
+      path: "/vendor-dashboard/products",
+    },
+    {
+      icon: <QrCode size={20} />,
+      label: "Campaigns",
+      path: "/vendor-dashboard/campaigns",
+    },
+    {
+      icon: <Gift size={20} />,
+      label: "Promotions",
+      path: "/vendor-dashboard/promotions",
+    },
+    {
+      icon: <SettingsIcon size={20} />,
+      label: "Settings",
+      path: "/vendor-dashboard/settings",
+    },
   ];
 
   return (
@@ -86,7 +115,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           <X size={24} />
         </button>
       )}
-      
+
       <div className="flex flex-col h-full py-6 mt-16">
         <nav className="flex-1 space-y-1 px-3">
           {menuItems.map((item, index) => (
@@ -114,7 +143,7 @@ const Dashboard = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  
+
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
@@ -130,58 +159,62 @@ const Dashboard = () => {
         toast({
           variant: "destructive",
           title: "Failed to load campaigns",
-          description: "Using sample data. Please check your backend connection.",
+          description:
+            "Using sample data. Please check your backend connection.",
         });
         setCampaigns(mockCampaigns);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     fetchCampaigns();
   }, [toast]);
-  
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => navigate("/vendor-dashboard/campaigns/new")}>
+        <Button
+          className="bg-orange-500 hover:bg-orange-600"
+          onClick={() => navigate("/vendor-dashboard/campaigns/new")}
+        >
           <Plus className="mr-2 h-4 w-4" />
           Create Campaign
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard 
-          title="Total Reviews" 
-          value="486" 
-          change="+12.5%" 
-          changeType="positive" 
+        <StatsCard
+          title="Total Reviews"
+          value="486"
+          change="+12.5%"
+          changeType="positive"
           period="from last month"
         />
-        <StatsCard 
-          title="Average Rating" 
-          value="4.7" 
-          change="+0.3" 
-          changeType="positive" 
+        <StatsCard
+          title="Average Rating"
+          value="4.7"
+          change="+0.3"
+          changeType="positive"
           period="from last month"
         />
-        <StatsCard 
-          title="Review Conversion" 
-          value="3.2%" 
-          change="-0.5%" 
-          changeType="negative" 
+        <StatsCard
+          title="Review Conversion"
+          value="3.2%"
+          change="-0.5%"
+          changeType="negative"
           period="from last month"
         />
-        <StatsCard 
-          title="Active Campaigns" 
-          value="5" 
-          change="+2" 
-          changeType="positive" 
+        <StatsCard
+          title="Active Campaigns"
+          value="5"
+          change="+2"
+          changeType="positive"
           period="from last month"
         />
       </div>
-      
+
       <div className="mt-8">
         <h2 className="text-xl font-medium mb-4">Recent Campaigns</h2>
         {isLoading ? (
@@ -193,10 +226,15 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {campaigns.slice(0, 3).map((campaign) => (
-              <CampaignCard 
+              <CampaignCard
                 key={campaign.id}
                 name={campaign.name}
-                image={campaign.image || `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(campaign.name)}`}
+                image={
+                  campaign.image ||
+                  `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                    campaign.name
+                  )}`
+                }
                 status={campaign.status}
                 reviews={156} // This would come from campaign data in a real implementation
                 rating={4.8} // This would come from campaign data in a real implementation
@@ -226,7 +264,7 @@ const VendorDashboard = () => {
             title: "Backend connection successful",
             description: "Connected to localhost:3000 backend API",
           });
-          
+
           // If connection is successful, try to fetch campaigns
           try {
             const campaignsData = await getCampaigns();
@@ -244,7 +282,8 @@ const VendorDashboard = () => {
         toast({
           variant: "destructive",
           title: "Backend connection failed",
-          description: "Using mock data. Please ensure localhost:3000 is running.",
+          description:
+            "Using mock data. Please ensure localhost:3000 is running.",
         });
       }
     };
@@ -259,10 +298,10 @@ const VendorDashboard = () => {
   return (
     <div className="flex h-screen bg-gray-50">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-      
+
       <main className="flex-1 overflow-y-auto bg-gray-50 flex flex-col">
         <VendorNavbar />
-        
+
         {isMobile && (
           <button
             onClick={toggleSidebar}
@@ -271,7 +310,7 @@ const VendorDashboard = () => {
             <Menu size={24} />
           </button>
         )}
-        
+
         <div className="px-6 py-8 max-w-7xl mx-auto w-full mt-16">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -279,7 +318,10 @@ const VendorDashboard = () => {
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
             <Route path="/products/edit/:id" element={<ProductForm />} />
-            <Route path="/campaigns" element={<CampaignsList campaigns={campaigns} />} />
+            <Route
+              path="/campaigns"
+              element={<CampaignsList campaigns={campaigns} />}
+            />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
             <Route path="/promotions" element={<PromotionsList />} />
