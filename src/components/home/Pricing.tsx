@@ -266,10 +266,16 @@ const Pricing = () => {
           transition={{ duration: 0.6 }}
           className="text-lg text-muted-foreground mb-6"
         >
-          <h2 className="text-[35px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700] text-black">
+          <h2 className="text-[35px] lg:text-[25px] xl:text-[35px] font-semibold mt-2 mb-4 text-center lg:flex items-center justify-center font-[700] text-black">
             Plans Made for &nbsp;
-            <img src="images/amazon-logo.png" className="h-16 mt-2" />
-            &nbsp; <b>Sellers</b> – Simple, Scalable, Transparent
+            <div className="flex items-center justify-center">
+              <img
+                src="images/amazon-logo.png"
+                className="h-16 mt-2 lg:h-12 lg:mt-1"
+              />{" "}
+              &nbsp; <b>Sellers</b>
+            </div>
+            – Simple, Scalable, Transparent
           </h2>
         </motion.p>
         <motion.div

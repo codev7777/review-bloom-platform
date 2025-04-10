@@ -75,11 +75,17 @@ const SupportedCountries = () => {
       <div className="container mx-auto px-2">
         <AnimatedCard delay={200}>
           <div className="text-center mb-16">
-            <h2 className="text-[35px] font-semibold mt-2 mb-4 text-center flex items-center justify-center font-[700]">
+            <h2 className="text-[35px] lg:text-[25px] xl:text-[35px] font-semibold mt-2 mb-4 text-center block lg:flex items-center justify-center font-[700]">
               {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
               🚀 The Ultimate Tool for all &nbsp;
-              <img src="images/amazon-logo.png" className="h-16 mt-2" />
-              &nbsp; <b>Sellers</b> — Across Every Marketplace
+              <div className="flex justify-center items-center">
+                <img
+                  src="images/amazon-logo.png"
+                  className="h-16 mt-2xl:h-16  xl:mt-2 lg:h-12"
+                />
+                &nbsp; <b>Sellers</b>
+              </div>
+              — Across Every Marketplace
             </h2>
             <p className="max-w-2xl mx-auto font-bold text-2xl">
               One platform. 21 countries. Unlimited insights.
