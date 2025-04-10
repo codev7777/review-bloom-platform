@@ -196,7 +196,8 @@ const Dashboard = () => {
               <CampaignCard 
                 key={campaign.id}
                 name={campaign.name}
-                image={campaign.image || `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(campaign.name)}`}
+                // Generate a placeholder image since 'image' is not in the Campaign type
+                image={`https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(campaign.name)}`}
                 status={campaign.status}
                 reviews={156} // This would come from campaign data in a real implementation
                 rating={4.8} // This would come from campaign data in a real implementation
