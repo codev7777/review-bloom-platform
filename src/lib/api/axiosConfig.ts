@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 // Create an Axios instance with default settings

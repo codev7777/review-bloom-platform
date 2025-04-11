@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha"; // 👈 Add this line
+// import ReCAPTCHA from "react-google-recaptcha"; // 👈 Add this line
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,25 +9,25 @@ import { useAuth } from "@/hooks/use-auth";
 const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("vendor@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("james.s200049@gmail.com");
+  const [password, setPassword] = useState("P@ssw0rd");
   const { login, isLoading } = useAuth();
 
-  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
-  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  // const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!recaptchaToken) {
-      alert("Please verify you're not a robot.");
-      return;
-    }
+    // if (!recaptchaToken) {
+    //   alert("Please verify you're not a robot.");
+    //   return;
+    // }
 
     // Optionally verify token on server before login
     await login(email, password);
     // await login(email, password, recaptchaToken);
-    recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
+    // recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
   };
 
   return (
@@ -82,14 +82,14 @@ const LoginPage = () => {
             </div>
 
             {/* 👇 Add reCAPTCHA here */}
-            <div className="flex items-center justify-center">
+            {/* <div className="flex items-center justify-center">
               <ReCAPTCHA
                 sitekey={SITE_KEY}
                 ref={recaptchaRef}
                 onChange={(token) => setRecaptchaToken(token)}
                 onExpired={() => setRecaptchaToken(null)}
               />
-            </div>
+            </div> */}
           </div>
 
           <div>

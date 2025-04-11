@@ -72,7 +72,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const { tokens, user } = response.data;
-      localStorage.setItem("token", tokens);
+      const token = tokens.access.token;
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
@@ -136,7 +137,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("token");
     setUser(null);
     navigate("/");
-
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
