@@ -1,4 +1,3 @@
-
 import {
   createContext,
   useContext,
@@ -34,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     if (savedUser && token) {
       try {
@@ -54,8 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await userApi.login({ email, password });
       const { tokens, user } = response;
-      
-      localStorage.setItem("token", tokens.access.token);
+      localStorage.setItem("refreshToken", tokens.refresh.token);
+      localStorage.setItem("accessToken", tokens.access.token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
@@ -87,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(true);
 
       const userData = await userApi.register({ name, email, password });
-      
+
       // After successful registration, automatically log in
       await login(email, password);
 
@@ -113,7 +112,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error during logout:", error);
     } finally {
       localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      localStorage.removeItem("accessToken");
       setUser(null);
       navigate("/");
       toast({

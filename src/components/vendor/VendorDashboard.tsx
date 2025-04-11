@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -243,7 +242,10 @@ const Dashboard = () => {
                   image={`https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
                     displayCampaign.name || displayCampaign.title
                   )}`}
-                  status={displayCampaign.status || (displayCampaign.isActive === "YES" ? "active" : "paused")}
+                  status={
+                    displayCampaign.status ||
+                    (displayCampaign.isActive === "YES" ? "active" : "paused")
+                  }
                   reviews={156} // Sample data
                   rating={4.8} // Sample data
                   date={displayCampaign.startDate?.toString() || "2023-05-15"}
@@ -277,7 +279,13 @@ const VendorDashboard = () => {
           // If connection is successful, try to fetch campaigns
           try {
             const campaignsResponse = await getCampaigns();
-            if (campaignsResponse && campaignsResponse.data && campaignsResponse.data.length > 0) {
+            console.log(campaignsResponse.data);
+            if (
+              campaignsResponse &&
+              campaignsResponse.data &&
+              campaignsResponse.data.length > 0
+            ) {
+              alert(campaignsResponse.data.length);
               setCampaigns(campaignsResponse.data);
             }
           } catch (error) {

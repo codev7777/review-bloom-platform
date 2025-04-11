@@ -1,7 +1,6 @@
+import api from "../axiosConfig";
 
-import api from '../axiosConfig';
-
-export type CampaignStatus = 'YES' | 'NO'; // isActive status
+export type CampaignStatus = "YES" | "NO"; // isActive status
 
 export interface Campaign {
   id: string;
@@ -17,8 +16,10 @@ export interface Campaign {
 }
 
 // Campaign API endpoints
-export const createCampaign = async (campaign: Omit<Campaign, 'id'>): Promise<Campaign> => {
-  const response = await api.post('/campaigns', campaign);
+export const createCampaign = async (
+  campaign: Omit<Campaign, "id">
+): Promise<Campaign> => {
+  const response = await api.post("/campaigns", campaign);
   return response.data;
 };
 
@@ -28,15 +29,16 @@ export const getCampaigns = async (params?: {
   promotionId?: string | number;
   companyId?: string | number;
   sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
   limit?: number;
   page?: number;
 }): Promise<{ data: Campaign[]; totalPages: number; totalCount: number }> => {
   try {
-    const response = await api.get('/campaigns', { params });
+    const response = await api.get("/campaigns", { params });
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error('Error fetching campaigns:', error);
+    console.error("Error fetching campaigns:", error);
     // Return empty result if API fails
     return { data: [], totalPages: 0, totalCount: 0 };
   }
@@ -47,7 +49,10 @@ export const getCampaign = async (id: string): Promise<Campaign> => {
   return response.data;
 };
 
-export const updateCampaign = async (id: string, campaign: Partial<Campaign>): Promise<Campaign> => {
+export const updateCampaign = async (
+  id: string,
+  campaign: Partial<Campaign>
+): Promise<Campaign> => {
   const response = await api.patch(`/campaigns/${id}`, campaign);
   return response.data;
 };

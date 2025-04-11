@@ -94,10 +94,6 @@ const VendorReviews = () => {
   const sectionRef = useRef(null);
 
   useEffect(() => {
-    console.log(vendorReviews); // Debug: check review data
-  }, []);
-
-  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {

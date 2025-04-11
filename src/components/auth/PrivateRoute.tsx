@@ -8,7 +8,6 @@ interface PrivateRouteProps {
 
 export const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
   const { isAuthenticated, isLoading, user } = useAuth();
-  console.log("isauth, ", isAuthenticated);
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
