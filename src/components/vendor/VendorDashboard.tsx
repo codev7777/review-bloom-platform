@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
-import { Campaign } from "@/types"; // Import Campaign type
+import { Campaign, mapCampaignForDisplay } from "@/types"; // Import Campaign type
 import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
 import { useToast } from "@/components/ui/use-toast";
 import CampaignCard from "./CampaignCard";
@@ -29,28 +30,34 @@ import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
 
-// Mock campaigns data with proper status types
+// Mock campaigns data with proper type properties
 const mockCampaigns: Campaign[] = [
   {
     id: "1",
-    name: "Summer Kitchen Sale",
+    title: "Summer Kitchen Sale",
+    isActive: "YES",
     code: "KITCHEN2023",
     url: "https://example.com/review/KITCHEN2023",
     status: "active",
+    name: "Summer Kitchen Sale",
   },
   {
     id: "2",
-    name: "Yoga Promotion",
+    title: "Yoga Promotion",
+    isActive: "YES",
     code: "YOGA2023",
     url: "https://example.com/review/YOGA2023",
     status: "active",
+    name: "Yoga Promotion",
   },
   {
     id: "3",
-    name: "Tech Gadgets Campaign",
+    title: "Tech Gadgets Campaign",
+    isActive: "NO",
     code: "TECH2023",
     url: "https://example.com/review/TECH2023",
     status: "paused",
+    name: "Tech Gadgets Campaign",
   },
 ];
 
@@ -147,9 +154,9 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const data = await getCampaigns();
-        if (data && data.length > 0) {
-          setCampaigns(data);
+        const response = await getCampaigns();
+        if (response && response.data && response.data.length > 0) {
+          setCampaigns(response.data);
         } else {
           // Fallback to mock data if API returns empty array
           setCampaigns(mockCampaigns);
@@ -225,20 +232,24 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {campaigns.slice(0, 3).map((campaign) => (
-              <CampaignCard
-                key={campaign.id}
-                name={campaign.name}
-                // Generate a placeholder image since 'image' is not in the Campaign type
-                image={`https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
-                  campaign.name
-                )}`}
-                status={campaign.status}
-                reviews={156} // This would come from campaign data in a real implementation
-                rating={4.8} // This would come from campaign data in a real implementation
-                date={campaign.startDate?.toString() || "2023-05-15"}
-              />
-            ))}
+            {campaigns.slice(0, 3).map((campaign) => {
+              // Use the display version of the campaign
+              const displayCampaign = mapCampaignForDisplay(campaign);
+              return (
+                <CampaignCard
+                  key={displayCampaign.id}
+                  name={displayCampaign.name || displayCampaign.title}
+                  // Generate a placeholder image
+                  image={`https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                    displayCampaign.name || displayCampaign.title
+                  )}`}
+                  status={displayCampaign.status || (displayCampaign.isActive === "YES" ? "active" : "paused")}
+                  reviews={156} // Sample data
+                  rating={4.8} // Sample data
+                  date={displayCampaign.startDate?.toString() || "2023-05-15"}
+                />
+              );
+            })}
           </div>
         )}
       </div>
@@ -265,9 +276,9 @@ const VendorDashboard = () => {
 
           // If connection is successful, try to fetch campaigns
           try {
-            const campaignsData = await getCampaigns();
-            if (campaignsData && campaignsData.length > 0) {
-              setCampaigns(campaignsData);
+            const campaignsResponse = await getCampaigns();
+            if (campaignsResponse && campaignsResponse.data && campaignsResponse.data.length > 0) {
+              setCampaigns(campaignsResponse.data);
             }
           } catch (error) {
             console.error("Error fetching initial campaigns:", error);

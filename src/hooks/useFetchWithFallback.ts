@@ -49,7 +49,7 @@ function useFetchWithFallback<T>(
           });
           setUsingMockData(true);
           toast({
-            variant: "warning",
+            variant: "default", // Changed from "warning" to "default"
             title: "No data found",
             description: "Using sample data for display purposes.",
           });

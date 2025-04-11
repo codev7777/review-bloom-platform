@@ -28,10 +28,12 @@ export interface Campaign {
 export const mapCampaignForDisplay = (campaign: Campaign): Campaign => {
   return {
     ...campaign,
-    name: campaign.title,
-    status: campaign.isActive === 'YES' ? 'active' : 'paused',
+    name: campaign.name || campaign.title, // Use name if available, otherwise use title
+    status: campaign.status || (campaign.isActive === 'YES' ? 'active' : 'paused'),
     // Generate a code from the title if not available
-    code: campaign.code || campaign.title?.replace(/\s+/g, '_').toUpperCase().substring(0, 10)
+    code: campaign.code || campaign.title?.replace(/\s+/g, '_').toUpperCase().substring(0, 10),
+    // Generate a URL if not available
+    url: campaign.url || `https://example.com/review/${campaign.id}`
   };
 };
 
