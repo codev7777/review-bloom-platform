@@ -1,20 +1,6 @@
 
 import api from '../axiosConfig';
-
-export type CampaignStatus = 'YES' | 'NO'; // isActive status
-
-export interface Campaign {
-  id: string;
-  title: string;
-  isActive: CampaignStatus;
-  promotionId?: string | number;
-  companyId?: string | number;
-  productIds?: (string | number)[];
-  marketplaces?: string[];
-  claims?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { Campaign, CampaignStatus } from '@/types';
 
 // Campaign API endpoints
 export const createCampaign = async (campaign: Omit<Campaign, 'id'>): Promise<Campaign> => {
@@ -42,16 +28,16 @@ export const getCampaigns = async (params?: {
   }
 };
 
-export const getCampaign = async (id: string): Promise<Campaign> => {
+export const getCampaign = async (id: string | number): Promise<Campaign> => {
   const response = await api.get(`/campaigns/${id}`);
   return response.data;
 };
 
-export const updateCampaign = async (id: string, campaign: Partial<Campaign>): Promise<Campaign> => {
+export const updateCampaign = async (id: string | number, campaign: Partial<Campaign>): Promise<Campaign> => {
   const response = await api.patch(`/campaigns/${id}`, campaign);
   return response.data;
 };
 
-export const deleteCampaign = async (id: string): Promise<void> => {
+export const deleteCampaign = async (id: string | number): Promise<void> => {
   await api.delete(`/campaigns/${id}`);
 };

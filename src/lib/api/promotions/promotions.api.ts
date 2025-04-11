@@ -1,18 +1,6 @@
 
 import api from '../axiosConfig';
-
-export type PromotionType = 'GIFT_CARD' | 'DISCOUNT_CODE' | 'FREE_PRODUCT' | 'DIGITAL_DOWNLOAD';
-
-export interface Promotion {
-  id: string;
-  title: string;
-  image?: string;
-  promotionType: PromotionType;
-  description?: string;
-  companyId?: string | number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { Promotion } from '@/types';
 
 // Promotion API endpoints
 export const createPromotion = async (promotion: Omit<Promotion, 'id'>): Promise<Promotion> => {
@@ -22,7 +10,7 @@ export const createPromotion = async (promotion: Omit<Promotion, 'id'>): Promise
 
 export const getPromotions = async (params?: {
   title?: string;
-  promotionType?: PromotionType;
+  promotionType?: string;
   companyId?: string | number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
@@ -39,16 +27,16 @@ export const getPromotions = async (params?: {
   }
 };
 
-export const getPromotion = async (id: string): Promise<Promotion> => {
+export const getPromotion = async (id: string | number): Promise<Promotion> => {
   const response = await api.get(`/promotions/${id}`);
   return response.data;
 };
 
-export const updatePromotion = async (id: string, promotion: Partial<Promotion>): Promise<Promotion> => {
+export const updatePromotion = async (id: string | number, promotion: Partial<Promotion>): Promise<Promotion> => {
   const response = await api.patch(`/promotions/${id}`, promotion);
   return response.data;
 };
 
-export const deletePromotion = async (id: string): Promise<void> => {
+export const deletePromotion = async (id: string | number): Promise<void> => {
   await api.delete(`/promotions/${id}`);
 };

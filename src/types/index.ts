@@ -1,14 +1,14 @@
 
 // Enhanced Campaign type to match the backend API
 export interface Campaign {
-  id: string;
+  id: string | number;
   title: string;
-  isActive: 'YES' | 'NO';
-  promotionId?: string | number;
-  companyId?: string | number;
-  productIds?: (string | number)[];
-  marketplaces?: string[];
-  claims?: number;
+  isActive: CampaignStatus;
+  promotionId: string | number;
+  companyId: string | number;
+  productIds: (string | number)[];
+  marketplaces: string[];
+  claims: number;
   createdAt?: string;
   updatedAt?: string;
   
@@ -23,6 +23,8 @@ export interface Campaign {
   giftOffer?: boolean;
   giftDescription?: string;
 }
+
+export type CampaignStatus = 'YES' | 'NO';
 
 // Map isActive to status for compatibility with existing components
 export const mapCampaignForDisplay = (campaign: Campaign): Campaign => {
@@ -60,30 +62,37 @@ export interface StatsCardProps {
 }
 
 export interface Company {
-  id: string;
+  id: string | number;
   name: string;
   detail?: string;
   logo?: string;
   websiteUrl?: string;
   planId?: number;
+  ratio?: number;
+  reviews?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface User {
-  id: string;
+  id: string | number;
   name: string;
   email: string;
   role: string;
-  companyId?: string;
+  companyId?: string | number;
   isEmailVerified?: boolean;
 }
 
 export interface Product {
-  id: string;
+  id: string | number;
   title: string;
   description?: string;
   image?: string;
   companyId: string | number;
   categoryId?: string | number;
+  ratio?: number;
+  createdAt?: string;
+  updatedAt?: string;
   
   // Legacy properties for compatibility
   name?: string;
@@ -94,12 +103,30 @@ export interface Product {
 }
 
 export interface Promotion {
-  id: string;
+  id: string | number;
   title: string;
-  image?: string;
+  image: string;
   promotionType: 'GIFT_CARD' | 'DISCOUNT_CODE' | 'FREE_PRODUCT' | 'DIGITAL_DOWNLOAD';
+  description: string;
+  companyId: string | number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Category {
+  id: string | number;
+  name: string;
   description?: string;
-  companyId?: string | number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Plan {
+  id: string | number;
+  name: string;
+  price: number;
+  description?: string;
+  planType: 'SILVER' | 'GOLD' | 'PLATINUM';
   createdAt?: string;
   updatedAt?: string;
 }
