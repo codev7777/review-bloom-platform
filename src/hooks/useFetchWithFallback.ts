@@ -84,6 +84,7 @@ function useFetchWithFallback<T>(
     error, 
     usingMockData, 
     pagination,
+    setData, // Expose setData function to consumers
     setPage: (page: number) => params.page = page
   };
 }
