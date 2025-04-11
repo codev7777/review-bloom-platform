@@ -20,6 +20,29 @@ interface Step1MarketplaceProps {
   updateFormData: (data: Partial<ReviewFormData>) => void;
   onNextStep: () => void;
 }
+const amazonOrderUrls: Record<string, string> = {
+  us: "https://www.amazon.com/gp/css/order-history",
+  ca: "https://www.amazon.ca/gp/css/order-history",
+  mx: "https://www.amazon.com.mx/gp/css/order-history",
+  gb: "https://www.amazon.co.uk/gp/css/order-history",
+  fr: "https://www.amazon.fr/gp/css/order-history",
+  de: "https://www.amazon.de/gp/css/order-history",
+  it: "https://www.amazon.it/gp/css/order-history",
+  es: "https://www.amazon.es/gp/css/order-history",
+  in: "https://www.amazon.in/gp/css/order-history",
+  jp: "https://www.amazon.co.jp/gp/css/order-history",
+  nl: "https://www.amazon.nl/gp/css/order-history",
+  se: "https://www.amazon.se/gp/css/order-history",
+  au: "https://www.amazon.com.au/gp/css/order-history",
+  br: "https://www.amazon.com.br/gp/css/order-history",
+  sg: "https://www.amazon.sg/gp/css/order-history",
+  tr: "https://www.amazon.com.tr/gp/css/order-history",
+  sa: "https://www.amazon.sa/gp/css/order-history",
+  ae: "https://www.amazon.ae/gp/css/order-history",
+  pl: "https://www.amazon.pl/gp/css/order-history",
+  eg: "https://www.amazon.eg/gp/css/order-history",
+  za: "", // No link for South Africa
+};
 
 const Step1Marketplace = ({
   productName,
@@ -184,7 +207,10 @@ const Step1Marketplace = ({
           Amazon order number<span className="text-red-500">*</span>
           {"   "}
           <a
-            href="https://www.amazon.com/gp/css/order-history"
+            href={
+              amazonOrderUrls[formData.country] ||
+              "https://www.amazon.com/gp/css/order-history"
+            }
             target="_new"
             id="order_number_link"
             className="hover:text-[#f97316] text-[#ff9900]"

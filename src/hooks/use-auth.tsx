@@ -23,8 +23,8 @@ interface AuthContextType {
   isLoading: boolean;
   login: (
     email: string,
-    password: string,
-    recaptchaToken: string
+    password: string
+    // recaptchaToken: string
   ) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -58,8 +58,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (
     email: string,
-    password: string,
-    recaptchaToken: string
+    password: string
+    // recaptchaToken: string
   ) => {
     try {
       setIsLoading(true);
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await api.post("/auth/login", {
         email,
         password,
-        recaptchaToken,
+        // recaptchaToken,
       });
 
       const { tokens, user } = response.data;

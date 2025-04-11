@@ -25,7 +25,8 @@ const LoginPage = () => {
     }
 
     // Optionally verify token on server before login
-    await login(email, password, recaptchaToken);
+    await login(email, password);
+    // await login(email, password, recaptchaToken);
     recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
   };
 
