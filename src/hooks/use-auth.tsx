@@ -1,3 +1,4 @@
+
 import {
   createContext,
   useContext,
@@ -7,25 +8,15 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
-import api from "@/lib/api/axiosConfig";
 import { toast } from "@/components/ui/use-toast";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: "USER" | "ADMIN";
-}
+import * as userApi from "@/lib/api/users/users.api";
+import { User } from "@/lib/api/users/users.api";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (
-    email: string,
-    password: string
-    // recaptchaToken: string
-  ) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   isVendor: () => boolean;
@@ -56,24 +47,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  const login = async (
-    email: string,
-    password: string
-    // recaptchaToken: string
-  ) => {
+  const login = async (email: string, password: string) => {
     try {
       setIsLoading(true);
       if (DEBUG) console.log("Attempting login...");
 
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-        // recaptchaToken,
-      });
-
-      const { tokens, user } = response.data;
-      const token = tokens.access.token;
-      localStorage.setItem("token", token);
+      const response = await userApi.login({ email, password });
+      const { tokens, user } = response;
+      
+      localStorage.setItem("token", tokens.access.token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
 
@@ -104,22 +86,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
 
-      const response = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
-
-      const { userData } = response.data;
-      localStorage.setItem("user", JSON.stringify(userData));
-      setUser(userData);
+      const userData = await userApi.register({ name, email, password });
+      
+      // After successful registration, automatically log in
+      await login(email, password);
 
       toast({
         title: "Account created",
         description: "Welcome to ReviewBrothers!",
       });
-
-      navigate("/vendor-dashboard");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
       toast({
@@ -127,20 +102,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Signup failed",
         description: error?.response?.data?.message || "Something went wrong",
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    setUser(null);
-    navigate("/");
-    toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
-    });
+  const logout = async () => {
+    try {
+      await userApi.logout();
+    } catch (error) {
+      console.error("Error during logout:", error);
+    } finally {
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      setUser(null);
+      navigate("/");
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    }
   };
 
   const isVendor = () => user?.role === "USER";

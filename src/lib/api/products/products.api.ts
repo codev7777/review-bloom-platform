@@ -3,22 +3,37 @@ import api from '../axiosConfig';
 
 export interface Product {
   id: string;
-  name: string;
-  asin: string;
-  category: string;
-  price: string;
-  image: string;
-  dateAdded: string;
+  title: string;
+  description?: string;
+  image?: string;
+  companyId: string | number;
+  categoryId?: string | number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-export const getProducts = async (): Promise<Product[]> => {
+// Product API endpoints
+export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
+  const response = await api.post('/products', product);
+  return response.data;
+};
+
+export const getProducts = async (params?: {
+  title?: string;
+  companyId?: string | number;
+  categoryId?: string | number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  limit?: number;
+  page?: number;
+}): Promise<{ data: Product[]; totalPages: number; totalCount: number }> => {
   try {
-    const response = await api.get('/products');
+    const response = await api.get('/products', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching products:', error);
-    // Return empty array if API fails, will be replaced with mock data in component
-    return [];
+    // Return empty result if API fails
+    return { data: [], totalPages: 0, totalCount: 0 };
   }
 };
 
@@ -27,13 +42,8 @@ export const getProduct = async (id: string): Promise<Product> => {
   return response.data;
 };
 
-export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
-  const response = await api.post('/products', product);
-  return response.data;
-};
-
 export const updateProduct = async (id: string, product: Partial<Product>): Promise<Product> => {
-  const response = await api.put(`/products/${id}`, product);
+  const response = await api.patch(`/products/${id}`, product);
   return response.data;
 };
 
