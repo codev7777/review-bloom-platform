@@ -1,16 +1,6 @@
 
 import api from '../axiosConfig';
-
-export interface Product {
-  id: string;
-  title: string;
-  description?: string;
-  image?: string;
-  companyId: string | number;
-  categoryId?: string | number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { Product } from '@/types';
 
 // Product API endpoints
 export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
@@ -37,16 +27,16 @@ export const getProducts = async (params?: {
   }
 };
 
-export const getProduct = async (id: string): Promise<Product> => {
+export const getProduct = async (id: string | number): Promise<Product> => {
   const response = await api.get(`/products/${id}`);
   return response.data;
 };
 
-export const updateProduct = async (id: string, product: Partial<Product>): Promise<Product> => {
+export const updateProduct = async (id: string | number, product: Partial<Product>): Promise<Product> => {
   const response = await api.patch(`/products/${id}`, product);
   return response.data;
 };
 
-export const deleteProduct = async (id: string): Promise<void> => {
+export const deleteProduct = async (id: string | number): Promise<void> => {
   await api.delete(`/products/${id}`);
 };

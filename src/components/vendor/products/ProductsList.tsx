@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Edit, 
@@ -43,52 +42,75 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/use-toast';
 import { Badge } from '@/components/ui/badge';
+import { Product } from '@/types';
+import { getProducts, deleteProduct } from '@/lib/api/products/products.api';
+import useFetchWithFallback from '@/hooks/useFetchWithFallback';
 
 // Mock data
-const MOCK_PRODUCTS = [
+const MOCK_PRODUCTS: Product[] = [
   { 
     id: '1', 
-    name: 'Kitchen Knife Set', 
+    title: 'Kitchen Knife Set', 
+    description: 'Professional kitchen knife set with wooden block',
+    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Knife+Set',
+    companyId: 1,
+    categoryId: 1,
+    name: 'Kitchen Knife Set',
     asin: 'B08N5LNQCV', 
     category: 'Kitchen', 
     price: '$49.99',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Knife+Set',
     dateAdded: '2023-04-12'
   },
   { 
     id: '2', 
-    name: 'Yoga Mat', 
+    title: 'Yoga Mat', 
+    description: 'Non-slip exercise yoga mat',
+    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat',
+    companyId: 1,
+    categoryId: 2,
+    name: 'Yoga Mat',
     asin: 'B07D9YYQ8V', 
     category: 'Fitness', 
     price: '$24.95',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat',
     dateAdded: '2023-05-18'
   },
   { 
     id: '3', 
-    name: 'Bluetooth Headphones', 
+    title: 'Bluetooth Headphones', 
+    description: 'Wireless noise-cancelling headphones',
+    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones',
+    companyId: 1,
+    categoryId: 3,
+    name: 'Bluetooth Headphones',
     asin: 'B07Q5NDZBD', 
     category: 'Electronics', 
     price: '$79.99',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones',
     dateAdded: '2023-02-24'
   },
   { 
     id: '4', 
-    name: 'Smart Watch', 
+    title: 'Smart Watch', 
+    description: 'Fitness tracking smart watch',
+    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Watch',
+    companyId: 1,
+    categoryId: 3,
+    name: 'Smart Watch',
     asin: 'B08L5NP6NG', 
     category: 'Electronics', 
     price: '$129.99',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Watch',
     dateAdded: '2023-06-08'
   },
   { 
     id: '5', 
-    name: 'Coffee Maker', 
+    title: 'Coffee Maker', 
+    description: 'Automatic coffee maker with timer',
+    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Coffee',
+    companyId: 1,
+    categoryId: 1,
+    name: 'Coffee Maker',
     asin: 'B07JG7DS1T', 
     category: 'Kitchen', 
     price: '$89.99',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Coffee',
     dateAdded: '2023-03-30'
   },
 ];
@@ -98,21 +120,26 @@ type SortOrder = 'asc' | 'desc';
 
 const ProductsList = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState(MOCK_PRODUCTS);
   const [searchTerm, setSearchTerm] = useState('');
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [sortField, setSortField] = useState<SortField>('dateAdded');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   
+  // Fetch products from the backend
+  const { data: products, isLoading, setData: setProducts } = useFetchWithFallback<Product>(
+    getProducts,
+    MOCK_PRODUCTS
+  );
+  
   // Get unique categories for filter
-  const categories = [...new Set(products.map(product => product.category))];
+  const categories = [...new Set(products.map(product => product.category || ''))];
   
   // Filter products based on search term and category
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      product.asin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = (product.title || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+      (product.asin || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (product.category || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = categoryFilter === null || product.category === categoryFilter;
     
@@ -124,13 +151,15 @@ const ProductsList = () => {
     let comparison = 0;
     
     if (sortField === 'name') {
-      comparison = a.name.localeCompare(b.name);
+      comparison = (a.name || a.title || '').localeCompare(b.name || b.title || '');
     } else if (sortField === 'asin') {
-      comparison = a.asin.localeCompare(b.asin);
+      comparison = (a.asin || '').localeCompare(b.asin || '');
     } else if (sortField === 'category') {
-      comparison = a.category.localeCompare(b.category);
+      comparison = (a.category || '').localeCompare(b.category || '');
     } else if (sortField === 'dateAdded') {
-      comparison = new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime();
+      const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
+      const dateB = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
+      comparison = dateA - dateB;
     }
     
     return sortOrder === 'asc' ? comparison : -comparison;
@@ -145,13 +174,23 @@ const ProductsList = () => {
     }
   };
   
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (productToDelete) {
-      setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete));
-      toast({
-        title: "Product deleted",
-        description: "The product has been removed successfully",
-      });
+      try {
+        await deleteProduct(productToDelete);
+        setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete));
+        toast({
+          title: "Product deleted",
+          description: "The product has been removed successfully",
+        });
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        toast({
+          variant: "destructive",
+          title: "Failed to delete product",
+          description: "There was an error deleting the product. Please try again.",
+        });
+      }
       setProductToDelete(null);
     }
   };
@@ -206,7 +245,11 @@ const ProductsList = () => {
         </DropdownMenu>
       </div>
       
-      {sortedProducts.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
+        </div>
+      ) : sortedProducts.length === 0 ? (
         <div className="text-center py-10 border rounded-lg">
           <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
           <h3 className="mt-4 text-lg font-medium">No products found</h3>

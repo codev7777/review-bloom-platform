@@ -28,6 +28,7 @@ import SettingsPanel from "./settings/SettingsPanel";
 import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
+import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 
 // Mock campaigns data with proper type properties
 const mockCampaigns: Campaign[] = [
@@ -35,6 +36,11 @@ const mockCampaigns: Campaign[] = [
     id: "1",
     title: "Summer Kitchen Sale",
     isActive: "YES",
+    promotionId: 1,
+    companyId: 1,
+    productIds: [1, 2, 3],
+    marketplaces: ["US", "CA"],
+    claims: 0,
     code: "KITCHEN2023",
     url: "https://example.com/review/KITCHEN2023",
     status: "active",
@@ -44,6 +50,11 @@ const mockCampaigns: Campaign[] = [
     id: "2",
     title: "Yoga Promotion",
     isActive: "YES",
+    promotionId: 2,
+    companyId: 1,
+    productIds: [3, 4],
+    marketplaces: ["US", "GB"],
+    claims: 0,
     code: "YOGA2023",
     url: "https://example.com/review/YOGA2023",
     status: "active",
@@ -53,6 +64,11 @@ const mockCampaigns: Campaign[] = [
     id: "3",
     title: "Tech Gadgets Campaign",
     isActive: "NO",
+    promotionId: 3,
+    companyId: 1,
+    productIds: [5, 6],
+    marketplaces: ["US", "JP"],
+    claims: 0,
     code: "TECH2023",
     url: "https://example.com/review/TECH2023",
     status: "paused",
@@ -146,36 +162,10 @@ const Sidebar = ({
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        const response = await getCampaigns();
-        if (response && response.data && response.data.length > 0) {
-          setCampaigns(response.data);
-        } else {
-          // Fallback to mock data if API returns empty array
-          setCampaigns(mockCampaigns);
-        }
-      } catch (error) {
-        console.error("Error fetching campaigns:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to load campaigns",
-          description:
-            "Using sample data. Please check your backend connection.",
-        });
-        setCampaigns(mockCampaigns);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCampaigns();
-  }, [toast]);
+  const { data: campaigns, isLoading } = useFetchWithFallback<Campaign>(
+    getCampaigns,
+    mockCampaigns
+  );
 
   return (
     <div className="space-y-8">
@@ -248,7 +238,7 @@ const Dashboard = () => {
                   }
                   reviews={156} // Sample data
                   rating={4.8} // Sample data
-                  date={displayCampaign.startDate?.toString() || "2023-05-15"}
+                  date={displayCampaign.createdAt || "2023-05-15"}
                 />
               );
             })}
@@ -262,7 +252,6 @@ const Dashboard = () => {
 const VendorDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
-  const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
   const { toast } = useToast();
 
   // Check connectivity to backend on component mount
@@ -275,22 +264,6 @@ const VendorDashboard = () => {
             title: "Backend connection successful",
             description: "Connected to localhost:3000 backend API",
           });
-
-          // If connection is successful, try to fetch campaigns
-          try {
-            const campaignsResponse = await getCampaigns();
-            console.log(campaignsResponse.data);
-            if (
-              campaignsResponse &&
-              campaignsResponse.data &&
-              campaignsResponse.data.length > 0
-            ) {
-              alert(campaignsResponse.data.length);
-              setCampaigns(campaignsResponse.data);
-            }
-          } catch (error) {
-            console.error("Error fetching initial campaigns:", error);
-          }
         } else {
           throw new Error("Failed to connect to backend");
         }
@@ -335,10 +308,7 @@ const VendorDashboard = () => {
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
             <Route path="/products/edit/:id" element={<ProductForm />} />
-            <Route
-              path="/campaigns"
-              element={<CampaignsList campaigns={campaigns} />}
-            />
+            <Route path="/campaigns" element={<CampaignsList />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
             <Route path="/promotions" element={<PromotionsList />} />

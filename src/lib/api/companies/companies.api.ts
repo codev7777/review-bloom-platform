@@ -1,14 +1,6 @@
 
 import api from '../axiosConfig';
-
-export interface Company {
-  id: string;
-  name: string;
-  detail?: string;
-  logo?: string;
-  websiteUrl?: string;
-  planId?: number;
-}
+import { Company } from '@/types';
 
 // Company API endpoints
 export const createCompany = async (company: Omit<Company, 'id'>): Promise<Company> => {
@@ -23,20 +15,25 @@ export const getCompanies = async (params?: {
   limit?: number;
   page?: number;
 }): Promise<{ data: Company[]; totalPages: number; totalCount: number }> => {
-  const response = await api.get('/companies', { params });
-  return response.data;
+  try {
+    const response = await api.get('/companies', { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching companies:', error);
+    return { data: [], totalPages: 0, totalCount: 0 };
+  }
 };
 
-export const getCompany = async (id: string): Promise<Company> => {
+export const getCompany = async (id: string | number): Promise<Company> => {
   const response = await api.get(`/companies/${id}`);
   return response.data;
 };
 
-export const updateCompany = async (id: string, company: Partial<Company>): Promise<Company> => {
+export const updateCompany = async (id: string | number, company: Partial<Company>): Promise<Company> => {
   const response = await api.patch(`/companies/${id}`, company);
   return response.data;
 };
 
-export const deleteCompany = async (id: string): Promise<void> => {
+export const deleteCompany = async (id: string | number): Promise<void> => {
   await api.delete(`/companies/${id}`);
 };

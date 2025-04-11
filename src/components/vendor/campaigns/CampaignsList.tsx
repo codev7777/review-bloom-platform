@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -17,7 +16,7 @@ import {
   ChevronDown,
   Download
 } from 'lucide-react';
-import { Campaign } from '@/types';
+import { Campaign, mapCampaignForDisplay } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -52,15 +51,58 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { getCampaigns } from '@/lib/api/campaigns/campaigns.api';
+import useFetchWithFallback from '@/hooks/useFetchWithFallback';
 
-interface CampaignsListProps {
-  campaigns: Campaign[];
-}
+const MOCK_CAMPAIGNS: Campaign[] = [
+  {
+    id: "1",
+    title: "Summer Kitchen Sale",
+    isActive: "YES",
+    promotionId: 1,
+    companyId: 1,
+    productIds: [1, 2, 3],
+    marketplaces: ["US", "CA"],
+    claims: 0,
+    code: "KITCHEN2023",
+    url: "https://example.com/review/KITCHEN2023",
+    status: "active",
+    name: "Summer Kitchen Sale",
+  },
+  {
+    id: "2",
+    title: "Yoga Promotion",
+    isActive: "YES",
+    promotionId: 2,
+    companyId: 1,
+    productIds: [3, 4],
+    marketplaces: ["US", "GB"],
+    claims: 0,
+    code: "YOGA2023",
+    url: "https://example.com/review/YOGA2023",
+    status: "active",
+    name: "Yoga Promotion",
+  },
+  {
+    id: "3",
+    title: "Tech Gadgets Campaign",
+    isActive: "NO",
+    promotionId: 3,
+    companyId: 1,
+    productIds: [5, 6],
+    marketplaces: ["US", "JP"],
+    claims: 0,
+    code: "TECH2023",
+    url: "https://example.com/review/TECH2023",
+    status: "paused",
+    name: "Tech Gadgets Campaign",
+  },
+];
 
 type SortField = 'name' | 'status' | 'reviews' | 'lastUpdated';
 type SortOrder = 'asc' | 'desc';
 
-const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
+const CampaignsList: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -69,44 +111,34 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
   const [selectedQrCode, setSelectedQrCode] = useState<{ url: string, name: string } | null>(null);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
   
-  const extendedCampaigns = campaigns.map(campaign => ({
-    ...campaign,
-    products: ['Kitchen Knife Set', 'Coffee Maker'],
-    promotionName: campaign.name.includes('Kitchen') 
-      ? 'Summer Gift Card' 
-      : campaign.name.includes('Yoga') 
-        ? 'Free Product' 
-        : 'Holiday Discount',
-    marketplaces: ['US', 'CA', campaign.name.includes('Tech') ? 'JP' : 'GB'],
-    lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 10000000000)).toISOString(),
-    reviews: Math.floor(Math.random() * 200) + 10,
-  }));
+  const { data: campaigns, isLoading } = useFetchWithFallback<Campaign>(
+    getCampaigns,
+    MOCK_CAMPAIGNS
+  );
   
-  // Filter campaigns
+  const extendedCampaigns = campaigns.map(campaign => {
+    const displayCampaign = mapCampaignForDisplay(campaign);
+    return {
+      ...displayCampaign,
+      products: ['Kitchen Knife Set', 'Coffee Maker'],
+      promotionName: displayCampaign.title.includes('Kitchen') 
+        ? 'Summer Gift Card' 
+        : displayCampaign.title.includes('Yoga') 
+          ? 'Free Product' 
+          : 'Holiday Discount',
+      marketplaces: campaign.marketplaces || ['US', 'CA'],
+      lastUpdated: campaign.updatedAt || new Date().toISOString(),
+      reviews: campaign.claims || Math.floor(Math.random() * 200) + 10,
+    };
+  });
+  
   const filteredCampaigns = extendedCampaigns.filter(campaign => {
-    const matchesSearch = campaign.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      campaign.code.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (campaign.name || campaign.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (campaign.code || '').toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesStatus = statusFilter === null || campaign.status === statusFilter;
     
     return matchesSearch && matchesStatus;
-  });
-  
-  // Sort campaigns
-  const sortedCampaigns = [...filteredCampaigns].sort((a, b) => {
-    let comparison = 0;
-    
-    if (sortField === 'name') {
-      comparison = a.name.localeCompare(b.name);
-    } else if (sortField === 'status') {
-      comparison = a.status.localeCompare(b.status);
-    } else if (sortField === 'reviews') {
-      comparison = a.reviews - b.reviews;
-    } else if (sortField === 'lastUpdated') {
-      comparison = new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime();
-    }
-    
-    return sortOrder === 'asc' ? comparison : -comparison;
   });
   
   const handleSort = (field: SortField) => {
@@ -256,123 +288,16 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedCampaigns.map((campaign) => (
-              <TableRow key={campaign.id}>
-                <TableCell className="font-medium">
-                  <div>
-                    <div className="font-medium">{campaign.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      Code: {campaign.code}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={campaign.status === 'active' ? "default" : "secondary"} className="capitalize">
-                    {campaign.status === 'active' ? (
-                      <CheckCircle className="mr-1 h-3 w-3" />
-                    ) : (
-                      <XCircle className="mr-1 h-3 w-3" />
-                    )}
-                    {campaign.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  <div className="flex flex-wrap gap-1">
-                    {campaign.products.map((product, idx) => (
-                      <Badge key={idx} variant="outline" className="font-normal">
-                        {product}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  {campaign.promotionName}
-                </TableCell>
-                <TableCell className="hidden lg:table-cell">
-                  {campaign.reviews}
-                </TableCell>
-                <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
-                  {formatDate(campaign.lastUpdated)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => showQrCode(campaign)}
-                          >
-                            <QrCode className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>View QR Code</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => handleCopyUrl(campaign.url)}
-                          >
-                            <Copy className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Copy URL</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => window.open(campaign.url, '_blank')}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Open URL</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => navigate(`/vendor-dashboard/campaigns/edit/${campaign.id}`)}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Edit Campaign</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={7} className="h-32 text-center">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
+                    <h3 className="mt-4 text-lg font-medium">Loading campaigns...</h3>
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
-            
-            {sortedCampaigns.length === 0 && (
+            ) : filteredCampaigns.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
@@ -395,6 +320,122 @@ const CampaignsList: React.FC<CampaignsListProps> = ({ campaigns }) => {
                   </div>
                 </TableCell>
               </TableRow>
+            ) : (
+              filteredCampaigns.map((campaign) => (
+                <TableRow key={campaign.id}>
+                  <TableCell className="font-medium">
+                    <div>
+                      <div className="font-medium">{campaign.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        Code: {campaign.code}
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={campaign.status === 'active' ? "default" : "secondary"} className="capitalize">
+                      {campaign.status === 'active' ? (
+                        <CheckCircle className="mr-1 h-3 w-3" />
+                      ) : (
+                        <XCircle className="mr-1 h-3 w-3" />
+                      )}
+                      {campaign.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <div className="flex flex-wrap gap-1">
+                      {campaign.products.map((product, idx) => (
+                        <Badge key={idx} variant="outline" className="font-normal">
+                          {product}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {campaign.promotionName}
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                    {campaign.reviews}
+                  </TableCell>
+                  <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                    {formatDate(campaign.lastUpdated)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => showQrCode(campaign)}
+                            >
+                              <QrCode className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View QR Code</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => handleCopyUrl(campaign.url)}
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Copy URL</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => window.open(campaign.url, '_blank')}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Open URL</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => navigate(`/vendor-dashboard/campaigns/edit/${campaign.id}`)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Edit Campaign</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>

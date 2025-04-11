@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -26,55 +25,62 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Promotion } from '@/types';
+import { getPromotions } from '@/lib/api/promotions/promotions.api';
+import useFetchWithFallback from '@/hooks/useFetchWithFallback';
 
 // Mock promotions data
-const MOCK_PROMOTIONS = [
+const MOCK_PROMOTIONS: Promotion[] = [
   {
     id: '1',
-    name: 'Summer Gift Card',
-    type: 'Gift Card or eGift Card',
+    title: 'Summer Gift Card',
+    promotionType: 'GIFT_CARD',
     description: 'A $10 Amazon Gift Card for summer purchases',
     image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Gift+Card',
+    companyId: 1,
     createdAt: '2023-06-15',
   },
   {
     id: '2',
-    name: 'Holiday Discount',
-    type: 'Discount Code, Promo Code or Virtual Gift Card',
+    title: 'Holiday Discount',
+    promotionType: 'DISCOUNT_CODE',
     description: '15% off discount code for holiday shopping',
     image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Discount',
+    companyId: 1,
     createdAt: '2023-11-20',
   },
   {
     id: '3',
-    name: 'Product Giveaway',
-    type: 'Free Product',
+    title: 'Product Giveaway',
+    promotionType: 'FREE_PRODUCT',
     description: 'Free kitchen gadget for selected customers',
     image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Free+Product',
+    companyId: 1,
     createdAt: '2023-08-05',
   },
   {
     id: '4',
-    name: 'Cookbook PDF',
-    type: 'Digital Download',
+    title: 'Cookbook PDF',
+    promotionType: 'DIGITAL_DOWNLOAD',
     description: 'Exclusive cookbook PDF with recipes',
     image: 'https://placehold.co/300x200/FFF5E8/FF9130?text=Digital+Download',
+    companyId: 1,
     createdAt: '2023-09-12',
   },
 ];
 
-type SortField = 'name' | 'type' | 'createdAt';
+type SortField = 'title' | 'promotionType' | 'createdAt';
 type SortOrder = 'asc' | 'desc';
 
 const PromotionTypeIcon = ({ type }: { type: string }) => {
   switch (type) {
-    case 'Gift Card or eGift Card':
+    case 'GIFT_CARD':
       return <CreditCard className="h-5 w-5 text-orange-500" />;
-    case 'Discount Code, Promo Code or Virtual Gift Card':
+    case 'DISCOUNT_CODE':
       return <Tag className="h-5 w-5 text-emerald-500" />;
-    case 'Free Product':
+    case 'FREE_PRODUCT':
       return <Gift className="h-5 w-5 text-purple-500" />;
-    case 'Digital Download':
+    case 'DIGITAL_DOWNLOAD':
       return <Download className="h-5 w-5 text-blue-500" />;
     default:
       return <Gift className="h-5 w-5 text-gray-500" />;
@@ -88,16 +94,22 @@ const PromotionsList = () => {
   const [sortField, setSortField] = useState<SortField>('createdAt');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   
+  // Fetch promotions from the backend
+  const { data: promotions, isLoading } = useFetchWithFallback<Promotion>(
+    getPromotions,
+    MOCK_PROMOTIONS
+  );
+  
   // Get unique promotion types for filtering
-  const promotionTypes = [...new Set(MOCK_PROMOTIONS.map(promo => promo.type))];
+  const promotionTypes = [...new Set(promotions.map(promo => promo.promotionType))];
   
   // Filter promotions
-  const filteredPromotions = MOCK_PROMOTIONS.filter(promotion => {
-    const matchesSearch = promotion.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      promotion.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredPromotions = promotions.filter(promotion => {
+    const matchesSearch = promotion.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      promotion.promotionType.toLowerCase().includes(searchQuery.toLowerCase()) ||
       promotion.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesType = typeFilter === null || promotion.type === typeFilter;
+    const matchesType = typeFilter === null || promotion.promotionType === typeFilter;
     
     return matchesSearch && matchesType;
   });
@@ -106,12 +118,14 @@ const PromotionsList = () => {
   const sortedPromotions = [...filteredPromotions].sort((a, b) => {
     let comparison = 0;
     
-    if (sortField === 'name') {
-      comparison = a.name.localeCompare(b.name);
-    } else if (sortField === 'type') {
-      comparison = a.type.localeCompare(b.type);
+    if (sortField === 'title') {
+      comparison = a.title.localeCompare(b.title);
+    } else if (sortField === 'promotionType') {
+      comparison = a.promotionType.localeCompare(b.promotionType);
     } else if (sortField === 'createdAt') {
-      comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      comparison = dateA - dateB;
     }
     
     return sortOrder === 'asc' ? comparison : -comparison;
@@ -194,25 +208,25 @@ const PromotionsList = () => {
               <Button variant="outline" className="gap-2">
                 <ArrowUpDown className="h-4 w-4" />
                 Sort
-                {sortField ===  'name' ? ' by Name' : sortField === 'type' ? ' by Type' : ' by Date'}
+                {sortField ===  'title' ? ' by Name' : sortField === 'promotionType' ? ' by Type' : ' by Date'}
                 {sortOrder === 'asc' ? ' (A-Z)' : ' (Z-A)'}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Sort by</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleSort('name')}>
+              <DropdownMenuItem onClick={() => handleSort('title')}>
                 <div className="flex items-center justify-between w-full">
                   <span>Name</span>
-                  {sortField === 'name' && (
+                  {sortField === 'title' && (
                     sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
                   )}
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort('type')}>
+              <DropdownMenuItem onClick={() => handleSort('promotionType')}>
                 <div className="flex items-center justify-between w-full">
                   <span>Type</span>
-                  {sortField === 'type' && (
+                  {sortField === 'promotionType' && (
                     sortOrder === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
                   )}
                 </div>
@@ -230,49 +244,24 @@ const PromotionsList = () => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedPromotions.map((promotion) => (
-          <Card key={promotion.id} className="overflow-hidden hover:shadow-md transition-shadow duration-200 h-full">
-            <div className="aspect-video w-full overflow-hidden bg-orange-50">
-              <img
-                src={promotion.image}
-                alt={promotion.name}
-                className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
-              />
-            </div>
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h3 className="font-medium line-clamp-1 text-base">{promotion.name}</h3>
-                  <div className="flex items-center mt-1 gap-1">
-                    <PromotionTypeIcon type={promotion.type} />
-                    <span className="text-xs text-muted-foreground line-clamp-1">{promotion.type}</span>
-                  </div>
-                </div>
-                <Badge variant="outline" className="text-xs whitespace-nowrap ml-2">
-                  {formatDate(promotion.createdAt)}
-                </Badge>
-              </div>
-              
-              <p className="text-sm text-muted-foreground mt-3 line-clamp-2">
-                {promotion.description}
-              </p>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                className="mt-4 w-full"
-                onClick={() => navigate(`/vendor-dashboard/promotions/edit/${promotion.id}`)}
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Promotion
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      
-      {sortedPromotions.length === 0 && (
+      {isLoading ? (
+        // Loading state
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="overflow-hidden">
+              <div className="aspect-video w-full bg-gray-100 animate-pulse"></div>
+              <CardContent className="p-5">
+                <div className="h-5 bg-gray-100 animate-pulse rounded w-2/3 mb-2"></div>
+                <div className="h-4 bg-gray-100 animate-pulse rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-gray-100 animate-pulse rounded w-full mb-2"></div>
+                <div className="h-4 bg-gray-100 animate-pulse rounded w-full mb-4"></div>
+                <div className="h-8 bg-gray-100 animate-pulse rounded w-full"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : sortedPromotions.length === 0 ? (
+        // Empty state
         <div className="text-center py-12">
           <Gift className="mx-auto h-12 w-12 text-muted-foreground opacity-30" />
           <h3 className="mt-4 text-lg font-medium">No promotions found</h3>
@@ -286,6 +275,49 @@ const PromotionsList = () => {
             <Plus className="mr-2 h-4 w-4" />
             Create Promotion
           </Button>
+        </div>
+      ) : (
+        // Promotions grid
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sortedPromotions.map((promotion) => (
+            <Card key={promotion.id} className="overflow-hidden hover:shadow-md transition-shadow duration-200 h-full">
+              <div className="aspect-video w-full overflow-hidden bg-orange-50">
+                <img
+                  src={promotion.image}
+                  alt={promotion.title}
+                  className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
+                />
+              </div>
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-medium line-clamp-1 text-base">{promotion.title}</h3>
+                    <div className="flex items-center mt-1 gap-1">
+                      <PromotionTypeIcon type={promotion.promotionType} />
+                      <span className="text-xs text-muted-foreground line-clamp-1">{promotion.promotionType}</span>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-xs whitespace-nowrap ml-2">
+                    {formatDate(promotion.createdAt)}
+                  </Badge>
+                </div>
+                
+                <p className="text-sm text-muted-foreground mt-3 line-clamp-2">
+                  {promotion.description}
+                </p>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4 w-full"
+                  onClick={() => navigate(`/vendor-dashboard/promotions/edit/${promotion.id}`)}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Promotion
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
