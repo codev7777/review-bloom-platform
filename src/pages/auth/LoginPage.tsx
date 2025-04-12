@@ -10,7 +10,7 @@ const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace wit
 
 const LoginPage = () => {
   const [email, setEmail] = useState("james.s200049@gmail.com");
-  const [password, setPassword] = useState("P@ssw0rd");
+  const [password, setPassword] = useState("akfguehdQQ1");
   const { login, isLoading } = useAuth();
 
   // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);

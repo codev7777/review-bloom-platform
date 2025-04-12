@@ -1,41 +1,43 @@
-
 // Enhanced Campaign type to match the backend API
 export interface Campaign {
   id: string | number;
   title: string;
   isActive: CampaignStatus;
   promotionId: string | number;
-  companyId: string | number;
+  companyId?: string | number;
   productIds: (string | number)[];
   marketplaces: string[];
   claims: number;
   createdAt?: string;
   updatedAt?: string;
-  
+
   // Legacy properties for compatibility with existing components
   name?: string;
   code?: string;
   url?: string;
   description?: string;
-  status?: 'draft' | 'scheduled' | 'active' | 'paused' | 'ended';
+  status?: "active" | "paused"; // Simplified status options to match UI
   startDate?: Date;
   endDate?: Date;
   giftOffer?: boolean;
   giftDescription?: string;
 }
 
-export type CampaignStatus = 'YES' | 'NO';
+export type CampaignStatus = "YES" | "NO";
 
 // Map isActive to status for compatibility with existing components
 export const mapCampaignForDisplay = (campaign: Campaign): Campaign => {
   return {
     ...campaign,
     name: campaign.name || campaign.title, // Use name if available, otherwise use title
-    status: campaign.status || (campaign.isActive === 'YES' ? 'active' : 'paused'),
+    status:
+      campaign.status || (campaign.isActive === "YES" ? "active" : "paused"),
     // Generate a code from the title if not available
-    code: campaign.code || campaign.title?.replace(/\s+/g, '_').toUpperCase().substring(0, 10),
+    code:
+      campaign.code ||
+      campaign.title?.replace(/\s+/g, "_").toUpperCase().substring(0, 10),
     // Generate a URL if not available
-    url: campaign.url || `https://example.com/review/${campaign.id}`
+    url: campaign.url || `https://example.com/review/${campaign.id}`,
   };
 };
 
@@ -43,10 +45,10 @@ export interface DiscountCode {
   id: string;
   code: string;
   discount: number;
-  type: 'flat' | 'percentage';
+  type: "flat" | "percentage";
   validUntil: string;
   timesUsed: number;
-  status: 'active' | 'scheduled' | 'expired';
+  status: "active" | "scheduled" | "expired";
 }
 
 export interface StatsCardProps {
@@ -54,7 +56,7 @@ export interface StatsCardProps {
   value: string;
   subtitle?: string;
   change?: string;
-  changeType?: 'positive' | 'negative' | 'neutral';
+  changeType?: "positive" | "negative" | "neutral";
   period?: string;
   trend?: string;
   percentage?: string;
@@ -93,12 +95,11 @@ export interface Product {
   ratio?: number;
   createdAt?: string;
   updatedAt?: string;
-  
+
   // Legacy properties for compatibility
   name?: string;
   asin?: string;
-  category?: string;
-  price?: string;
+  category?: string | Category; // Can be either a string (legacy) or Category object
   dateAdded?: string;
 }
 
@@ -106,7 +107,11 @@ export interface Promotion {
   id: string | number;
   title: string;
   image: string;
-  promotionType: 'GIFT_CARD' | 'DISCOUNT_CODE' | 'FREE_PRODUCT' | 'DIGITAL_DOWNLOAD';
+  promotionType:
+    | "GIFT_CARD"
+    | "DISCOUNT_CODE"
+    | "FREE_PRODUCT"
+    | "DIGITAL_DOWNLOAD";
   description: string;
   companyId: string | number;
   createdAt?: string;
@@ -126,7 +131,7 @@ export interface Plan {
   name: string;
   price: number;
   description?: string;
-  planType: 'SILVER' | 'GOLD' | 'PLATINUM';
+  planType: "SILVER" | "GOLD" | "PLATINUM";
   createdAt?: string;
   updatedAt?: string;
 }

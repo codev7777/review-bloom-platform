@@ -1,26 +1,27 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Edit, 
-  Trash2, 
-  Plus, 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Edit,
+  Trash2,
+  Plus,
   Search,
   Info,
   SlidersHorizontal,
   ArrowUpDown,
   ChevronUp,
-  ChevronDown
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { 
+  ChevronDown,
+  Pencil,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow 
-} from '@/components/ui/table';
+  TableRow,
+} from "@/components/ui/table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +32,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,146 +40,162 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/use-toast';
-import { Badge } from '@/components/ui/badge';
-import { Product } from '@/types';
-import { getProducts, deleteProduct } from '@/lib/api/products/products.api';
-import useFetchWithFallback from '@/hooks/useFetchWithFallback';
-
+} from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Product } from "@/types";
+import { getProducts, deleteProduct } from "@/lib/api/products/products.api";
+import useFetchWithFallback from "@/hooks/useFetchWithFallback";
+import type { ColumnDef } from "@tanstack/react-table";
+import { getImageUrl } from "@/utils/imageUrl";
 // Mock data
 const MOCK_PRODUCTS: Product[] = [
-  { 
-    id: '1', 
-    title: 'Kitchen Knife Set', 
-    description: 'Professional kitchen knife set with wooden block',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Knife+Set',
+  {
+    id: "1",
+    title: "Kitchen Knife Set",
+    description: "Professional kitchen knife set with wooden block",
+    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Knife+Set",
     companyId: 1,
     categoryId: 1,
-    name: 'Kitchen Knife Set',
-    asin: 'B08N5LNQCV', 
-    category: 'Kitchen', 
-    price: '$49.99',
-    dateAdded: '2023-04-12'
+    name: "Kitchen Knife Set",
+    asin: "B08N5LNQCV",
+    category: "Kitchen",
+    dateAdded: "2023-04-12",
   },
-  { 
-    id: '2', 
-    title: 'Yoga Mat', 
-    description: 'Non-slip exercise yoga mat',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat',
+  {
+    id: "2",
+    title: "Yoga Mat",
+    description: "Non-slip exercise yoga mat",
+    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat",
     companyId: 1,
     categoryId: 2,
-    name: 'Yoga Mat',
-    asin: 'B07D9YYQ8V', 
-    category: 'Fitness', 
-    price: '$24.95',
-    dateAdded: '2023-05-18'
+    name: "Yoga Mat",
+    asin: "B07D9YYQ8V",
+    category: "Fitness",
+    dateAdded: "2023-05-18",
   },
-  { 
-    id: '3', 
-    title: 'Bluetooth Headphones', 
-    description: 'Wireless noise-cancelling headphones',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones',
+  {
+    id: "3",
+    title: "Bluetooth Headphones",
+    description: "Wireless noise-cancelling headphones",
+    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones",
     companyId: 1,
     categoryId: 3,
-    name: 'Bluetooth Headphones',
-    asin: 'B07Q5NDZBD', 
-    category: 'Electronics', 
-    price: '$79.99',
-    dateAdded: '2023-02-24'
+    name: "Bluetooth Headphones",
+    asin: "B07Q5NDZBD",
+    category: "Electronics",
+    dateAdded: "2023-02-24",
   },
-  { 
-    id: '4', 
-    title: 'Smart Watch', 
-    description: 'Fitness tracking smart watch',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Watch',
+  {
+    id: "4",
+    title: "Smart Watch",
+    description: "Fitness tracking smart watch",
+    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Watch",
     companyId: 1,
     categoryId: 3,
-    name: 'Smart Watch',
-    asin: 'B08L5NP6NG', 
-    category: 'Electronics', 
-    price: '$129.99',
-    dateAdded: '2023-06-08'
+    name: "Smart Watch",
+    asin: "B08L5NP6NG",
+    category: "Electronics",
+    dateAdded: "2023-06-08",
   },
-  { 
-    id: '5', 
-    title: 'Coffee Maker', 
-    description: 'Automatic coffee maker with timer',
-    image: 'https://placehold.co/100x100/FFF5E8/FF9130?text=Coffee',
+  {
+    id: "5",
+    title: "Coffee Maker",
+    description: "Automatic coffee maker with timer",
+    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Coffee",
     companyId: 1,
     categoryId: 1,
-    name: 'Coffee Maker',
-    asin: 'B07JG7DS1T', 
-    category: 'Kitchen', 
-    price: '$89.99',
-    dateAdded: '2023-03-30'
+    name: "Coffee Maker",
+    asin: "B07JG7DS1T",
+    category: "Kitchen",
+    dateAdded: "2023-03-30",
   },
 ];
 
-type SortField = 'name' | 'asin' | 'category' | 'dateAdded';
-type SortOrder = 'asc' | 'desc';
+type SortField = "name" | "asin" | "category" | "dateAdded";
+type SortOrder = "asc" | "desc";
+
+const BACKEND_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
 
 const ProductsList = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>('dateAdded');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-  
-  // Fetch products from the backend
-  const { data: products, isLoading, setData: setProducts } = useFetchWithFallback<Product>(
-    getProducts,
-    MOCK_PRODUCTS
-  );
-  
+  const [sortField, setSortField] = useState<SortField>("dateAdded");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+
+  // Get the current user's company ID from localStorage
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const companyId = user.companyId || 1; // Default to 1 if not available
+
+  // Fetch products from the backend with companyId
+  const {
+    data: products,
+    isLoading,
+    setData: setProducts,
+    usingMockData,
+  } = useFetchWithFallback<Product>(getProducts, MOCK_PRODUCTS, { companyId });
+
   // Get unique categories for filter
-  const categories = [...new Set(products.map(product => product.category || ''))];
-  
+  const categories = [
+    ...new Set(products.map((product) => product.categoryId || "")),
+  ];
+
   // Filter products based on search term and category
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = (product.title || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (product.asin || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (product.category || '').toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesCategory = categoryFilter === null || product.category === categoryFilter;
-    
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      (product.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (product.asin || "").toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      categoryFilter === null || product.categoryId === categoryFilter;
+
     return matchesSearch && matchesCategory;
   });
-  
+
   // Sort products
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     let comparison = 0;
-    
-    if (sortField === 'name') {
-      comparison = (a.name || a.title || '').localeCompare(b.name || b.title || '');
-    } else if (sortField === 'asin') {
-      comparison = (a.asin || '').localeCompare(b.asin || '');
-    } else if (sortField === 'category') {
-      comparison = (a.category || '').localeCompare(b.category || '');
-    } else if (sortField === 'dateAdded') {
+
+    if (sortField === "name") {
+      comparison = (a.name || a.title || "").localeCompare(
+        b.name || b.title || ""
+      );
+    } else if (sortField === "asin") {
+      comparison = (a.asin || "").localeCompare(b.asin || "");
+    } else if (sortField === "category") {
+      const categoryA =
+        typeof a.category === "string" ? a.category : a.category?.name || "";
+      const categoryB =
+        typeof b.category === "string" ? b.category : b.category?.name || "";
+      comparison = categoryA.localeCompare(categoryB);
+    } else if (sortField === "dateAdded") {
       const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
       const dateB = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
       comparison = dateA - dateB;
     }
-    
-    return sortOrder === 'asc' ? comparison : -comparison;
+
+    return sortOrder === "asc" ? comparison : -comparison;
   });
-  
+
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortOrder('asc');
+      setSortOrder("asc");
     }
   };
-  
+
   const handleDeleteProduct = async () => {
     if (productToDelete) {
       try {
         await deleteProduct(productToDelete);
-        setProducts(prevProducts => prevProducts.filter(p => p.id !== productToDelete));
+        setProducts((prevProducts) =>
+          prevProducts.filter((p) => p.id !== productToDelete)
+        );
         toast({
           title: "Product deleted",
           description: "The product has been removed successfully",
@@ -188,13 +205,99 @@ const ProductsList = () => {
         toast({
           variant: "destructive",
           title: "Failed to delete product",
-          description: "There was an error deleting the product. Please try again.",
+          description:
+            "There was an error deleting the product. Please try again.",
         });
       }
       setProductToDelete(null);
     }
   };
-  
+
+  const columns: ColumnDef<Product>[] = [
+    {
+      accessorKey: "title",
+      header: "Product",
+      cell: ({ row }) => {
+        const product = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-lg overflow-hidden bg-orange-100">
+              <img
+                src={getImageUrl(product.image)}
+                alt={product.title}
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div>
+              <div className="font-medium">{product.title}</div>
+              <div className="text-sm text-muted-foreground">
+                ASIN: {product.asin}
+              </div>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "categoryId",
+      header: "Category",
+      cell: ({ row }) => {
+        const category = categories.find((c) => c === row.original.categoryId);
+        return (
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
+              {category || "Uncategorized"}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => {
+        const product = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() =>
+                navigate(`/vendor-dashboard/products/${product.id}/edit`)
+              }
+            >
+              <Edit className="h-4 w-4 text-orange-500" />
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete product</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to delete this product? This action
+                    cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDeleteProduct()}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        );
+      },
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -202,15 +305,15 @@ const ProductsList = () => {
           <h1 className="text-2xl font-semibold">Products</h1>
           <p className="text-muted-foreground">Manage your product catalog</p>
         </div>
-        <Button 
+        <Button
           className="bg-orange-500 hover:bg-orange-600"
-          onClick={() => navigate('/vendor-dashboard/products/new')}
+          onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
           Add Product
         </Button>
       </div>
-      
+
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -222,12 +325,14 @@ const ProductsList = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2">
               <SlidersHorizontal className="h-4 w-4" />
-              {categoryFilter ? `Category: ${categoryFilter}` : "Filter by Category"}
+              {categoryFilter
+                ? `Category: ${categoryFilter}`
+                : "Filter by Category"}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -237,14 +342,17 @@ const ProductsList = () => {
               All Categories
             </DropdownMenuItem>
             {categories.map((category) => (
-              <DropdownMenuItem key={category} onClick={() => setCategoryFilter(category)}>
+              <DropdownMenuItem
+                key={category}
+                onClick={() => setCategoryFilter(String(category))}
+              >
                 {category}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      
+
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
@@ -254,13 +362,15 @@ const ProductsList = () => {
           <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
           <h3 className="mt-4 text-lg font-medium">No products found</h3>
           <p className="mt-1 text-sm text-muted-foreground">
-            {searchTerm || categoryFilter ? "Try a different search term or filter" : "Add a product to get started"}
+            {searchTerm || categoryFilter
+              ? "Try a different search term or filter"
+              : "Add a product to get started"}
           </p>
           {!searchTerm && !categoryFilter && (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
-              onClick={() => navigate('/vendor-dashboard/products/new')}
+              onClick={() => navigate("/vendor-dashboard/products/new")}
             >
               <Plus className="mr-2 h-4 w-4" />
               Add your first product
@@ -273,32 +383,49 @@ const ProductsList = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Product</TableHead>
-                <TableHead className="cursor-pointer" onClick={() => handleSort('asin')}>
+                <TableHead
+                  className="cursor-pointer"
+                  onClick={() => handleSort("asin")}
+                >
                   <div className="flex items-center">
                     ASIN
                     <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === 'asin' && (
-                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
+                    {sortField === "asin" &&
+                      (sortOrder === "asc" ? (
+                        <ChevronUp className="ml-1 h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      ))}
                   </div>
                 </TableHead>
-                <TableHead className="cursor-pointer" onClick={() => handleSort('category')}>
+                <TableHead
+                  className="cursor-pointer"
+                  onClick={() => handleSort("category")}
+                >
                   <div className="flex items-center">
                     Category
                     <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === 'category' && (
-                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
+                    {sortField === "category" &&
+                      (sortOrder === "asc" ? (
+                        <ChevronUp className="ml-1 h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      ))}
                   </div>
                 </TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead className="cursor-pointer" onClick={() => handleSort('dateAdded')}>
+                <TableHead
+                  className="cursor-pointer"
+                  onClick={() => handleSort("dateAdded")}
+                >
                   <div className="flex items-center">
                     Date Added
                     <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === 'dateAdded' && (
-                      sortOrder === 'asc' ? <ChevronUp className="ml-1 h-4 w-4" /> : <ChevronDown className="ml-1 h-4 w-4" />
-                    )}
+                    {sortField === "dateAdded" &&
+                      (sortOrder === "asc" ? (
+                        <ChevronUp className="ml-1 h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      ))}
                   </div>
                 </TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -310,7 +437,7 @@ const ProductsList = () => {
                   <TableCell className="font-medium">
                     <div className="flex items-center">
                       <img
-                        src={product.image}
+                        src={getImageUrl(product.image)}
                         alt={product.name}
                         className="h-10 w-10 rounded object-cover mr-3"
                       />
@@ -322,24 +449,31 @@ const ProductsList = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{product.asin}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {product.asin}
+                  </TableCell>
                   <TableCell>
                     <Badge variant="outline" className="font-normal">
-                      {product.category}
+                      {typeof product.category === "object"
+                        ? product.category.name
+                        : product.category}
                     </Badge>
                   </TableCell>
-                  <TableCell>{product.price}</TableCell>
                   <TableCell>{product.dateAdded}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => navigate(`/vendor-dashboard/products/edit/${product.id}`)}
+                        onClick={() =>
+                          navigate(
+                            `/vendor-dashboard/products/${product.id}/edit`
+                          )
+                        }
                       >
                         <Edit className="h-4 w-4 text-orange-500" />
                       </Button>
-                      
+
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="ghost" size="icon">
@@ -350,12 +484,13 @@ const ProductsList = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Delete product</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to delete this product? This action cannot be undone.
+                              Are you sure you want to delete this product? This
+                              action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction 
+                            <AlertDialogAction
                               onClick={() => handleDeleteProduct()}
                               className="bg-red-500 hover:bg-red-600"
                             >

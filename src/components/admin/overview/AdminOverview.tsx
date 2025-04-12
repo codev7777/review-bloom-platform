@@ -1,4 +1,3 @@
-
 import { BarChart, LineChart, PieChart } from "@/components/ui/charts";
 import {
   Card,
@@ -97,7 +96,9 @@ const AdminOverview = () => {
         <Card className="col-span-2 lg:col-span-3">
           <CardHeader>
             <CardTitle>Campaign Performance</CardTitle>
-            <CardDescription>Performance metrics across all active campaigns</CardDescription>
+            <CardDescription>
+              Performance metrics across all active campaigns
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <BarChart

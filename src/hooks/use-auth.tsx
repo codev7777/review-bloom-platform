@@ -29,22 +29,32 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  const DEBUG = false; // Set to true for console logs
+  const DEBUG = true; // Set to true for console logs
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     const token = localStorage.getItem("accessToken");
 
+    if (DEBUG) console.log("Auth initialization:", { savedUser, token });
+
     if (savedUser && token) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        if (DEBUG) console.log("User loaded from localStorage:", parsedUser);
       } catch (error) {
         console.error("Invalid user data in localStorage:", error);
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
       }
+    } else {
+      if (DEBUG) console.log("No user or token found in localStorage");
     }
     setIsLoading(false);
   }, []);
+
+  // Compute isAuthenticated based on user and token
+  const isAuthenticated = Boolean(user && localStorage.getItem("accessToken"));
 
   const login = async (email: string, password: string) => {
     try {
@@ -53,10 +63,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const response = await userApi.login({ email, password });
       const { tokens, user } = response;
+
+      if (DEBUG) console.log("Login successful:", { tokens, user });
+
       localStorage.setItem("refreshToken", tokens.refresh.token);
       localStorage.setItem("accessToken", tokens.access.token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
+
+      if (DEBUG)
+        console.log("Tokens stored in localStorage:", {
+          accessToken: localStorage.getItem("accessToken"),
+          refreshToken: localStorage.getItem("refreshToken"),
+          user: localStorage.getItem("user"),
+        });
 
       toast({
         title: "Login successful",
@@ -70,6 +90,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
+      if (DEBUG) console.error("Login error:", error);
+
       toast({
         variant: "destructive",
         title: "Login failed",
@@ -129,7 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated: !!user,
+        isAuthenticated,
         isLoading,
         login,
         signup,

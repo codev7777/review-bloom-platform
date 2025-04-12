@@ -1,6 +1,5 @@
-
-import { useState, useEffect } from 'react';
-import { toast } from '@/components/ui/use-toast';
+import { useState, useEffect } from "react";
+import { toast } from "@/components/ui/use-toast";
 
 interface PaginatedResponse<T> {
   data: T[];
@@ -23,69 +22,136 @@ function useFetchWithFallback<T>(
   const [pagination, setPagination] = useState({
     totalPages: 1,
     totalCount: mockData.length,
-    currentPage: 1
+    currentPage: 1,
   });
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
+      setError(null);
       try {
+        console.log("Fetching data with params:", params);
         const result = await fetchFn(params);
-        if (result && result.data && result.data.length > 0) {
-          setData(result.data);
-          setPagination({
-            totalPages: result.totalPages,
-            totalCount: result.totalCount,
-            currentPage: params.page || 1
-          });
-          setUsingMockData(false);
+        console.log("API response:", result);
+
+        if (result && result.data && Array.isArray(result.data)) {
+          if (result.data.length > 0) {
+            console.log("Using API data:", result.data.length, "items");
+            setData(result.data);
+            setPagination({
+              totalPages: result.totalPages || 1,
+              totalCount: result.totalCount || result.data.length,
+              currentPage: params.page || 1,
+            });
+            setUsingMockData(false);
+          } else {
+            console.log("API returned empty array, using mock data");
+            setData(mockData);
+            setPagination({
+              totalPages: 1,
+              totalCount: mockData.length,
+              currentPage: 1,
+            });
+            setUsingMockData(true);
+            toast({
+              variant: "default",
+              title: "No data found",
+              description: "Using sample data for display purposes.",
+            });
+          }
         } else {
-          // If API returned empty array, use mock data
+          console.error("Invalid API response format:", result);
           setData(mockData);
           setPagination({
             totalPages: 1,
             totalCount: mockData.length,
-            currentPage: 1
+            currentPage: 1,
           });
           setUsingMockData(true);
           toast({
-            variant: "default", // Changed from "warning" to "default"
-            title: "No data found",
-            description: "Using sample data for display purposes.",
+            variant: "destructive",
+            title: "Invalid response format",
+            description:
+              "Using sample data. Please check the API response format.",
           });
         }
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err as Error);
+        console.error("Error fetching data:", err);
+
+        // Create a more descriptive error message
+        let errorMessage = "Unknown error occurred";
+
+        if (
+          err instanceof SyntaxError &&
+          err.message.includes("Unexpected token")
+        ) {
+          errorMessage =
+            "Received non-JSON response from server. The server might be down or returning an error page.";
+        } else if (err instanceof Error) {
+          errorMessage = err.message;
+        }
+
+        setError(new Error(errorMessage));
         setData(mockData);
         setPagination({
           totalPages: 1,
           totalCount: mockData.length,
-          currentPage: 1
+          currentPage: 1,
         });
         setUsingMockData(true);
-        toast({
-          variant: "destructive",
-          title: "Failed to load data",
-          description: "Using sample data. Please check your backend connection.",
-        });
+
+        // Check if it's an authentication error
+        const axiosError = err as any;
+        if (axiosError.response) {
+          console.error(
+            "Error response:",
+            axiosError.response.status,
+            axiosError.response.data
+          );
+          if (axiosError.response.status === 401) {
+            toast({
+              variant: "destructive",
+              title: "Authentication error",
+              description: "Please log in again to access this data.",
+            });
+          } else if (axiosError.response.status === 403) {
+            toast({
+              variant: "destructive",
+              title: "Access denied",
+              description: "You don't have permission to access this data.",
+            });
+          } else {
+            toast({
+              variant: "destructive",
+              title: "Failed to load data",
+              description:
+                "Using sample data. Please check your backend connection.",
+            });
+          }
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Network error",
+            description: "Unable to connect to the server. Using sample data.",
+          });
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...dependencies, JSON.stringify(params)]);
 
-  return { 
-    data, 
-    isLoading, 
-    error, 
-    usingMockData, 
+  return {
+    data,
+    isLoading,
+    error,
+    usingMockData,
     pagination,
-    setData, // Expose setData function to consumers
-    setPage: (page: number) => params.page = page
+    setData,
+    setPage: (page: number) => (params.page = page),
   };
 }
 

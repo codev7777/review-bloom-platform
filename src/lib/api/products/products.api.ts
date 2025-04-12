@@ -1,42 +1,81 @@
-
-import api from '../axiosConfig';
-import { Product } from '@/types';
+import { Product } from "@/types";
+import api from "../axiosConfig";
 
 // Product API endpoints
-export const createProduct = async (product: Omit<Product, 'id'>): Promise<Product> => {
-  const response = await api.post('/products', product);
+export const createProduct = async (formData: FormData): Promise<Product> => {
+  const response = await api.post("/products", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
 export const getProducts = async (params?: {
-  title?: string;
-  companyId?: string | number;
-  categoryId?: string | number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
-  limit?: number;
   page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }): Promise<{ data: Product[]; totalPages: number; totalCount: number }> => {
-  try {
-    const response = await api.get('/products', { params });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching products:', error);
-    // Return empty result if API fails
-    return { data: [], totalPages: 0, totalCount: 0 };
-  }
+  const response = await api.get("/products", { params });
+  const result = response.data;
+  return {
+    data: result.results,
+    totalPages: result.totalPages,
+    totalCount: result.total,
+  };
 };
 
 export const getProduct = async (id: string | number): Promise<Product> => {
-  const response = await api.get(`/products/${id}`);
+  try {
+    // Convert id to number if it's a string
+    const numericId = typeof id === "string" ? Number(id) : id;
+    if (isNaN(numericId)) {
+      throw new Error("Invalid product ID");
+    }
+
+    console.log("Making API call to get product with ID:", numericId);
+    const response = await api.get(`/products/${numericId}`);
+    console.log("API response for product:", response.data);
+
+    if (!response.data) {
+      throw new Error("No product data received");
+    }
+
+    // Log the full response to see what we're getting
+    console.log("Full API response:", {
+      status: response.status,
+      headers: response.headers,
+      data: response.data,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error in getProduct API call:", error);
+    if (error.response) {
+      console.error("Error response:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
+    throw error;
+  }
+};
+
+export const updateProduct = async (
+  id: string,
+  formData: FormData
+): Promise<Product> => {
+  const response = await api.put(`/products/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
   return response.data;
 };
 
-export const updateProduct = async (id: string | number, product: Partial<Product>): Promise<Product> => {
-  const response = await api.patch(`/products/${id}`, product);
-  return response.data;
-};
-
-export const deleteProduct = async (id: string | number): Promise<void> => {
+export const deleteProduct = async (id: string): Promise<void> => {
   await api.delete(`/products/${id}`);
 };

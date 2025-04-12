@@ -1,48 +1,255 @@
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { toast } from '@/components/ui/use-toast';
-import { useAuth } from '@/hooks/use-auth';
-import { User, Bell, CreditCard, Mail, Shield } from 'lucide-react';
-import { Switch } from '@/components/ui/switch';
-import { 
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/use-toast";
+import { useAuth } from "@/hooks/use-auth";
+import { User, Bell, CreditCard, Mail, Shield, Upload, X } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  createCompany,
+  updateCompany,
+  getCompany,
+} from "@/lib/api/companies/companies.api";
+import { updateUser, getUser } from "@/lib/api/users/users.api";
+import { Company, User as UserType } from "@/types";
+import { getImageUrl } from "@/utils/imageUrl";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FILE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+];
+
+const BACKEND_URL =
+  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+
+// Mock data for fallback
+const MOCK_COMPANY = {
+  id: "1",
+  name: "Sample Company",
+  website: "https://example.com",
+  email: "contact@example.com",
+  phone: "+1234567890",
+  address: "123 Sample St",
+  logo: "https://placehold.co/100x100/FFF5E8/FF9130?text=Logo",
+  detail: "Sample company description",
+};
+
+// Define a separate interface for the form data
+interface SettingsFormData {
+  // User fields
+  name: string;
+  email: string;
+  phone: string;
+  // Company fields
+  companyName: string;
+  websiteUrl: string;
+  detail: string;
+  logo: string | null;
+}
 
 const SettingsPanel = () => {
-  const { user } = useAuth();
+  const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [activeTab, setActiveTab] = useState("profile");
+  const [formData, setFormData] = useState<SettingsFormData>({
+    name: auth.user?.name || "",
+    email: auth.user?.email || "",
+    phone: "",
+    companyName: "",
+    websiteUrl: "",
+    detail: "",
+    logo: null,
+  });
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // const getImageUrl = (imagePath: string | undefined) => {
+  //   if (!imagePath)
+  //     return "https://placehold.co/100x100/FFF5E8/FF9130?text=No+Logo";
+  //   return imagePath.startsWith("http")
+  //     ? imagePath
+  //     : `${BACKEND_URL}${imagePath}`;
+  // };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (auth.user?.id) {
+        try {
+          // Fetch user data
+          const userData = await getUser(String(auth.user.id));
+          setFormData((prev) => ({
+            ...prev,
+            name: userData.name || "",
+            email: userData.email || "",
+          }));
+
+          // Fetch company data if user has a company
+          if (auth.user.companyId) {
+            const company = await getCompany(String(auth.user.companyId));
+            setFormData((prev) => ({
+              ...prev,
+              companyName: company.name || "",
+              websiteUrl: company.websiteUrl || "",
+              detail: company.detail || "",
+              logo: company.logo || null,
+            }));
+            if (company.logo) {
+              setPreviewImage(getImageUrl(company.logo));
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to load user data",
+          });
+        }
+      }
+    };
+
+    fetchData();
+  }, [auth.user?.id, auth.user?.companyId]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      setFileError("File size must be less than 5MB");
+      return;
+    }
+
+    // Validate file type
+    if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+      setFileError("File must be a JPEG, PNG, GIF, or WebP image");
+      return;
+    }
+
+    setFileError(null);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      setPreviewImage(base64String);
+      setFormData((prev) => ({ ...prev, logo: base64String }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveLogo = () => {
+    setPreviewImage(null);
+    setFormData((prev) => ({ ...prev, logo: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSave = async () => {
     setIsLoading(true);
-    
+
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      if (activeTab === "profile") {
+        // Only update user information
+        if (auth.user?.id) {
+          const updatedUser = await updateUser(String(auth.user.id), {
+            name: formData.name,
+          });
+
+          // Update local storage with new user data
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+
+          // Force page reload to update auth context
+          window.location.reload();
+        }
+      } else if (activeTab === "company") {
+        // Validate required company fields
+        if (
+          !formData.companyName ||
+          !formData.websiteUrl ||
+          !formData.detail ||
+          !formData.logo
+        ) {
+          toast({
+            variant: "destructive",
+            title: "Missing Fields",
+            description: "Please fill in all required fields",
+          });
+          return;
+        }
+
+        const companyData = {
+          name: formData.companyName,
+          websiteUrl: formData.websiteUrl,
+          detail: formData.detail,
+          logo: formData.logo,
+        };
+
+        // If user doesn't have a company, create one
+        if (!auth.user?.companyId) {
+          // Create company
+          const newCompany = await createCompany(companyData);
+
+          // Update user with new company ID
+          if (auth.user?.id) {
+            const updatedUser = await updateUser(String(auth.user.id), {
+              companyId: String(newCompany.id),
+            });
+
+            // Update local storage with new user data
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+
+            // Force page reload to update auth context
+            window.location.reload();
+          }
+        } else {
+          // Update existing company
+          await updateCompany(String(auth.user.companyId), companyData);
+        }
+      }
+
       toast({
-        title: "Settings saved",
-        description: "Your settings have been updated successfully",
+        title: "Success",
+        description: "Settings updated successfully",
       });
     } catch (error) {
+      console.error("Error updating settings:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "There was an error saving your settings",
+        description: "Failed to update settings",
       });
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="space-y-6">
       <div>
@@ -51,512 +258,252 @@ const SettingsPanel = () => {
           Manage your account settings and preferences
         </p>
       </div>
-      
-      <Tabs defaultValue="profile" className="space-y-4">
+
+      <Tabs
+        defaultValue="profile"
+        className="space-y-6"
+        onValueChange={setActiveTab}
+      >
         <TabsList>
-          <TabsTrigger value="profile" className="gap-2">
-            <User className="h-4 w-4" />
+          <TabsTrigger value="profile">
+            <User className="mr-2 h-4 w-4" />
             Profile
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-2">
-            <Bell className="h-4 w-4" />
+          <TabsTrigger value="company">
+            <Shield className="mr-2 h-4 w-4" />
+            Company
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="mr-2 h-4 w-4" />
             Notifications
           </TabsTrigger>
-          <TabsTrigger value="billing" className="gap-2">
-            <CreditCard className="h-4 w-4" />
+          <TabsTrigger value="billing">
+            <CreditCard className="mr-2 h-4 w-4" />
             Billing
           </TabsTrigger>
-          <TabsTrigger value="branding" className="gap-2">
-            <Mail className="h-4 w-4" />
-            Branding
-          </TabsTrigger>
-          <TabsTrigger value="security" className="gap-2">
-            <Shield className="h-4 w-4" />
-            Security
-          </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="profile" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium">Personal Information</h3>
-                <p className="text-sm text-muted-foreground">
-                  Update your account details and profile information
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" defaultValue={user?.name || "Vendor User"} />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" defaultValue={user?.email || "vendor@example.com"} />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="Enter your phone number" />
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-medium">Company Information</h3>
-                <p className="text-sm text-muted-foreground">
-                  Update your company details and business information
-                </p>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="company">Company Name</Label>
-                  <Input id="company" defaultValue="Example Store" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
-                  <Input id="website" type="url" placeholder="https://www.example.com" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="amazon-store">Amazon Store URL</Label>
-                  <Input id="amazon-store" type="url" placeholder="https://www.amazon.com/stores/page/..." />
-                </div>
-              </div>
-            </div>
+          <div>
+            <h3 className="text-lg font-medium">Personal Information</h3>
+            <p className="text-sm text-muted-foreground">
+              Update your personal information and how others see you on the
+              platform
+            </p>
           </div>
-          
-          <div className="flex justify-end gap-4 mt-6">
-            <Button
-              type="button"
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-orange-500 hover:bg-orange-600"
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Saving...
-                </span>
-              ) : (
-                'Save Changes'
-              )}
-            </Button>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                disabled
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone Number</Label>
+              <Input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </div>
           </div>
         </TabsContent>
-        
+
+        <TabsContent value="company" className="space-y-6">
+          <div>
+            <h3 className="text-lg font-medium">Company Information</h3>
+            <p className="text-sm text-muted-foreground">
+              Update your company details and business information
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="companyName">Company Name</Label>
+              <Input
+                id="companyName"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="websiteUrl">Website</Label>
+              <Input
+                id="websiteUrl"
+                name="websiteUrl"
+                type="url"
+                placeholder="https://www.example.com"
+                value={formData.websiteUrl}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="detail">Company Description</Label>
+              <Textarea
+                id="detail"
+                name="detail"
+                placeholder="Tell us about your company..."
+                value={formData.detail}
+                onChange={handleChange}
+                rows={4}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Company Logo</Label>
+              <div className="flex items-center gap-4">
+                <div className="relative h-24 w-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                  {previewImage ? (
+                    <img
+                      src={getImageUrl(previewImage)}
+                      alt="Company logo preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                      <span className="mt-1 block text-xs text-gray-500">
+                        Upload logo
+                      </span>
+                    </div>
+                  )}
+                  {previewImage && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveLogo}
+                      className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
+                    >
+                      <X className="h-4 w-4 text-gray-500" />
+                    </button>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept={ALLOWED_FILE_TYPES.join(",")}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {previewImage ? "Change Logo" : "Upload Logo"}
+                  </Button>
+                  {fileError && (
+                    <p className="mt-1 text-sm text-red-500">{fileError}</p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-500">
+                    Recommended size: 200x200px, PNG or JPG
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
         <TabsContent value="notifications" className="space-y-6">
           <div>
             <h3 className="text-lg font-medium">Notification Preferences</h3>
             <p className="text-sm text-muted-foreground">
-              Choose how and when you'd like to be notified
+              Configure how you want to be notified
             </p>
           </div>
-          
+
           <div className="space-y-4">
-            <div className="grid gap-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="font-medium">New Reviews</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get notified when a customer leaves a new review
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="new-reviews-email" className="text-sm">Email</Label>
-                    <Switch id="new-reviews-email" defaultChecked />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="new-reviews-app" className="text-sm">In-App</Label>
-                    <Switch id="new-reviews-app" defaultChecked />
-                  </div>
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Email Notifications</Label>
+                <p className="text-sm text-muted-foreground">
+                  Receive notifications via email
+                </p>
               </div>
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="font-medium">Campaign Updates</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get notified about campaign status changes and performance
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="campaign-email" className="text-sm">Email</Label>
-                    <Switch id="campaign-email" defaultChecked />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="campaign-app" className="text-sm">In-App</Label>
-                    <Switch id="campaign-app" defaultChecked />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="font-medium">Marketing & Tips</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Receive tips, product updates, and marketing materials
-                  </p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="marketing-email" className="text-sm">Email</Label>
-                    <Switch id="marketing-email" defaultChecked />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="marketing-app" className="text-sm">In-App</Label>
-                    <Switch id="marketing-app" defaultChecked />
-                  </div>
-                </div>
-              </div>
+              <Switch />
             </div>
-            
-            <div className="space-y-2 mt-6">
-              <Label htmlFor="digest-frequency">Email Digest Frequency</Label>
-              <Select defaultValue="daily">
-                <SelectTrigger id="digest-frequency">
-                  <SelectValue placeholder="Select frequency" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="realtime">Real-time</SelectItem>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="none">Don't send</SelectItem>
-                </SelectContent>
-              </Select>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Push Notifications</Label>
+                <p className="text-sm text-muted-foreground">
+                  Receive push notifications in your browser
+                </p>
+              </div>
+              <Switch />
             </div>
-          </div>
-          
-          <div className="flex justify-end gap-4 mt-6">
-            <Button
-              type="button"
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-orange-500 hover:bg-orange-600"
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
           </div>
         </TabsContent>
-        
+
         <TabsContent value="billing" className="space-y-6">
           <div>
-            <h3 className="text-lg font-medium">Subscription & Billing</h3>
+            <h3 className="text-lg font-medium">Billing Information</h3>
             <p className="text-sm text-muted-foreground">
-              Manage your subscription, payment methods, and billing information
+              Manage your billing information and subscription
             </p>
           </div>
-          
-          <div className="rounded-md border p-6 space-y-4">
-            <div className="flex justify-between">
-              <div>
-                <h4 className="font-medium">Current Plan</h4>
-                <div className="flex items-center mt-1">
-                  <span className="text-lg font-semibold text-orange-500">Pro Plan</span>
-                  <span className="ml-2 bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">Active</span>
-                </div>
-              </div>
-              <Button variant="outline" className="text-orange-500 border-orange-200 hover:bg-orange-50">
-                Upgrade Plan
-              </Button>
-            </div>
-            
-            <div className="space-y-1 text-sm">
-              <p>Renewal date: <span className="font-medium">October 15, 2023</span></p>
-              <p>Billing cycle: <span className="font-medium">Monthly</span></p>
-            </div>
-            
-            <div className="pt-4 border-t space-y-4 mt-4">
-              <h4 className="font-medium">Plan Features</h4>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Up to 25 active campaigns</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Advanced analytics dashboard</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Custom email templates</span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span>Priority support</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="rounded-md border p-6 space-y-4">
-            <h4 className="font-medium">Payment Method</h4>
+
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-12 h-8 bg-slate-800 rounded mr-3 flex items-center justify-center text-white text-xs">VISA</div>
-                <div>
-                  <p className="font-medium">Visa ending in 4242</p>
-                  <p className="text-sm text-muted-foreground">Expires 12/2024</p>
-                </div>
+              <div className="space-y-0.5">
+                <Label>Current Plan</Label>
+                <p className="text-sm text-muted-foreground">Free Plan</p>
               </div>
-              <Button variant="outline" size="sm">
-                Update
-              </Button>
+              <Button variant="outline">Upgrade Plan</Button>
             </div>
-          </div>
-          
-          <div className="rounded-md border p-6 space-y-4">
-            <div className="flex justify-between items-center">
-              <h4 className="font-medium">Billing History</h4>
-              <Button variant="outline" size="sm">
-                Download All
-              </Button>
-            </div>
-            
-            <div className="border rounded-md divide-y">
-              <div className="p-4 flex justify-between items-center">
-                <div>
-                  <p className="font-medium">Pro Plan - Monthly</p>
-                  <p className="text-sm text-muted-foreground">Sep 15, 2023</p>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium mr-4">$49.99</span>
-                  <Button variant="ghost" size="sm">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                  </Button>
-                </div>
+
+            <div className="space-y-2">
+              <Label>Payment Method</Label>
+              <div className="flex items-center gap-4">
+                <CreditCard className="h-8 w-8 text-gray-400" />
+                <span className="text-sm text-gray-500">
+                  No payment method added
+                </span>
               </div>
-              <div className="p-4 flex justify-between items-center">
-                <div>
-                  <p className="font-medium">Pro Plan - Monthly</p>
-                  <p className="text-sm text-muted-foreground">Aug 15, 2023</p>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium mr-4">$49.99</span>
-                  <Button variant="ghost" size="sm">
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="branding" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Email & Branding</h3>
-            <p className="text-sm text-muted-foreground">
-              Customize the look and feel of your customer communications
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="brand-name">Brand Name</Label>
-                <Input id="brand-name" defaultValue="Example Store" />
-                <p className="text-xs text-muted-foreground">
-                  This will appear as the sender name in emails
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="brand-logo">Brand Logo</Label>
-                <div className="mt-2 flex items-center">
-                  <div className="h-12 w-12 rounded bg-slate-200 flex items-center justify-center mr-4">
-                    <span className="text-slate-500 text-xs">Logo</span>
-                  </div>
-                  <Button variant="outline" size="sm" className="mr-2">
-                    Upload
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    Remove
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Recommended size: 200x200px, PNG or JPG
-                </p>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="brand-colors">Primary Color</Label>
-                <div className="flex items-center gap-4">
-                  <Input 
-                    id="brand-colors" 
-                    type="color" 
-                    className="w-12 h-10 p-1 rounded cursor-pointer"
-                    defaultValue="#FF9130"
-                  />
-                  <Input 
-                    type="text" 
-                    defaultValue="#FF9130" 
-                    className="w-32"
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email-signature">Email Signature</Label>
-                <Textarea 
-                  id="email-signature" 
-                  placeholder="Enter your email signature"
-                  rows={4}
-                  defaultValue="Best regards,\nThe Example Store Team\nwww.example.com"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="review-thank-you">Review Thank You Message</Label>
-                <Textarea 
-                  id="review-thank-you" 
-                  placeholder="Enter your thank you message"
-                  rows={4}
-                  defaultValue="Thank you for taking the time to review our product! Your feedback helps us improve our offerings and helps other customers make informed decisions."
-                />
-                <p className="text-xs text-muted-foreground">
-                  This message will be shown to customers after they submit a review
-                </p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-end gap-4 mt-6">
-            <Button
-              type="button"
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button 
-              className="bg-orange-500 hover:bg-orange-600"
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              {isLoading ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="security" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Security Settings</h3>
-            <p className="text-sm text-muted-foreground">
-              Manage your account security and access settings
-            </p>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h4 className="font-medium">Change Password</h4>
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <Input 
-                    id="current-password" 
-                    type="password" 
-                    placeholder="Enter your current password" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">New Password</Label>
-                  <Input 
-                    id="new-password" 
-                    type="password" 
-                    placeholder="Enter your new password" 
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm New Password</Label>
-                  <Input 
-                    id="confirm-password" 
-                    type="password" 
-                    placeholder="Confirm your new password" 
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end">
-                <Button className="bg-orange-500 hover:bg-orange-600">
-                  Update Password
-                </Button>
-              </div>
-            </div>
-            
-            <div className="pt-6 border-t space-y-4">
-              <h4 className="font-medium">Two-Factor Authentication</h4>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm">Enhance your account security with 2FA</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Add an extra layer of security to your account by requiring a verification code along with your password.
-                  </p>
-                </div>
-                <Switch defaultChecked={false} />
-              </div>
-            </div>
-            
-            <div className="pt-6 border-t space-y-4">
-              <h4 className="font-medium">Account Access</h4>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm">Active Sessions</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      You're currently logged in on 1 device
-                    </p>
-                  </div>
-                  <Button variant="outline" size="sm">
-                    Manage Sessions
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            <div className="pt-6 border-t space-y-4">
-              <h4 className="font-medium">Delete Account</h4>
-              <p className="text-sm text-muted-foreground">
-                Permanently delete your account and all associated data. This action cannot be undone.
-              </p>
-              <Button variant="destructive">
-                Delete Account
-              </Button>
             </div>
           </div>
         </TabsContent>
       </Tabs>
+
+      <div className="flex justify-end">
+        <Button
+          onClick={handleSave}
+          disabled={isLoading}
+          className="bg-orange-500 hover:bg-orange-600"
+        >
+          {isLoading ? (
+            <>
+              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white mr-2" />
+              Saving...
+            </>
+          ) : (
+            "Save Changes"
+          )}
+        </Button>
+      </div>
     </div>
   );
 };

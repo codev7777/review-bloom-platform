@@ -29,52 +29,9 @@ import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
 import useFetchWithFallback from "@/hooks/useFetchWithFallback";
-
-// Mock campaigns data with proper type properties
-const mockCampaigns: Campaign[] = [
-  {
-    id: "1",
-    title: "Summer Kitchen Sale",
-    isActive: "YES",
-    promotionId: 1,
-    companyId: 1,
-    productIds: [1, 2, 3],
-    marketplaces: ["US", "CA"],
-    claims: 0,
-    code: "KITCHEN2023",
-    url: "https://example.com/review/KITCHEN2023",
-    status: "active",
-    name: "Summer Kitchen Sale",
-  },
-  {
-    id: "2",
-    title: "Yoga Promotion",
-    isActive: "YES",
-    promotionId: 2,
-    companyId: 1,
-    productIds: [3, 4],
-    marketplaces: ["US", "GB"],
-    claims: 0,
-    code: "YOGA2023",
-    url: "https://example.com/review/YOGA2023",
-    status: "active",
-    name: "Yoga Promotion",
-  },
-  {
-    id: "3",
-    title: "Tech Gadgets Campaign",
-    isActive: "NO",
-    promotionId: 3,
-    companyId: 1,
-    productIds: [5, 6],
-    marketplaces: ["US", "JP"],
-    claims: 0,
-    code: "TECH2023",
-    url: "https://example.com/review/TECH2023",
-    status: "paused",
-    name: "Tech Gadgets Campaign",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "@/lib/api/products/products.api";
+import { getPromotions } from "@/lib/api/promotions/promotions.api";
 
 const Sidebar = ({
   isOpen,
@@ -164,7 +121,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { data: campaigns, isLoading } = useFetchWithFallback<Campaign>(
     getCampaigns,
-    mockCampaigns
+    []
   );
 
   return (
@@ -249,10 +206,35 @@ const Dashboard = () => {
   );
 };
 
-const VendorDashboard = () => {
+const VendorDashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+
+  const { data: campaignsResponse } = useQuery({
+    queryKey: ["campaigns"],
+    queryFn: () => getCampaigns(),
+  });
+
+  const { data: productsResponse } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => getProducts(),
+  });
+
+  const { data: promotionsResponse } = useQuery({
+    queryKey: ["promotions"],
+    queryFn: () => getPromotions(),
+  });
+
+  const campaigns = campaignsResponse?.data || [];
+  const products = productsResponse?.data || [];
+  const promotions = promotionsResponse?.data || [];
+
+  // Calculate statistics
+  const activeCampaigns = campaigns.filter((c) => c.isActive === "YES").length;
+  const totalProducts = products.length;
+  const totalPromotions = promotions.length;
+  const totalClaims = campaigns.reduce((sum, c) => sum + (c.claims || 0), 0);
 
   // Check connectivity to backend on component mount
   useEffect(() => {
@@ -307,7 +289,7 @@ const VendorDashboard = () => {
             <Route path="/analytics" element={<AnalyticsPanel />} />
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
-            <Route path="/products/edit/:id" element={<ProductForm />} />
+            <Route path="/products/:id/edit" element={<ProductForm />} />
             <Route path="/campaigns" element={<CampaignsList />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />
