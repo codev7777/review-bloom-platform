@@ -289,7 +289,7 @@ const VendorDashboard: React.FC = () => {
             <Route path="/analytics" element={<AnalyticsPanel />} />
             <Route path="/products" element={<ProductsList />} />
             <Route path="/products/new" element={<ProductForm />} />
-            <Route path="/products/:id/edit" element={<ProductForm />} />
+            <Route path="/products/edit/:id" element={<ProductForm />} />
             <Route path="/campaigns" element={<CampaignsList />} />
             <Route path="/campaigns/new" element={<CampaignForm />} />
             <Route path="/campaigns/edit/:id" element={<CampaignForm />} />

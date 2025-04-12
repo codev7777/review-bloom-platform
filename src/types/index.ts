@@ -1,3 +1,5 @@
+import GetDomain from "@/lib/GetDomain";
+
 // Enhanced Campaign type to match the backend API
 export interface Campaign {
   id: string | number;
@@ -37,7 +39,7 @@ export const mapCampaignForDisplay = (campaign: Campaign): Campaign => {
       campaign.code ||
       campaign.title?.replace(/\s+/g, "_").toUpperCase().substring(0, 10),
     // Generate a URL if not available
-    url: campaign.url || `https://example.com/review/${campaign.id}`,
+    url: campaign.url || `${GetDomain()}/review/${campaign.id}`,
   };
 };
 

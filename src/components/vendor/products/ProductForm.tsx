@@ -74,12 +74,21 @@ interface FormData extends Omit<Partial<Product>, "image"> {
 }
 
 const ProductForm = () => {
-  const { productId } = useParams();
+  const params = useParams();
+  const productId = params.id;
   const navigate = useNavigate();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const isEditMode = Boolean(productId);
+
+  console.log("Initial setup:", {
+    params,
+    productId,
+    isEditMode,
+    authUser: auth?.user,
+    companyId: auth?.user?.companyId,
+  });
 
   const [formData, setFormData] = useState<{
     title: string;
@@ -104,15 +113,27 @@ const ProductForm = () => {
   const [isFetching, setIsFetching] = useState(isEditMode);
 
   useEffect(() => {
+    console.log("useEffect triggered:", {
+      params,
+      productId,
+      isEditMode,
+      isFetching,
+      currentFormData: formData,
+    });
+
     const fetchProduct = async () => {
       if (isEditMode && productId) {
+        console.log("Starting fetchProduct with:", {
+          productId,
+          isEditMode,
+          currentFormData: formData,
+        });
+
         setIsFetching(true);
         try {
-          console.log("Starting to fetch product with ID:", productId);
-          console.log("Current formData:", formData);
-
+          console.log("Making API call to get product with ID:", productId);
           const response = await getProduct(productId);
-          console.log("API Response:", response);
+          console.log("API Response received:", response);
 
           if (response) {
             const newFormData = {
@@ -128,10 +149,8 @@ const ProductForm = () => {
             };
             console.log("Setting new formData:", newFormData);
 
-            // Set form data
             setFormData(newFormData);
 
-            // Set image preview if image exists
             if (response.image) {
               const imageUrl = getImageUrl(response.image);
               console.log("Setting image preview URL:", imageUrl);
@@ -154,6 +173,12 @@ const ProductForm = () => {
         } finally {
           setIsFetching(false);
         }
+      } else {
+        console.log("Skipping fetchProduct because:", {
+          isEditMode,
+          productId,
+          isFetching,
+        });
       }
     };
 
@@ -209,7 +234,7 @@ const ProductForm = () => {
       setImagePreview(base64String);
       setFormData((prev) => ({
         ...prev,
-        image: base64String,
+        image: file, // Store the actual file object
       }));
       setHasImageChanged(true);
     };
@@ -254,9 +279,15 @@ const ProductForm = () => {
         formDataToSend.append("asin", formData.asin);
       }
 
-      // Only include image if it has been changed
-      if (hasImageChanged && formData.image) {
+      // Handle image upload
+      if (formData.image instanceof File) {
         formDataToSend.append("image", formData.image);
+      } else if (typeof formData.image === "string" && hasImageChanged) {
+        // If it's a base64 string and has been changed
+        const response = await fetch(formData.image);
+        const blob = await response.blob();
+        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+        formDataToSend.append("image", file);
       }
 
       if (isEditMode && productId) {

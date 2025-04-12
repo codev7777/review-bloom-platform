@@ -190,12 +190,7 @@ const SettingsPanel = () => {
         }
       } else if (activeTab === "company") {
         // Validate required company fields
-        if (
-          !formData.companyName ||
-          !formData.websiteUrl ||
-          !formData.detail ||
-          !formData.logo
-        ) {
+        if (!formData.companyName || !formData.websiteUrl || !formData.detail) {
           toast({
             variant: "destructive",
             title: "Missing Fields",
@@ -204,12 +199,30 @@ const SettingsPanel = () => {
           return;
         }
 
+        // Prepare company data
         const companyData = {
           name: formData.companyName,
           websiteUrl: formData.websiteUrl,
           detail: formData.detail,
-          logo: formData.logo,
         };
+
+        // Only include logo if it's a new base64 string or if it's being removed
+        if (formData.logo !== null) {
+          // If it's a base64 string (new image or existing image)
+          if (typeof formData.logo === "string") {
+            // Check if it's a base64 string or a URL
+            if (formData.logo.startsWith("data:image")) {
+              // It's a new base64 image
+              (companyData as any).logo = formData.logo;
+            } else if (formData.logo.startsWith("http")) {
+              // It's an existing URL, don't include it in the update
+              // This prevents sending the URL as base64
+            }
+          }
+        } else {
+          // If logo is null, send empty string to remove the logo
+          (companyData as any).logo = "";
+        }
 
         // If user doesn't have a company, create one
         if (!auth.user?.companyId) {

@@ -48,69 +48,6 @@ import { getProducts, deleteProduct } from "@/lib/api/products/products.api";
 import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getImageUrl } from "@/utils/imageUrl";
-// Mock data
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    title: "Kitchen Knife Set",
-    description: "Professional kitchen knife set with wooden block",
-    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Knife+Set",
-    companyId: 1,
-    categoryId: 1,
-    name: "Kitchen Knife Set",
-    asin: "B08N5LNQCV",
-    category: "Kitchen",
-    dateAdded: "2023-04-12",
-  },
-  {
-    id: "2",
-    title: "Yoga Mat",
-    description: "Non-slip exercise yoga mat",
-    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Yoga+Mat",
-    companyId: 1,
-    categoryId: 2,
-    name: "Yoga Mat",
-    asin: "B07D9YYQ8V",
-    category: "Fitness",
-    dateAdded: "2023-05-18",
-  },
-  {
-    id: "3",
-    title: "Bluetooth Headphones",
-    description: "Wireless noise-cancelling headphones",
-    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Headphones",
-    companyId: 1,
-    categoryId: 3,
-    name: "Bluetooth Headphones",
-    asin: "B07Q5NDZBD",
-    category: "Electronics",
-    dateAdded: "2023-02-24",
-  },
-  {
-    id: "4",
-    title: "Smart Watch",
-    description: "Fitness tracking smart watch",
-    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Watch",
-    companyId: 1,
-    categoryId: 3,
-    name: "Smart Watch",
-    asin: "B08L5NP6NG",
-    category: "Electronics",
-    dateAdded: "2023-06-08",
-  },
-  {
-    id: "5",
-    title: "Coffee Maker",
-    description: "Automatic coffee maker with timer",
-    image: "https://placehold.co/100x100/FFF5E8/FF9130?text=Coffee",
-    companyId: 1,
-    categoryId: 1,
-    name: "Coffee Maker",
-    asin: "B07JG7DS1T",
-    category: "Kitchen",
-    dateAdded: "2023-03-30",
-  },
-];
 
 type SortField = "name" | "asin" | "category" | "dateAdded";
 type SortOrder = "asc" | "desc";
@@ -136,7 +73,7 @@ const ProductsList = () => {
     isLoading,
     setData: setProducts,
     usingMockData,
-  } = useFetchWithFallback<Product>(getProducts, MOCK_PRODUCTS, { companyId });
+  } = useFetchWithFallback<Product>(getProducts, [], { companyId });
 
   // Get unique categories for filter
   const categories = [
@@ -262,7 +199,7 @@ const ProductsList = () => {
               variant="ghost"
               size="icon"
               onClick={() =>
-                navigate(`/vendor-dashboard/products/${product.id}/edit`)
+                navigate(`/vendor-dashboard/products/edit/${product.id}`)
               }
             >
               <Edit className="h-4 w-4 text-orange-500" />
@@ -297,6 +234,34 @@ const ProductsList = () => {
       },
     },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-10 border rounded-lg">
+        <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
+        <h3 className="mt-4 text-lg font-medium">No products found</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Add a product to get started
+        </p>
+        <Button
+          variant="outline"
+          className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
+          onClick={() => navigate("/vendor-dashboard/products/new")}
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Add your first product
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -353,160 +318,134 @@ const ProductsList = () => {
         </DropdownMenu>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
-        </div>
-      ) : sortedProducts.length === 0 ? (
-        <div className="text-center py-10 border rounded-lg">
-          <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
-          <h3 className="mt-4 text-lg font-medium">No products found</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {searchTerm || categoryFilter
-              ? "Try a different search term or filter"
-              : "Add a product to get started"}
-          </p>
-          {!searchTerm && !categoryFilter && (
-            <Button
-              variant="outline"
-              className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
-              onClick={() => navigate("/vendor-dashboard/products/new")}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add your first product
-            </Button>
-          )}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Product</TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("asin")}
-                >
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Product</TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("asin")}
+              >
+                <div className="flex items-center">
+                  ASIN
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  {sortField === "asin" &&
+                    (sortOrder === "asc" ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    ))}
+                </div>
+              </TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("category")}
+              >
+                <div className="flex items-center">
+                  Category
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  {sortField === "category" &&
+                    (sortOrder === "asc" ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    ))}
+                </div>
+              </TableHead>
+              <TableHead
+                className="cursor-pointer"
+                onClick={() => handleSort("dateAdded")}
+              >
+                <div className="flex items-center">
+                  Date Added
+                  <ArrowUpDown className="ml-2 h-4 w-4" />
+                  {sortField === "dateAdded" &&
+                    (sortOrder === "asc" ? (
+                      <ChevronUp className="ml-1 h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    ))}
+                </div>
+              </TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedProducts.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell className="font-medium">
                   <div className="flex items-center">
-                    ASIN
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === "asin" &&
-                      (sortOrder === "asc" ? (
-                        <ChevronUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("category")}
-                >
-                  <div className="flex items-center">
-                    Category
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === "category" &&
-                      (sortOrder === "asc" ? (
-                        <ChevronUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => handleSort("dateAdded")}
-                >
-                  <div className="flex items-center">
-                    Date Added
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                    {sortField === "dateAdded" &&
-                      (sortOrder === "asc" ? (
-                        <ChevronUp className="ml-1 h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      ))}
-                  </div>
-                </TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedProducts.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center">
-                      <img
-                        src={getImageUrl(product.image)}
-                        alt={product.name}
-                        className="h-10 w-10 rounded object-cover mr-3"
-                      />
-                      <div>
-                        <div className="font-medium">{product.name}</div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">
-                          {product.asin}
-                        </div>
+                    <img
+                      src={getImageUrl(product.image)}
+                      alt={product.name}
+                      className="h-10 w-10 rounded object-cover mr-3"
+                    />
+                    <div>
+                      <div className="font-medium">{product.name}</div>
+                      <div className="text-xs text-muted-foreground hidden sm:block">
+                        {product.asin}
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {product.asin}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className="font-normal">
-                      {typeof product.category === "object"
-                        ? product.category.name
-                        : product.category}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{product.dateAdded}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() =>
-                          navigate(
-                            `/vendor-dashboard/products/${product.id}/edit`
-                          )
-                        }
-                      >
-                        <Edit className="h-4 w-4 text-orange-500" />
-                      </Button>
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell">
+                  {product.asin}
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="font-normal">
+                    {typeof product.category === "object"
+                      ? product.category.name
+                      : product.category}
+                  </Badge>
+                </TableCell>
+                <TableCell>{product.dateAdded}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() =>
+                        navigate(
+                          `/vendor-dashboard/products/edit/${product.id}`
+                        )
+                      }
+                    >
+                      <Edit className="h-4 w-4 text-orange-500" />
+                    </Button>
 
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete product</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete this product? This
-                              action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => handleDeleteProduct()}
-                              className="bg-red-500 hover:bg-red-600"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete product</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this product? This
+                            action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteProduct()}
+                            className="bg-red-500 hover:bg-red-600"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

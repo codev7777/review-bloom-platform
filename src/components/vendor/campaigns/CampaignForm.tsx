@@ -26,6 +26,7 @@ import {
 } from "@/lib/api/campaigns/campaigns.api";
 import { Campaign, CampaignStatus, Product, Promotion } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
+import GetDomain from "@/lib/GetDomain";
 
 // Marketplace constants
 const MARKETPLACE_COUNTRIES = [
@@ -142,11 +143,12 @@ const CampaignForm = () => {
         isActive: campaignData.isActive,
         claims: campaignData.claims,
       });
-      setCampaignUrl(`https://example.com/review/${campaignData.id}`);
+
+      setCampaignUrl(`${GetDomain()}/review/${campaignData.id}`);
 
       // Generate QR code for the campaign URL
       generateQRCode({
-        value: `https://example.com/review/${campaignData.id}`,
+        value: `${GetDomain()}/review/${campaignData.id}`,
         size: 200,
         bgColor: "#FFFFFF",
         fgColor: "#000000",
@@ -161,7 +163,7 @@ const CampaignForm = () => {
   // Generate a new QR code when the campaign URL changes
   useEffect(() => {
     if (!campaignUrl && !isEditMode) {
-      const url = `https://example.com/review/${Math.random()
+      const url = `${GetDomain()}/review/${Math.random()
         .toString(36)
         .substring(2, 10)
         .toUpperCase()}`;
@@ -468,70 +470,72 @@ const CampaignForm = () => {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="text-center space-y-4">
-                  <QrCode className="h-8 w-8 mx-auto text-orange-500" />
-                  <h3 className="font-medium text-lg">Campaign QR Code</h3>
-
-                  <div className="bg-white p-4 rounded-lg border mx-auto max-w-xs">
-                    {qrCode ? (
-                      <img
-                        src={qrCode}
-                        alt="Campaign QR Code"
-                        className="mx-auto"
-                      />
-                    ) : (
-                      <div className="h-[200px] w-[200px] mx-auto bg-gray-100 animate-pulse rounded" />
-                    )}
-                  </div>
-
-                  <div className="p-3 bg-gray-50 rounded border text-sm relative">
-                    <div className="truncate pr-10">{campaignUrl}</div>
-                    <button
-                      type="button"
-                      onClick={handleCopyUrl}
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-gray-900"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <div className="text-sm text-muted-foreground">
-                    <p>
-                      This QR code will be automatically generated for your
-                      campaign. Customers can scan it to leave their reviews.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {selectedPromotion && (
+          {isEditMode && (
+            <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-medium text-lg mb-2">
-                    Selected Promotion
-                  </h3>
-                  <div className="space-y-2">
-                    <div>
-                      <span className="text-sm font-medium">Name:</span>
-                      <span className="text-sm ml-2">
-                        {selectedPromotion.title}
-                      </span>
+                  <div className="text-center space-y-4">
+                    <QrCode className="h-8 w-8 mx-auto text-orange-500" />
+                    <h3 className="font-medium text-lg">Campaign QR Code</h3>
+
+                    <div className="bg-white p-4 rounded-lg border mx-auto max-w-xs">
+                      {qrCode ? (
+                        <img
+                          src={qrCode}
+                          alt="Campaign QR Code"
+                          className="mx-auto"
+                        />
+                      ) : (
+                        <div className="h-[200px] w-[200px] mx-auto bg-gray-100 animate-pulse rounded" />
+                      )}
                     </div>
-                    <div>
-                      <span className="text-sm font-medium">Type:</span>
-                      <span className="text-sm ml-2">
-                        {selectedPromotion.promotionType}
-                      </span>
+
+                    <div className="p-3 bg-gray-50 rounded border text-sm relative">
+                      <div className="truncate pr-10">{campaignUrl}</div>
+                      <button
+                        type="button"
+                        onClick={handleCopyUrl}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-gray-900"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="text-sm text-muted-foreground">
+                      <p>
+                        This QR code will be automatically generated for your
+                        campaign. Customers can scan it to leave their reviews.
+                      </p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            )}
-          </div>
+
+              {selectedPromotion && (
+                <Card>
+                  <CardContent className="p-6">
+                    <h3 className="font-medium text-lg mb-2">
+                      Selected Promotion
+                    </h3>
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-sm font-medium">Name:</span>
+                        <span className="text-sm ml-2">
+                          {selectedPromotion.title}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium">Type:</span>
+                        <span className="text-sm ml-2">
+                          {selectedPromotion.promotionType}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex gap-4 justify-end">

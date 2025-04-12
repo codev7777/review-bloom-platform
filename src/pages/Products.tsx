@@ -71,7 +71,7 @@ export default function Products() {
   }, [products, isLoading, error, usingMockData, pagination]);
 
   const handleEdit = (id: string) => {
-    navigate(`/vendor-dashboard/products/${id}/edit`);
+    navigate(`/vendor-dashboard/products/edit/${id}`);
   };
 
   const handleDelete = async (id: string) => {

@@ -68,7 +68,7 @@ export const updateProduct = async (
   id: string,
   formData: FormData
 ): Promise<Product> => {
-  const response = await api.put(`/products/${id}`, formData, {
+  const response = await api.patch(`/products/${id}`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
