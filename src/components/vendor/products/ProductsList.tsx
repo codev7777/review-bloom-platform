@@ -43,11 +43,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Product } from "@/types";
+import { Product, Category } from "@/types";
 import { getProducts, deleteProduct } from "@/lib/api/products/products.api";
+import { getCategories } from "@/lib/api/categories/categories.api";
 import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import type { ColumnDef } from "@tanstack/react-table";
 import { getImageUrl } from "@/utils/imageUrl";
+import { useQuery } from "@tanstack/react-query";
 
 type SortField = "name" | "asin" | "category" | "dateAdded";
 type SortOrder = "asc" | "desc";
@@ -75,10 +77,17 @@ const ProductsList = () => {
     usingMockData,
   } = useFetchWithFallback<Product>(getProducts, [], { companyId });
 
-  // Get unique categories for filter
-  const categories = [
-    ...new Set(products.map((product) => product.categoryId || "")),
-  ];
+  // Fetch categories
+  const { data: categoriesResponse = { data: [] } } = useQuery<{
+    data: Category[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(),
+  });
+
+  const categories = categoriesResponse.data;
 
   // Filter products based on search term and category
   const filteredProducts = products.filter((product) => {
@@ -87,7 +96,10 @@ const ProductsList = () => {
       (product.asin || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      categoryFilter === null || product.categoryId === categoryFilter;
+      categoryFilter === null ||
+      (typeof product.category === "object" &&
+        product.category?.name === categoryFilter) ||
+      product.categoryId === categoryFilter;
 
     return matchesSearch && matchesCategory;
   });
@@ -293,25 +305,23 @@ const ProductsList = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4" />
-              {categoryFilter
-                ? `Category: ${categoryFilter}`
-                : "Filter by Category"}
+              Filter by Category
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel>Categories</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => setCategoryFilter(null)}>
               All Categories
             </DropdownMenuItem>
             {categories.map((category) => (
               <DropdownMenuItem
-                key={category}
-                onClick={() => setCategoryFilter(String(category))}
+                key={category.id}
+                onClick={() => setCategoryFilter(category.name)}
               >
-                {category}
+                {category.name}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

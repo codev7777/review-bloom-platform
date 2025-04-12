@@ -17,6 +17,7 @@ export const getProducts = async (params?: {
   search?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  companyId?: string | number;
 }): Promise<{ data: Product[]; totalPages: number; totalCount: number }> => {
   const response = await api.get("/products", { params });
   const result = response.data;

@@ -84,7 +84,14 @@ const CampaignsList: React.FC = () => {
   }, [isAuthenticated, user, navigate]);
 
   const { data: campaignsResponse, isLoading } = useQuery({
-    queryKey: ["campaigns", searchQuery, statusFilter, sortField, sortOrder],
+    queryKey: [
+      "campaigns",
+      searchQuery,
+      statusFilter,
+      sortField,
+      sortOrder,
+      user?.companyId,
+    ],
     queryFn: () =>
       getCampaigns({
         title: searchQuery || undefined,
@@ -96,9 +103,9 @@ const CampaignsList: React.FC = () => {
             : undefined,
         sortBy: sortField,
         sortOrder,
+        companyId: user?.companyId,
       }),
-    // Only run the query if the user is authenticated
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!user?.companyId,
   });
 
   console.log("Campaigns Response:", campaignsResponse);

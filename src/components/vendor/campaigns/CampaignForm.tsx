@@ -115,18 +115,28 @@ const CampaignForm = () => {
     claims: 0,
   });
 
-  const { data: productsResponse } = useQuery({
-    queryKey: ["products"],
-    queryFn: () => getProducts(),
+  const { data: productsResponse = { data: [] } } = useQuery<{
+    data: Product[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["products", user?.companyId],
+    queryFn: () => getProducts({ companyId: user?.companyId }),
+    enabled: !!user?.companyId,
   });
 
-  const { data: promotionsResponse } = useQuery({
-    queryKey: ["promotions"],
-    queryFn: () => getPromotions(),
+  const { data: promotionsResponse = { data: [] } } = useQuery<{
+    data: Promotion[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["promotions", user?.companyId],
+    queryFn: () => getPromotions({ companyId: user?.companyId }),
+    enabled: !!user?.companyId,
   });
 
-  const products = productsResponse?.data || [];
-  const promotions = promotionsResponse?.data || [];
+  const products = productsResponse.data;
+  const promotions = promotionsResponse.data;
 
   const [qrCode, setQrCode] = useState<string>("");
   const [campaignUrl, setCampaignUrl] = useState<string>("");
