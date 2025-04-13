@@ -7,12 +7,30 @@ import Step1Marketplace from "./steps/Step1Marketplace";
 import Step2UserInfo from "./steps/Step2UserInfo";
 import Step3Feedback from "./steps/Step3Feedback";
 import Step4Thanks from "./steps/Step4Thanks";
+import { createReview } from "@/lib/api/reviews/reviews.api";
+import { getCampaign } from "@/lib/api/campaigns/campaigns.api";
+import { getProducts } from "@/lib/api/products/products.api";
+import { Campaign, Product, Promotion } from "@/types";
 
 interface ReviewFunnelProps {
   campaignId: string;
   productName: string;
   productImage: string;
   vendor: string;
+  productId?: number;
+  asin?: string;
+  promotionId?: number;
+  products: Array<{
+    id: number;
+    title: string;
+    image: string;
+    asin: string;
+  }>;
+}
+
+interface ExtendedCampaign extends Campaign {
+  product?: Product;
+  promotion?: Promotion;
 }
 
 export interface ReviewFormData {
@@ -26,6 +44,7 @@ export interface ReviewFormData {
   phoneNumber: string;
   asin: string;
   productType?: string;
+  productId?: number;
 }
 
 const FunnelStep = ({
@@ -51,6 +70,10 @@ const ReviewFunnel = ({
   productName,
   productImage,
   vendor,
+  productId,
+  asin,
+  promotionId,
+  products,
 }: ReviewFunnelProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -66,9 +89,50 @@ const ReviewFunnel = ({
     name: "",
     usedMoreThanSevenDays: false,
     phoneNumber: "",
-    asin: "",
+    asin: asin || "",
     productType: "",
+    productId,
   });
+
+  const [step, setStep] = useState(1);
+  const [campaign, setCampaign] = useState<ExtendedCampaign | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const campaignData = await getCampaign(campaignId);
+        setCampaign(campaignData);
+
+        if (campaignData.productIds?.length) {
+          const numericProductIds = campaignData.productIds
+            .map((id) => {
+              if (typeof id === "string") {
+                return parseInt(id, 10);
+              }
+              return id;
+            })
+            .filter((id): id is number => !isNaN(id));
+
+          const productsData = await getProducts({
+            ids: numericProductIds,
+          });
+          if (productsData.data.length > 0) {
+            console.log("New products data available:", productsData.data);
+          }
+        }
+      } catch (err) {
+        setError("Failed to load campaign data");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [campaignId]);
 
   // Determine current step based on URL parameter
   const getCurrentStep = (): number => {
@@ -76,8 +140,6 @@ const ReviewFunnel = ({
     const stepNum = parseInt(urlStep);
     return isNaN(stepNum) || stepNum < 1 || stepNum > 4 ? 1 : stepNum;
   };
-
-  const [step, setStep] = useState(getCurrentStep());
 
   // Update URL when step changes
   useEffect(() => {
@@ -97,11 +159,66 @@ const ReviewFunnel = ({
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
-  const handleNextStep = () => {
-    const nextStep = step + 1;
-    if (nextStep <= 4) {
-      setStep(nextStep);
-      navigate(`/review/${campaignId}/step/${nextStep}`);
+  const handleNextStep = async () => {
+    // If we're on step 3 and moving to step 4, submit the review
+    if (step === 3) {
+      if (!productId) {
+        toast({
+          title: "Error",
+          description: "Product ID is required to submit a review.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        // Ensure all required fields are present
+        if (
+          !formData.email ||
+          !formData.name ||
+          !formData.feedback ||
+          !formData.rating
+        ) {
+          toast({
+            title: "Error",
+            description: "Please fill in all required fields.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        await createReview({
+          email: formData.email,
+          name: formData.name,
+          productId,
+          rating: formData.rating,
+          feedback: formData.feedback,
+          country: formData.country,
+          orderNo: formData.orderId,
+          promotionId,
+        });
+
+        // Move to step 4 after successful submission
+        const nextStep = step + 1;
+        if (nextStep <= 4) {
+          setStep(nextStep);
+          navigate(`/review/${campaignId}/step/${nextStep}`);
+        }
+      } catch (error) {
+        console.error("Error submitting review:", error);
+        toast({
+          title: "Error",
+          description: "Failed to submit review. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      // Regular step progression
+      const nextStep = step + 1;
+      if (nextStep <= 4) {
+        setStep(nextStep);
+        navigate(`/review/${campaignId}/step/${nextStep}`);
+      }
     }
   };
 
@@ -115,10 +232,7 @@ const ReviewFunnel = ({
 
   const handleGoToAmazon = () => {
     const domain = getAmazonDomain(formData.country);
-    // In a real implementation, you would use the actual ASIN to create the correct URL
     const reviewUrl = `${domain}/review/create-review?asin=${formData.asin}`;
-
-    // Open Amazon in a new tab
     window.open(reviewUrl, "_blank");
   };
 
@@ -215,40 +329,54 @@ const ReviewFunnel = ({
           </div>
         </div>
       </div>
-      {/* Step content */}
+
       <div className="relative min-h-[400px] flex flex-col justify-center">
-        <FunnelStep isActive={step === 1}>
-          <Step1Marketplace
-            productName={productName}
-            productImage={productImage}
-            formData={formData}
-            updateFormData={updateFormData}
-            onNextStep={handleNextStep}
-          />
-        </FunnelStep>
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-destructive">{error}</div>
+        ) : (
+          <>
+            <FunnelStep isActive={step === 1}>
+              <Step1Marketplace
+                productName={campaign?.product?.title || ""}
+                productImage={campaign?.product?.image || ""}
+                formData={formData}
+                updateFormData={updateFormData}
+                onNextStep={handleNextStep}
+                products={products}
+                promotion={campaign?.promotion}
+                marketplaces={campaign?.marketplaces || []}
+              />
+            </FunnelStep>
 
-        <FunnelStep isActive={step === 2}>
-          <Step2UserInfo
-            formData={formData}
-            updateFormData={updateFormData}
-            onNextStep={handleNextStep}
-            onPreviousStep={handlePreviousStep}
-          />
-        </FunnelStep>
+            <FunnelStep isActive={step === 2}>
+              <Step2UserInfo
+                formData={formData}
+                updateFormData={updateFormData}
+                onNextStep={handleNextStep}
+                onPreviousStep={handlePreviousStep}
+              />
+            </FunnelStep>
 
-        <FunnelStep isActive={step === 3}>
-          <Step3Feedback
-            formData={formData}
-            updateFormData={updateFormData}
-            onNextStep={handleNextStep}
-            onPreviousStep={handlePreviousStep}
-            onGoToAmazon={handleGoToAmazon}
-          />
-        </FunnelStep>
+            <FunnelStep isActive={step === 3}>
+              <Step3Feedback
+                formData={formData}
+                updateFormData={updateFormData}
+                onNextStep={handleNextStep}
+                onPreviousStep={handlePreviousStep}
+                onGoToAmazon={handleGoToAmazon}
+                products={products}
+              />
+            </FunnelStep>
 
-        <FunnelStep isActive={step === 4}>
-          <Step4Thanks formData={formData} onGoHome={handleGoHome} />
-        </FunnelStep>
+            <FunnelStep isActive={step === 4}>
+              <Step4Thanks formData={formData} onGoHome={handleGoHome} />
+            </FunnelStep>
+          </>
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useParams,
 } from "react-router-dom";
 import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -31,6 +32,11 @@ import { PrivateRoute } from "./components/auth/PrivateRoute";
 import ScrollToTop from "./lib/ScrollToTop";
 const queryClient = new QueryClient();
 
+const ReviewRedirect = () => {
+  const { campaignId } = useParams<{ campaignId: string }>();
+  return <Navigate to={`/review/${campaignId}/step/1`} replace />;
+};
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -46,7 +52,7 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route
                   path="/review/:campaignId"
-                  element={<Navigate to="/review/:campaignId/step/1" replace />}
+                  element={<ReviewRedirect />}
                 />
                 <Route
                   path="/review/:campaignId/step/:step"

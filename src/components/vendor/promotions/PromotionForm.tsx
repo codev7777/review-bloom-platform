@@ -9,6 +9,8 @@ import {
   Tag,
   Gift,
   Download,
+  Plus,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -120,6 +122,8 @@ const PromotionForm = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(isEditMode);
   const [hasImageChanged, setHasImageChanged] = useState(false);
+  const [couponCodes, setCouponCodes] = useState<string[]>([]);
+  const [newCouponCode, setNewCouponCode] = useState("");
 
   // Get the current user's company ID from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -134,10 +138,17 @@ const PromotionForm = () => {
           if (response) {
             setFormData(response);
             setPreviewImage(getImageUrl(response.image));
+            if (response.couponCodes) {
+              setCouponCodes(response.couponCodes);
+            }
           }
         } catch (error) {
           console.error("Error fetching promotion:", error);
-          toast.error("Failed to load promotion data");
+          toast({
+            title: "Error",
+            description: "Failed to load promotion data",
+            variant: "destructive",
+          });
         } finally {
           setIsFetching(false);
         }
@@ -229,12 +240,36 @@ const PromotionForm = () => {
         return;
       }
 
-      // Create the promotion data object
+      // Create the promotion data object with type-specific fields
       const promotionData = {
         title: formData.title,
         description: formData.description,
         promotionType: formData.promotionType,
-        ...(hasImageChanged && { image: formData.image }), // Only include image if it has been changed
+        ...(hasImageChanged && { image: formData.image }),
+
+        // Gift Card specific fields
+        ...(formData.promotionType === "GIFT_CARD" && {
+          giftCardDeliveryMethod: formData.giftCardDeliveryMethod,
+        }),
+
+        // Discount Code specific fields
+        ...(formData.promotionType === "DISCOUNT_CODE" && {
+          approvalMethod: formData.approvalMethod,
+          codeType: formData.codeType,
+          couponCodes: couponCodes,
+        }),
+
+        // Free Product specific fields
+        ...(formData.promotionType === "FREE_PRODUCT" && {
+          freeProductDeliveryMethod: "SHIP" as const,
+          freeProductApprovalMethod: "MANUAL" as const,
+        }),
+
+        // Digital Download specific fields
+        ...(formData.promotionType === "DIGITAL_DOWNLOAD" && {
+          downloadableFileUrl: formData.downloadableFileUrl,
+          digitalApprovalMethod: formData.digitalApprovalMethod,
+        }),
       };
 
       if (isEditMode && id) {
@@ -261,6 +296,17 @@ const PromotionForm = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleAddCouponCode = () => {
+    if (newCouponCode.trim()) {
+      setCouponCodes([...couponCodes, newCouponCode.trim()]);
+      setNewCouponCode("");
+    }
+  };
+
+  const handleRemoveCouponCode = (index: number) => {
+    setCouponCodes(couponCodes.filter((_, i) => i !== index));
   };
 
   return (
@@ -332,6 +378,158 @@ const PromotionForm = () => {
                   required
                 />
               </div>
+
+              {/* Type-specific fields */}
+              {formData.promotionType === "GIFT_CARD" && (
+                <div className="space-y-2">
+                  <Label>Delivery Method</Label>
+                  <RadioGroup
+                    value={formData.giftCardDeliveryMethod}
+                    onValueChange={(value) =>
+                      handleSelectChange("giftCardDeliveryMethod", value)
+                    }
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="SHIP" id="ship" />
+                      <Label htmlFor="ship">Ship to customer</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="DIGITAL" id="digital" />
+                      <Label htmlFor="digital">
+                        Digitally deliver to customer
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              )}
+
+              {formData.promotionType === "DISCOUNT_CODE" && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Approval Method</Label>
+                    <RadioGroup
+                      value={formData.approvalMethod}
+                      onValueChange={(value) =>
+                        handleSelectChange("approvalMethod", value)
+                      }
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="MANUAL" id="manual" />
+                        <Label htmlFor="manual">
+                          Manually approve and deliver
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="AUTOMATIC" id="automatic" />
+                        <Label htmlFor="automatic">
+                          Deliver automatically without approval
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Code Type</Label>
+                    <RadioGroup
+                      value={formData.codeType}
+                      onValueChange={(value) =>
+                        handleSelectChange("codeType", value)
+                      }
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="SAME_FOR_ALL" id="same" />
+                        <Label htmlFor="same">Same code for everyone</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="SINGLE_USE" id="single" />
+                        <Label htmlFor="single">
+                          Single use code for each customer
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Coupon Codes</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={newCouponCode}
+                        onChange={(e) => setNewCouponCode(e.target.value)}
+                        placeholder="Enter coupon code"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleAddCouponCode}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="space-y-2 mt-2">
+                      {couponCodes.map((code, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                        >
+                          <span>{code}</span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemoveCouponCode(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {formData.promotionType === "DIGITAL_DOWNLOAD" && (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Downloadable File URL</Label>
+                    <Input
+                      value={formData.downloadableFileUrl}
+                      onChange={(e) =>
+                        handleSelectChange(
+                          "downloadableFileUrl",
+                          e.target.value
+                        )
+                      }
+                      placeholder="Enter file URL"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Approval Method</Label>
+                    <RadioGroup
+                      value={formData.digitalApprovalMethod}
+                      onValueChange={(value) =>
+                        handleSelectChange("digitalApprovalMethod", value)
+                      }
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="MANUAL" id="manual-digital" />
+                        <Label htmlFor="manual-digital">
+                          Manually approve and deliver
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value="AUTOMATIC"
+                          id="automatic-digital"
+                        />
+                        <Label htmlFor="automatic-digital">
+                          Deliver automatically without approval
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">

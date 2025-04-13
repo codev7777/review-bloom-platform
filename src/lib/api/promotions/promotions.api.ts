@@ -11,6 +11,18 @@ export const createPromotion = async (data: {
     | "FREE_PRODUCT"
     | "DIGITAL_DOWNLOAD";
   image: string;
+  // Gift Card specific fields
+  giftCardDeliveryMethod?: "SHIP" | "DIGITAL";
+  // Discount Code specific fields
+  approvalMethod?: "MANUAL" | "AUTOMATIC";
+  codeType?: "SAME_FOR_ALL" | "SINGLE_USE";
+  couponCodes?: string[];
+  // Free Product specific fields
+  freeProductDeliveryMethod?: "SHIP";
+  freeProductApprovalMethod?: "MANUAL";
+  // Digital Download specific fields
+  downloadableFileUrl?: string;
+  digitalApprovalMethod?: "MANUAL" | "AUTOMATIC";
 }): Promise<Promotion> => {
   const response = await api.post("/promotions", data);
   return response.data;

@@ -18,8 +18,14 @@ export const getProducts = async (params?: {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   companyId?: string | number;
+  ids?: number[];
 }): Promise<{ data: Product[]; totalPages: number; totalCount: number }> => {
-  const response = await api.get("/products", { params });
+  const response = await api.get("/products", {
+    params: {
+      ...params,
+      ids: params?.ids?.join(","),
+    },
+  });
   const result = response.data;
   return {
     data: result.results,

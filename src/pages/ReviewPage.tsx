@@ -6,147 +6,138 @@ import ReviewFunnel from "@/components/review/ReviewFunnel";
 import Navbar from "@/components/layout/Navbar";
 import Logo from "@/components/layout/navbar/Logo";
 import { Link } from "react-router-dom";
+import { getCampaign } from "@/lib/api/campaigns/campaigns.api";
+import { getProducts } from "@/lib/api/products/products.api";
+import { useQuery } from "@tanstack/react-query";
+
 const ReviewPage = () => {
   const { campaignId, step } = useParams<{
     campaignId: string;
     step: string;
   }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [campaignData, setCampaignData] = useState<{
     productName: string;
     productImage: string;
     vendor: string;
+    productId?: number;
+    asin?: string;
+    promotionId?: number;
+    products: Array<{
+      id: number;
+      title: string;
+      image: string;
+      asin: string;
+    }>;
   } | null>(null);
 
+  // Fetch campaign data
+  const {
+    data: campaign,
+    isLoading: isCampaignLoading,
+    error: campaignError,
+  } = useQuery({
+    queryKey: ["campaign", campaignId],
+    queryFn: () => {
+      if (!campaignId) return null;
+      return getCampaign(campaignId);
+    },
+    enabled: !!campaignId,
+    retry: 1,
+  });
+
+  // Fetch products for the campaign
+  const {
+    data: productsResponse = { data: [] },
+    isLoading: isProductsLoading,
+    error: productsError,
+  } = useQuery({
+    queryKey: ["campaign-products", campaignId],
+    queryFn: () => {
+      if (!campaign?.productIds?.length) return { data: [] };
+      const productIds = campaign.productIds.map((id) => Number(id));
+      return getProducts({ ids: productIds });
+    },
+    enabled: !!campaign?.productIds?.length,
+  });
+
   useEffect(() => {
-    // Redirect to step 1 if no step is specified
+    if (campaign && productsResponse.data.length > 0) {
+      const firstProduct = productsResponse.data[0];
+      setCampaignData({
+        productName: firstProduct.title,
+        productImage: firstProduct.image,
+        vendor: "Amazon",
+        productId: firstProduct.id,
+        asin: firstProduct.asin,
+        promotionId: campaign.promotionId
+          ? Number(campaign.promotionId)
+          : undefined,
+        products: productsResponse.data.map((product) => ({
+          id: product.id,
+          title: product.title,
+          image: product.image,
+          asin: product.asin || "",
+        })),
+      });
+    } else if (!isCampaignLoading && !isProductsLoading) {
+      setError("Campaign not found or no products available");
+    }
+  }, [campaign, productsResponse.data, isCampaignLoading, isProductsLoading]);
+
+  useEffect(() => {
     if (campaignId && !step) {
       navigate(`/review/${campaignId}/step/1`, { replace: true });
     }
   }, [campaignId, step, navigate]);
 
-  useEffect(() => {
-    // Simulate API call to fetch campaign data
-    const fetchCampaignData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // Show loading state while either campaign or products are loading
+  if (isCampaignLoading || isProductsLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF9900]"></div>
+        <p className="mt-4 text-gray-600">Loading campaign...</p>
+      </div>
+    );
+  }
 
-        // In a real app, this would be an API call
-        // Simulate network delay
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        // Check if campaignId exists and is valid
-        if (!campaignId) {
-          throw new Error("Campaign ID is missing");
-        }
-
-        // Demo campaign data
-        if (campaignId === "demo-campaign") {
-          setCampaignData({
-            productName: "Dell Desktop",
-            productImage: "/images/products/dell-computer.jpg",
-            vendor: "Dell Technologies Inc",
-          });
-          return;
-        }
-
-        // Placeholder data - in a real app, this would come from the API
-        // Simulate different products based on campaign ID
-        const productData = {
-          "1": {
-            productName: "Premium Kitchen Knife Set",
-            productImage:
-              "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
-            vendor: "HomeChef Essentials",
-          },
-          "2": {
-            productName: "Yoga Mat",
-            productImage:
-              "https://placehold.co/300x300/FFF5E8/FF9130?text=Yoga+Mat",
-            vendor: "Fitness Guru",
-          },
-          "3": {
-            productName: "Bluetooth Headphones",
-            productImage:
-              "https://placehold.co/300x300/FFF5E8/FF9130?text=Headphones",
-            vendor: "Tech Innovations",
-          },
-        };
-
-        // @ts-ignore - This is just for demo purposes
-        if (productData[campaignId]) {
-          // @ts-ignore - This is just for demo purposes
-          setCampaignData(productData[campaignId]);
-        } else {
-          setCampaignData({
-            productName: "Premium Kitchen Knife Set",
-            productImage:
-              "https://placehold.co/300x300/FFF5E8/FF9130?text=Kitchen+Set",
-            vendor: "HomeChef Essentials",
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching campaign:", err);
-        setError(
-          "Failed to load campaign information. Please check the URL and try again."
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCampaignData();
-  }, [campaignId]);
+  if (error || !campaignData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold mb-4">Error</h1>
+        <p className="text-gray-600 mb-4">{error || "Campaign not found"}</p>
+        <Button asChild>
+          <Link to="/">Go Home</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div className="bg-[#232f3e] h-[80px] mx-auto overflow-hidden flex items-center pl-20">
-        <Link to="/">
-          <Logo />
-        </Link>
-      </div>
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <div className="container mx-auto max-w-4xl mt-20">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="mb-6"
-            onClick={() => navigate("/")}
-          >
-            <ArrowLeft className="mr-2 w-4 h-4" />
-            Back to Home
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Button variant="ghost" asChild>
+            <Link to="/">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
           </Button>
-
-          {loading ? (
-            <div className="bg-white rounded-xl shadow-sm border border-border p-8 max-w-2xl mx-auto">
-              <div className="space-y-6 animate-pulse">
-                <div className="h-8 w-3/4 bg-gray-200 rounded mx-auto"></div>
-                <div className="h-4 w-1/2 bg-gray-200 rounded mx-auto"></div>
-                <div className="h-40 bg-gray-200 rounded"></div>
-                <div className="h-10 bg-gray-200 rounded"></div>
-                <div className="h-10 bg-gray-200 rounded"></div>
-                <div className="h-20 bg-gray-200 rounded"></div>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="bg-white rounded-xl shadow-sm border border-red-200 p-8 max-w-2xl mx-auto text-center">
-              <h2 className="text-xl font-semibold text-red-600 mb-4">Error</h2>
-              <p className="text-muted-foreground mb-6">{error}</p>
-              <Button onClick={() => navigate("/")}>Return to Home</Button>
-            </div>
-          ) : campaignData ? (
-            <ReviewFunnel
-              campaignId={campaignId || ""}
-              productName={campaignData.productName}
-              productImage={campaignData.productImage}
-              vendor={campaignData.vendor}
-            />
-          ) : null}
         </div>
+        <ReviewFunnel
+          campaignId={campaignId || ""}
+          productName={campaignData.productName}
+          productImage={campaignData.productImage}
+          vendor={campaignData.vendor}
+          productId={campaignData.productId}
+          asin={campaignData.asin}
+          promotionId={campaignData.promotionId}
+          products={campaignData.products}
+        />
       </div>
-    </>
+    </div>
   );
 };
 

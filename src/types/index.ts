@@ -118,6 +118,22 @@ export interface Promotion {
   companyId: string | number;
   createdAt?: string;
   updatedAt?: string;
+
+  // Gift Card specific fields
+  giftCardDeliveryMethod?: "SHIP" | "DIGITAL";
+
+  // Discount Code specific fields
+  approvalMethod?: "MANUAL" | "AUTOMATIC";
+  codeType?: "SAME_FOR_ALL" | "SINGLE_USE";
+  couponCodes?: string[];
+
+  // Free Product specific fields
+  freeProductDeliveryMethod?: "SHIP";
+  freeProductApprovalMethod?: "MANUAL";
+
+  // Digital Download specific fields
+  downloadableFileUrl?: string;
+  digitalApprovalMethod?: "MANUAL" | "AUTOMATIC";
 }
 
 export interface Category {
@@ -136,4 +152,19 @@ export interface Plan {
   planType: "SILVER" | "GOLD" | "PLATINUM";
   createdAt?: string;
   updatedAt?: string;
+}
+
+export interface Review {
+  id: number;
+  email: string;
+  name: string;
+  productId: number;
+  ratio: number;
+  feedback: string;
+  marketplace: string;
+  customerId: number;
+  orderNo?: string;
+  feedbackDate: Date;
+  promotionId?: number;
+  status: "PENDING" | "PROCESSED" | "REJECTED";
 }

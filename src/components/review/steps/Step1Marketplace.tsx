@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import StarRating from "../StarRating";
 import { ReviewFormData } from "../ReviewFunnel";
+import { getImageUrl } from "@/utils/imageUrl";
 
 interface Step1MarketplaceProps {
   productName: string;
@@ -19,29 +20,39 @@ interface Step1MarketplaceProps {
   formData: ReviewFormData;
   updateFormData: (data: Partial<ReviewFormData>) => void;
   onNextStep: () => void;
+  products: Array<{
+    id: number;
+    title: string;
+    image: string;
+    asin: string;
+  }>;
+  promotion?: {
+    id: string | number;
+    title: string;
+    image: string;
+    description: string;
+  };
+  marketplaces?: string[];
 }
+
+const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
+  US: "United States (Amazon.com)",
+  CA: "Canada (Amazon.ca)",
+  GB: "United Kingdom (Amazon.co.uk)",
+  DE: "Germany (Amazon.de)",
+  FR: "France (Amazon.fr)",
+  JP: "Japan (Amazon.co.jp)",
+  AU: "Australia (Amazon.com.au)",
+};
+
 const amazonOrderUrls: Record<string, string> = {
-  us: "https://www.amazon.com/gp/css/order-history",
-  ca: "https://www.amazon.ca/gp/css/order-history",
-  mx: "https://www.amazon.com.mx/gp/css/order-history",
-  gb: "https://www.amazon.co.uk/gp/css/order-history",
-  fr: "https://www.amazon.fr/gp/css/order-history",
-  de: "https://www.amazon.de/gp/css/order-history",
-  it: "https://www.amazon.it/gp/css/order-history",
-  es: "https://www.amazon.es/gp/css/order-history",
-  in: "https://www.amazon.in/gp/css/order-history",
-  jp: "https://www.amazon.co.jp/gp/css/order-history",
-  nl: "https://www.amazon.nl/gp/css/order-history",
-  se: "https://www.amazon.se/gp/css/order-history",
-  au: "https://www.amazon.com.au/gp/css/order-history",
-  br: "https://www.amazon.com.br/gp/css/order-history",
-  sg: "https://www.amazon.sg/gp/css/order-history",
-  tr: "https://www.amazon.com.tr/gp/css/order-history",
-  sa: "https://www.amazon.sa/gp/css/order-history",
-  ae: "https://www.amazon.ae/gp/css/order-history",
-  pl: "https://www.amazon.pl/gp/css/order-history",
-  eg: "https://www.amazon.eg/gp/css/order-history",
-  za: "", // No link for South Africa
+  US: "https://www.amazon.com/gp/css/order-history",
+  CA: "https://www.amazon.ca/gp/css/order-history",
+  GB: "https://www.amazon.co.uk/gp/css/order-history",
+  DE: "https://www.amazon.de/gp/css/order-history",
+  FR: "https://www.amazon.fr/gp/css/order-history",
+  JP: "https://www.amazon.co.jp/gp/css/order-history",
+  AU: "https://www.amazon.com.au/gp/css/order-history",
 };
 
 const Step1Marketplace = ({
@@ -50,6 +61,9 @@ const Step1Marketplace = ({
   formData,
   updateFormData,
   onNextStep,
+  products,
+  promotion,
+  marketplaces = [],
 }: Step1MarketplaceProps) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof ReviewFormData, string>>
@@ -77,7 +91,14 @@ const Step1Marketplace = ({
   };
 
   const handleProductChange = (value: string) => {
-    updateFormData({ productType: value });
+    const selectedProduct = products.find((p) => p.id.toString() === value);
+    if (selectedProduct) {
+      updateFormData({
+        productType: value,
+        productId: selectedProduct.id,
+        asin: selectedProduct.asin,
+      });
+    }
     if (errors.productType) {
       setErrors((prev) => ({ ...prev, productType: "" }));
     }
@@ -92,24 +113,25 @@ const Step1Marketplace = ({
 
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
-    const orderIdPattern = /^\d{3}-\d{7}-\d{7}$/;
-    if (!formData.orderId.trim()) {
-      newErrors.orderId = "Order ID is required";
-    } else if (!orderIdPattern.test(formData.orderId)) {
-      newErrors.orderId =
-        "Invalid Amazon order ID format. Should be like 123-4567890-1234567";
-    }
-
-    if (formData.rating === 0) {
-      newErrors.rating = "Please select a rating";
-    }
 
     if (!formData.country) {
       newErrors.country = "Please select your country";
     }
 
+    if (!formData.orderId) {
+      newErrors.orderId = "Order ID is required";
+    }
+
+    if (!formData.rating) {
+      newErrors.rating = "Please rate the product";
+    }
+
     if (!formData.productType) {
       newErrors.productType = "Please select a product";
+    }
+
+    if (!formData.usedMoreThanSevenDays) {
+      newErrors.usedMoreThanSevenDays = "Please confirm product usage";
     }
 
     setErrors(newErrors);
@@ -121,28 +143,32 @@ const Step1Marketplace = ({
 
     if (validateForm()) {
       onNextStep();
-    } else {
-      alert("Please check the form and fill in all required fields correctly.");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-      <div className="flex justify-center items-center">
+      {/* Promotion Image */}
+      <div className="flex justify-center items-center my-6">
         <img
-          src="/images/funnel/amazon-gift-card-5.png"
-          className="h-[200px] object-contain rounded"
+          src={`http://localhost:3000/uploads/${promotion?.image}`}
+          alt={promotion?.title}
+          className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
         />
       </div>
+      {/* <h2 className="text-2xl font-semibold text-center">Select Marketplace</h2>
+      <p className="text-center text-muted-foreground">
+        Choose where you purchased the product
+      </p> */}
 
-      {/* Select Product */}
+      {/* Product Selection */}
       <div className="space-y-3">
-        <Label htmlFor="product">
-          Which product did you buy? <span className="text-red-500">*</span>
+        <Label htmlFor="productType">
+          Select Product <span className="text-red-500">*</span>
         </Label>
         <Select
           onValueChange={handleProductChange}
-          defaultValue={formData.productType}
+          value={formData.productType}
         >
           <SelectTrigger
             className={errors.productType ? "border-destructive" : ""}
@@ -150,8 +176,11 @@ const Step1Marketplace = ({
             <SelectValue placeholder="Select a product" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="dell-desktop">Dell Desktop</SelectItem>
-            <SelectItem value="lenovo-laptop">Lenovo Laptop</SelectItem>
+            {products.map((product) => (
+              <SelectItem key={product.id} value={product.id.toString()}>
+                {product.title}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {errors.productType && (
@@ -159,41 +188,21 @@ const Step1Marketplace = ({
         )}
       </div>
 
-      {/* Select Marketplace */}
+      {/* Country Selection */}
       <div className="space-y-3">
         <Label htmlFor="country">
-          Select the marketplace you purchased from{" "}
-          <span className="text-red-500">*</span>
+          Select Marketplace <span className="text-red-500">*</span>
         </Label>
-        <Select
-          onValueChange={handleCountryChange}
-          defaultValue={formData.country}
-        >
+        <Select onValueChange={handleCountryChange} value={formData.country}>
           <SelectTrigger className={errors.country ? "border-destructive" : ""}>
-            <SelectValue placeholder="Select your country" />
+            <SelectValue placeholder="Select your marketplace" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="us">United States (Amazon.com)</SelectItem>
-            <SelectItem value="ca">Canada (Amazon.ca)</SelectItem>
-            <SelectItem value="mx">Mexico (Amazon.com.mx)</SelectItem>
-            <SelectItem value="gb">United Kingdom (Amazon.co.uk)</SelectItem>
-            <SelectItem value="fr">France (Amazon.fr)</SelectItem>
-            <SelectItem value="de">Germany (Amazon.de)</SelectItem>
-            <SelectItem value="it">Italy (Amazon.it)</SelectItem>
-            <SelectItem value="es">Spain (Amazon.es)</SelectItem>
-            <SelectItem value="in">India (Amazon.in)</SelectItem>
-            <SelectItem value="jp">Japan (Amazon.co.jp)</SelectItem>
-            <SelectItem value="nl">Netherlands (Amazon.nl)</SelectItem>
-            <SelectItem value="se">Sweden (Amazon.se)</SelectItem>
-            <SelectItem value="au">Australia (Amazon.com.au)</SelectItem>
-            <SelectItem value="br">Brazil (Amazon.com.br)</SelectItem>
-            <SelectItem value="sg">Singapore (Amazon.sg)</SelectItem>
-            <SelectItem value="tr">Turkey (Amazon.com.tr)</SelectItem>
-            <SelectItem value="sa">Saudi Arabia (Amazon.sa)</SelectItem>
-            <SelectItem value="ae">United Arab Emirates (Amazon.ae)</SelectItem>
-            <SelectItem value="pl">Poland (Amazon.pl)</SelectItem>
-            <SelectItem value="eg">Egypt (Amazon.eg)</SelectItem>
-            <SelectItem value="za">South Africa (No Amazon site)</SelectItem>
+            {marketplaces.map((marketplace) => (
+              <SelectItem key={marketplace} value={marketplace.toLowerCase()}>
+                {MARKETPLACE_COUNTRY_NAMES[marketplace] || marketplace}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {errors.country && (
@@ -208,7 +217,7 @@ const Step1Marketplace = ({
           {"   "}
           <a
             href={
-              amazonOrderUrls[formData.country] ||
+              amazonOrderUrls[formData.country.toUpperCase()] ||
               "https://www.amazon.com/gp/css/order-history"
             }
             target="_new"
@@ -253,18 +262,18 @@ const Step1Marketplace = ({
 
       {/* Product Usage Confirmation */}
       <div className="space-y-3">
-        <Label htmlFor="usedMoreThanSevenDays">
-          Have you been using this product for more than 7 days?{" "}
+        <Label>
+          Have you used the product for more than 7 days?{" "}
           <span className="text-red-500">*</span>
         </Label>
         <Select
           onValueChange={handleUsageChange}
-          defaultValue={formData.usedMoreThanSevenDays ? "Yes" : "No"}
+          value={formData.usedMoreThanSevenDays ? "Yes" : "No"}
         >
           <SelectTrigger
             className={errors.usedMoreThanSevenDays ? "border-destructive" : ""}
           >
-            <SelectValue placeholder="Select Yes or No" />
+            <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Yes">Yes</SelectItem>
@@ -278,13 +287,15 @@ const Step1Marketplace = ({
         )}
       </div>
 
-      <Button
-        type="submit"
-        className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium mt-6"
-      >
-        Next Step
-        <ChevronRight className="ml-2 w-4 h-4" />
-      </Button>
+      <div className="flex flex-col gap-4 pt-4 items-center">
+        <Button
+          type="submit"
+          className="flex-1 bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium pl-10 w-full sm:w-[500px]"
+        >
+          Continue
+          <ChevronRight className="ml-0 w-4 h-4" />
+        </Button>
+      </div>
     </form>
   );
 };

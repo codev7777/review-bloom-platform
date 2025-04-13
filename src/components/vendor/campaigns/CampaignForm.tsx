@@ -99,11 +99,33 @@ const CampaignForm = () => {
   const isEditMode = Boolean(id);
   const { user } = useAuth();
 
-  // Add query for fetching campaign data in edit mode
+  // Fetch campaign data in edit mode
   const { data: campaignData } = useQuery({
     queryKey: ["campaign", id],
     queryFn: () => (id ? getCampaign(id) : null),
     enabled: isEditMode,
+  });
+
+  // Fetch all products for the company
+  const { data: productsResponse = { data: [] } } = useQuery<{
+    data: Product[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["products", user?.companyId],
+    queryFn: () => getProducts({ companyId: user?.companyId }),
+    enabled: !!user?.companyId,
+  });
+
+  // Fetch promotions for the company
+  const { data: promotionsResponse = { data: [] } } = useQuery<{
+    data: Promotion[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["promotions", user?.companyId],
+    queryFn: () => getPromotions({ companyId: user?.companyId }),
+    enabled: !!user?.companyId,
   });
 
   const [formData, setFormData] = useState<Partial<CampaignWithQR>>({
@@ -115,34 +137,11 @@ const CampaignForm = () => {
     claims: 0,
   });
 
-  const { data: productsResponse = { data: [] } } = useQuery<{
-    data: Product[];
-    totalPages: number;
-    totalCount: number;
-  }>({
-    queryKey: ["products", user?.companyId],
-    queryFn: () => getProducts({ companyId: user?.companyId }),
-    enabled: !!user?.companyId,
-  });
-
-  const { data: promotionsResponse = { data: [] } } = useQuery<{
-    data: Promotion[];
-    totalPages: number;
-    totalCount: number;
-  }>({
-    queryKey: ["promotions", user?.companyId],
-    queryFn: () => getPromotions({ companyId: user?.companyId }),
-    enabled: !!user?.companyId,
-  });
-
-  const products = productsResponse.data;
-  const promotions = promotionsResponse.data;
-
   const [qrCode, setQrCode] = useState<string>("");
   const [campaignUrl, setCampaignUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Update useEffect to load actual campaign data
+  // Update form data when campaign data is loaded
   useEffect(() => {
     if (isEditMode && campaignData) {
       setFormData({
@@ -179,7 +178,6 @@ const CampaignForm = () => {
         .toUpperCase()}`;
       setCampaignUrl(url);
 
-      // Generate QR code
       generateQRCode({
         value: url,
         size: 200,
@@ -206,12 +204,17 @@ const CampaignForm = () => {
   };
 
   const handleProductSelect = (productId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      productIds: prev.productIds?.includes(productId)
-        ? prev.productIds.filter((id) => id !== productId)
-        : [...(prev.productIds || []), productId],
-    }));
+    setFormData((prev) => {
+      const currentProductIds = prev.productIds || [];
+      const productIdNum = Number(productId);
+
+      // Toggle the product selection
+      const newProductIds = currentProductIds.includes(productIdNum)
+        ? currentProductIds.filter((id) => id !== productIdNum)
+        : [...currentProductIds, productIdNum];
+
+      return { ...prev, productIds: newProductIds };
+    });
   };
 
   const handleMarketplaceSelect = (marketplace: string) => {
@@ -223,20 +226,11 @@ const CampaignForm = () => {
     }));
   };
 
-  const handleCopyUrl = () => {
-    navigator.clipboard.writeText(campaignUrl);
-    toast({
-      title: "URL Copied",
-      description: "Campaign URL has been copied to clipboard",
-    });
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Validate required fields
       if (
         !formData.title ||
         !formData.promotionId ||
@@ -251,7 +245,6 @@ const CampaignForm = () => {
         return;
       }
 
-      // Check if user has a company ID
       if (!user?.companyId) {
         toast({
           variant: "destructive",
@@ -262,7 +255,6 @@ const CampaignForm = () => {
         return;
       }
 
-      // Create campaign data
       const campaignData = {
         title: formData.title,
         isActive: formData.isActive || "YES",
@@ -277,7 +269,6 @@ const CampaignForm = () => {
       };
 
       if (isEditMode && id) {
-        // Update the campaign
         await updateCampaign(id, campaignData);
         toast({
           title: "Campaign updated",
@@ -285,7 +276,6 @@ const CampaignForm = () => {
           variant: "default",
         });
       } else {
-        // Create the campaign
         await createCampaign(campaignData);
         toast({
           title: "Campaign created",
@@ -296,306 +286,213 @@ const CampaignForm = () => {
 
       navigate("/vendor-dashboard/campaigns");
     } catch (error) {
-      console.error("Error creating campaign:", error);
+      console.error("Error submitting campaign:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "There was an error creating the campaign",
+        description: "Failed to submit campaign. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Get selected promotion details
-  const selectedPromotion = promotions.find(
-    (p) => p.id === formData.promotionId
-  );
+  const products = productsResponse.data;
+  const promotions = promotionsResponse.data;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold">
-          {isEditMode ? "Edit Campaign" : "Create Campaign"}
-        </h1>
-        <p className="text-muted-foreground">
-          {isEditMode
-            ? "Update your review campaign settings"
-            : "Configure your new review campaign"}
-        </p>
-      </div>
-
+    <div className="container mx-auto px-4 py-8">
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="title">Campaign Name</Label>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="title">Campaign Title</Label>
               <Input
                 id="title"
                 name="title"
                 value={formData.title}
                 onChange={handleInputChange}
-                placeholder="e.g. Summer Kitchen Sale"
                 required
-                className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="promotion">Select Promotion</Label>
+            <div>
+              <Label htmlFor="promotionId">Promotion</Label>
               <Select
-                value={String(formData.promotionId)}
+                value={formData.promotionId?.toString()}
                 onValueChange={(value) =>
                   handleSelectChange("promotionId", value)
                 }
               >
-                <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-orange-500/20">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a promotion" />
                 </SelectTrigger>
-                <SelectContent className="animate-in zoom-in-95 duration-100">
+                <SelectContent>
                   {promotions.map((promotion) => (
-                    <SelectItem key={promotion.id} value={String(promotion.id)}>
-                      {promotion.title} - {promotion.promotionType}
+                    <SelectItem
+                      key={promotion.id}
+                      value={promotion.id.toString()}
+                    >
+                      {promotion.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="active">Campaign Status</Label>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="isActive"
-                    checked={formData.isActive === "YES"}
-                    onCheckedChange={(checked) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        isActive: checked ? "YES" : "NO",
-                      }))
-                    }
-                  />
-                  <Label htmlFor="isActive">Active</Label>
-                </div>
-              </div>
-
-              <div
-                className={`p-3 rounded-md ${
-                  formData.isActive === "YES"
-                    ? "bg-green-50 text-green-700"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                <div className="flex items-center space-x-2">
-                  {formData.isActive === "YES" ? (
-                    <Check size={16} />
-                  ) : (
-                    <X size={16} />
-                  )}
-                  <span className="text-sm font-medium">
-                    {formData.isActive === "YES"
-                      ? "This campaign is active and accepting reviews"
-                      : "This campaign is not active and will not accept reviews"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Select Products</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+            <div>
+              <Label>Products</Label>
+              <div className="grid grid-cols-1 gap-2">
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className={`
-                      border rounded-md p-3 cursor-pointer transition-all duration-200
-                      ${
-                        formData.productIds.includes(String(product.id))
-                          ? "bg-orange-50 border-orange-200"
-                          : "hover:bg-gray-50"
-                      }
-                    `}
-                    onClick={() => handleProductSelect(String(product.id))}
+                    className="flex items-center space-x-2 p-2 border rounded-md hover:bg-gray-50"
                   >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h4 className="font-medium text-sm">{product.name}</h4>
-                        <p className="text-xs text-muted-foreground">
-                          ASIN: {product.asin}
-                        </p>
-                      </div>
-                      <div
-                        className={`w-4 h-4 rounded-full flex items-center justify-center
-                        ${
-                          formData.productIds.includes(String(product.id))
-                            ? "bg-orange-500"
-                            : "border border-gray-300"
-                        }`}
-                      >
-                        {formData.productIds.includes(String(product.id)) && (
-                          <Check className="h-3 w-3 text-white" />
+                    <input
+                      type="checkbox"
+                      id={`product-${product.id}`}
+                      checked={formData.productIds?.includes(
+                        Number(product.id)
+                      )}
+                      onChange={() =>
+                        handleProductSelect(product.id.toString())
+                      }
+                      className="h-4 w-4"
+                    />
+                    <label
+                      htmlFor={`product-${product.id}`}
+                      className="flex-1 cursor-pointer"
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium">{product.title}</span>
+                        {product.asin && (
+                          <span className="text-sm text-gray-500">
+                            ASIN: {product.asin}
+                          </span>
                         )}
                       </div>
-                    </div>
+                    </label>
                   </div>
                 ))}
               </div>
-              {formData.productIds.length === 0 && (
-                <p className="text-sm text-red-500 flex items-center mt-1">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  Select at least one product
+              {formData.productIds?.length === 0 && (
+                <p className="text-sm text-red-500 mt-2">
+                  Please select at least one product
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label>Select Marketplaces</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
+            <div>
+              <Label>Marketplaces</Label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {MARKETPLACE_COUNTRIES.map((country) => (
-                  <Badge
+                  <div
                     key={country}
-                    variant={
-                      formData.marketplaces.includes(country)
-                        ? "default"
-                        : "outline"
-                    }
-                    className={`cursor-pointer ${
-                      formData.marketplaces.includes(country)
-                        ? "bg-orange-500 hover:bg-orange-600"
-                        : "hover:bg-gray-100"
-                    }`}
-                    onClick={() => handleMarketplaceSelect(country)}
+                    className="flex items-center space-x-2 p-2 border rounded-md"
                   >
-                    {country} - {MARKETPLACE_COUNTRY_NAMES[country]}
-                  </Badge>
+                    <input
+                      type="checkbox"
+                      id={`marketplace-${country}`}
+                      checked={formData.marketplaces?.includes(country)}
+                      onChange={() => {
+                        const newMarketplaces = formData.marketplaces?.includes(
+                          country
+                        )
+                          ? formData.marketplaces.filter((m) => m !== country)
+                          : [...(formData.marketplaces || []), country];
+                        handleSelectChange("marketplaces", newMarketplaces);
+                      }}
+                      className="h-4 w-4"
+                    />
+                    <label
+                      htmlFor={`marketplace-${country}`}
+                      className="flex-1 cursor-pointer"
+                    >
+                      {MARKETPLACE_COUNTRY_NAMES[country]}
+                    </label>
+                  </div>
                 ))}
               </div>
-              {formData.marketplaces.length === 0 && (
-                <p className="text-sm text-red-500 flex items-center mt-1">
-                  <AlertCircle className="h-4 w-4 mr-1" />
-                  Select at least one marketplace
-                </p>
-              )}
+            </div>
+
+            <div>
+              <Label htmlFor="claims">Number of Claims</Label>
+              <Input
+                id="claims"
+                name="claims"
+                type="number"
+                value={formData.claims}
+                onChange={handleInputChange}
+                min="0"
+              />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="isActive"
+                checked={formData.isActive === "YES"}
+                onCheckedChange={(checked) =>
+                  handleSelectChange("isActive", checked ? "YES" : "NO")
+                }
+              />
+              <Label htmlFor="isActive">Active Campaign</Label>
             </div>
           </div>
 
-          {isEditMode && (
-            <div className="space-y-6">
+          {qrCode && (
+            <div className="space-y-4">
               <Card>
                 <CardContent className="p-6">
-                  <div className="text-center space-y-4">
-                    <QrCode className="h-8 w-8 mx-auto text-orange-500" />
-                    <h3 className="font-medium text-lg">Campaign QR Code</h3>
-
-                    <div className="bg-white p-4 rounded-lg border mx-auto max-w-xs">
-                      {qrCode ? (
-                        <img
-                          src={qrCode}
-                          alt="Campaign QR Code"
-                          className="mx-auto"
-                        />
-                      ) : (
-                        <div className="h-[200px] w-[200px] mx-auto bg-gray-100 animate-pulse rounded" />
-                      )}
-                    </div>
-
-                    <div className="p-3 bg-gray-50 rounded border text-sm relative">
-                      <div className="truncate pr-10">{campaignUrl}</div>
-                      <button
-                        type="button"
-                        onClick={handleCopyUrl}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-gray-900"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div className="text-sm text-muted-foreground">
-                      <p>
-                        This QR code will be automatically generated for your
-                        campaign. Customers can scan it to leave their reviews.
+                  <div className="flex flex-col items-center space-y-4">
+                    <img
+                      src={qrCode}
+                      alt="Campaign QR Code"
+                      className="w-48 h-48"
+                    />
+                    <div className="text-center">
+                      <p className="text-sm text-gray-500">
+                        Scan to access campaign
+                      </p>
+                      <p className="text-xs text-gray-400 break-all">
+                        {campaignUrl}
                       </p>
                     </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        navigator.clipboard.writeText(campaignUrl);
+                        toast({
+                          title: "URL Copied",
+                          description:
+                            "Campaign URL has been copied to clipboard",
+                        });
+                      }}
+                    >
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy URL
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
-
-              {selectedPromotion && (
-                <Card>
-                  <CardContent className="p-6">
-                    <h3 className="font-medium text-lg mb-2">
-                      Selected Promotion
-                    </h3>
-                    <div className="space-y-2">
-                      <div>
-                        <span className="text-sm font-medium">Name:</span>
-                        <span className="text-sm ml-2">
-                          {selectedPromotion.title}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-sm font-medium">Type:</span>
-                        <span className="text-sm ml-2">
-                          {selectedPromotion.promotionType}
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </div>
           )}
         </div>
 
-        <div className="flex gap-4 justify-end">
+        <div className="flex justify-end space-x-4">
           <Button
             type="button"
             variant="outline"
             onClick={() => navigate("/vendor-dashboard/campaigns")}
-            className="transition-all duration-200 hover:bg-gray-100"
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            className="bg-orange-500 hover:bg-orange-600 transition-all duration-200 transform hover:scale-105"
-            disabled={
-              isLoading ||
-              formData.productIds.length === 0 ||
-              formData.marketplaces.length === 0 ||
-              !formData.promotionId
-            }
-          >
-            {isLoading ? (
-              <span className="flex items-center">
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                {isEditMode ? "Saving..." : "Creating..."}
-              </span>
-            ) : isEditMode ? (
-              "Save Changes"
-            ) : (
-              "Create Campaign"
-            )}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading
+              ? "Saving..."
+              : isEditMode
+              ? "Update Campaign"
+              : "Create Campaign"}
           </Button>
         </div>
       </form>

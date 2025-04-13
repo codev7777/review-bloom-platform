@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ReviewFormData } from "../ReviewFunnel";
+import GetDomain from "@/lib/GetDomain";
 
 interface Step3FeedbackProps {
   formData: ReviewFormData;
@@ -12,6 +13,12 @@ interface Step3FeedbackProps {
   onNextStep: () => void;
   onPreviousStep: () => void;
   onGoToAmazon: () => void;
+  products: Array<{
+    id: number;
+    title: string;
+    image: string;
+    asin: string;
+  }>;
 }
 
 const Step3Feedback = ({
@@ -20,6 +27,7 @@ const Step3Feedback = ({
   onNextStep,
   onPreviousStep,
   onGoToAmazon,
+  products,
 }: Step3FeedbackProps) => {
   const { toast } = useToast();
   const [errors, setErrors] = useState<
@@ -30,11 +38,11 @@ const Step3Feedback = ({
   );
   const [isValidFeedback, setIsValidFeedback] = useState(false);
 
-  // Product image based on selection in Step 1
-  const productImage =
-    formData.productType === "dell-desktop"
-      ? "/images/products/dell-desktop.jpg"
-      : "/images/products/lenovo-laptop.webp";
+  // Get the selected product's image
+  const selectedProduct = products.find((p) => p.id === formData.productId);
+  const productImage = selectedProduct?.image
+    ? `http://localhost:3000/uploads/${selectedProduct.image}`
+    : "/images/products/default-product.jpg";
 
   // Validate feedback on component mount and when feedback changes
   useEffect(() => {
@@ -129,11 +137,7 @@ const Step3Feedback = ({
       <div className="flex justify-center items-center my-6">
         <img
           src={productImage}
-          alt={
-            formData.productType === "dell-desktop"
-              ? "Dell Desktop"
-              : "Lenovo Laptop"
-          }
+          alt={selectedProduct?.title || "Product"}
           className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
         />
       </div>
