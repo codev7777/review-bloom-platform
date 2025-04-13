@@ -27,8 +27,7 @@ const helpArticles = [
     category: "Getting Started",
     articles: [
       { id: "how-it-works", title: "How It Works" },
-      { id: "supported-platforms", title: "Supported Platforms" },
-      { id: "supported-countries", title: "Supported Countries & Marketplaces" },
+      { id: "supported-platforms", title: "Supported Platform" },
       { id: "verified-vs-unverified", title: "Verified vs Unverified Reviews" },
       { id: "product-reviews", title: "Product Reviews & Seller Feedback" }
     ]
@@ -39,7 +38,7 @@ const helpArticles = [
       { id: "create-campaigns", title: "How to Create Campaigns" },
       { id: "add-products", title: "How to Add Products" },
       { id: "create-promotions", title: "How to Create Promotions" },
-      { id: "gift-cards", title: "Gift Cards, Promotions and Other Promotions Types" },
+      { id: "gift-cards", title: "Gift Cards and Promotional Types" },
       { id: "enter-coupon-codes", title: "How to Enter Coupon Codes" },
       { id: "bulk-uploading", title: "Bulk Uploading Coupon Codes" }
     ]
@@ -58,8 +57,8 @@ const helpArticles = [
       { id: "download-qr", title: "Downloading & Printing QR Codes" },
       { id: "claims-center", title: "How to Use the Claims Center" },
       { id: "test-campaigns", title: "How to Test Your Campaigns & Funnels" },
-      { id: "white-label", title: "How to White Label or Add Personalized Branding to the Smart Funnel" },
-      { id: "meta-pixel", title: "How to Add a Meta Pixel (Facebook Pixel) to the Smart Funnel" }
+      { id: "white-label", title: "How to White Label or Add Personalized Branding" },
+      { id: "meta-pixel", title: "How to Add a Meta Pixel to the Smart Funnel" }
     ]
   },
   {
