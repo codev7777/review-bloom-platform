@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -11,9 +10,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import KnowledgeCenterContent from "@/components/help/KnowledgeCenterContent";
 
-// Help article categories and items
 const helpArticles = [
+  {
+    category: "Knowledge Center",
+    articles: [
+      { 
+        id: "how-it-works", 
+        title: "How It Works", 
+        component: KnowledgeCenterContent 
+      }
+    ]
+  },
   {
     category: "Getting Started",
     articles: [
@@ -72,7 +81,10 @@ const helpArticles = [
 const HelpPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredArticles, setFilteredArticles] = useState(helpArticles);
-  const [activeArticle, setActiveArticle] = useState<null | { title: string, content: string }>(null);
+  const [activeArticle, setActiveArticle] = useState<null | { 
+    title: string, 
+    Component?: React.ComponentType 
+  }>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,22 +105,17 @@ const HelpPage = () => {
     setFilteredArticles(filtered);
   };
 
-  const getArticleContent = (articleId: string) => {
-    // Placeholder for actual article content
-    return `This is the content for the article: ${articleId}. In a real implementation, this would be fetched from a database or CMS.
-    
-    The article would contain detailed explanations, screenshots, and step-by-step instructions to help vendors understand how to use this feature.
-    
-    For now, this is just placeholder text to demonstrate the functionality.`;
-  };
-  
-  const openArticle = (article: { id: string, title: string }) => {
+  const openArticle = (article: { 
+    id: string, 
+    title: string, 
+    component?: React.ComponentType 
+  }) => {
     setActiveArticle({
       title: article.title,
-      content: getArticleContent(article.id)
+      Component: article.component
     });
   };
-
+  
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -138,7 +145,7 @@ const HelpPage = () => {
               </form>
             </div>
             
-            {activeArticle ? (
+            {activeArticle?.Component ? (
               <div className="bg-card rounded-lg p-8 shadow-sm border animate-fade-in">
                 <Button
                   variant="outline"
@@ -149,7 +156,7 @@ const HelpPage = () => {
                 </Button>
                 <h2 className="text-2xl font-semibold mb-4">{activeArticle.title}</h2>
                 <div className="prose max-w-none">
-                  <p className="whitespace-pre-line">{activeArticle.content}</p>
+                  <activeArticle.Component />
                 </div>
               </div>
             ) : (
