@@ -1,13 +1,9 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useFetchWithFallback from "@/hooks/useFetchWithFallback";
-import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
-import { Campaign } from "@/types";
-
-// Define sort related types locally since they don't exist in the project
-type SortField = "title" | "promotionType" | "createdAt";
-type SortOrder = "asc" | "desc";
+import { useFetchWithFallback } from "../../hooks/useFetchWithFallback";
+import { getCampaigns } from "../../services/campaigns";
+import { Campaign } from "../../types/campaign";
+import { SortField, SortOrder } from "../../types/sort";
 
 const CampaignList = () => {
   const navigate = useNavigate();
@@ -31,16 +27,19 @@ const CampaignList = () => {
 
   // Get unique promotion types for filtering
   const promotionTypes = [
-    ...new Set(campaigns.map((campaign) => campaign.promotionId?.toString() || ""))
+    ...new Set(campaigns.map((campaign) => campaign.promotion.promotionType)),
   ];
 
   // Filter campaigns based on search term and type
   const filteredCampaigns = campaigns.filter((campaign) => {
     const matchesSearch =
-      (campaign.title || "").toLowerCase().includes(searchTerm.toLowerCase());
+      (campaign.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (campaign.promotion.description || "")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
     const matchesType =
-      typeFilter === null || campaign.promotionId?.toString() === typeFilter;
+      typeFilter === null || campaign.promotion.promotionType === typeFilter;
 
     return matchesSearch && matchesType;
   });
@@ -52,8 +51,8 @@ const CampaignList = () => {
     if (sortField === "title") {
       comparison = (a.title || "").localeCompare(b.title || "");
     } else if (sortField === "promotionType") {
-      comparison = (a.promotionId?.toString() || "").localeCompare(
-        b.promotionId?.toString() || ""
+      comparison = (a.promotion.promotionType || "").localeCompare(
+        b.promotion.promotionType || ""
       );
     } else if (sortField === "createdAt") {
       const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;

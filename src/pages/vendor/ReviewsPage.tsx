@@ -234,7 +234,7 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      await updateReviewStatus(reviewId, newStatus);
+      await updateReviewStatus(Number(reviewId), newStatus);
       setReviews(
         reviews.map((review) =>
           review.id === reviewId ? { ...review, status: newStatus } : review
@@ -437,7 +437,7 @@ const ReviewsPage = () => {
                       value={review.status}
                       onValueChange={(
                         value: "PENDING" | "PROCESSED" | "REJECTED"
-                      ) => handleStatusUpdate(Number(review.id), value)}
+                      ) => handleStatusUpdate(review.id, value)}
                     >
                       <SelectTrigger className="w-[120px]">
                         <SelectValue />
