@@ -273,8 +273,10 @@ const ProductForm = () => {
         formDataToSend.append("asin", formData.asin);
       }
 
-      if (typeof formData.image === "object" && formData.image instanceof File) {
-        formDataToSend.append("image", formData.image);
+      if (typeof formData.image === "object" && formData.image !== null) {
+        if ('size' in formData.image && 'type' in formData.image) {
+          formDataToSend.append("image", formData.image as unknown as File);
+        }
       } else if (typeof formData.image === "string" && hasImageChanged) {
         const response = await fetch(formData.image);
         const blob = await response.blob();
