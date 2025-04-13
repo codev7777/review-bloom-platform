@@ -274,18 +274,21 @@ const ProductForm = () => {
         formDataToSend.append("asin", formData.asin);
       }
 
-      if (typeof formData.image === "object" && formData.image !== null) {
-        // Safe to use formData.image here after the null check
-        if ('size' in formData.image && 'type' in formData.image) {
-          // Additional type narrowing ensures formData.image is treated as a File
-          const imageFile = formData.image as File;
-          formDataToSend.append("image", imageFile);
+      // Check if formData.image is not null before handling it
+      if (formData.image !== null) {
+        if (typeof formData.image === "object") {
+          // Safe to use formData.image here after the null check
+          if ('size' in formData.image && 'type' in formData.image) {
+            // Additional type narrowing ensures formData.image is treated as a File
+            const imageFile = formData.image as File;
+            formDataToSend.append("image", imageFile);
+          }
+        } else if (typeof formData.image === "string" && hasImageChanged) {
+          const response = await fetch(formData.image);
+          const blob = await response.blob();
+          const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+          formDataToSend.append("image", file);
         }
-      } else if (typeof formData.image === "string" && hasImageChanged) {
-        const response = await fetch(formData.image);
-        const blob = await response.blob();
-        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-        formDataToSend.append("image", file);
       }
 
       if (isEditMode && productId) {
