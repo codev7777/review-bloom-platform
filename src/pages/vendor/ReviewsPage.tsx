@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -234,7 +235,10 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      const numericReviewId = typeof reviewId === 'string' ? parseInt(reviewId, 10) : reviewId;
+      // Convert string ID to number if needed
+      const numericReviewId = typeof reviewId === 'string' 
+        ? parseInt(reviewId, 10) 
+        : reviewId;
       
       await updateReviewStatus(numericReviewId, newStatus);
       setReviews(
@@ -317,10 +321,10 @@ const ReviewsPage = () => {
   }
 
   return (
-    <div className="p-6 animate-fade-in">
+    <div className="p-6 animate-fade-in bg-white rounded-lg shadow-sm">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h1 className="text-xl font-semibold">Customer Reviews</h1>
+          <h1 className="text-xl font-semibold text-gray-800">Customer Reviews</h1>
           <p className="text-muted-foreground">
             Manage and respond to all your product reviews
           </p>
@@ -330,6 +334,7 @@ const ReviewsPage = () => {
           <Button
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}
+            className="border-gray-200 hover:bg-gray-50"
           >
             <Filter className="mr-2 h-4 w-4" />
             Filters
@@ -343,11 +348,11 @@ const ReviewsPage = () => {
 
       <div className="mb-6">
         <Tabs defaultValue="all" className="w-full">
-          <TabsList>
-            <TabsTrigger value="all">All Reviews</TabsTrigger>
-            <TabsTrigger value="positive">Positive (5-4★)</TabsTrigger>
-            <TabsTrigger value="neutral">Neutral (3★)</TabsTrigger>
-            <TabsTrigger value="negative">Negative (2-1★)</TabsTrigger>
+          <TabsList className="bg-gray-100">
+            <TabsTrigger value="all" className="data-[state=active]:bg-white">All Reviews</TabsTrigger>
+            <TabsTrigger value="positive" className="data-[state=active]:bg-white">Positive (5-4★)</TabsTrigger>
+            <TabsTrigger value="neutral" className="data-[state=active]:bg-white">Neutral (3★)</TabsTrigger>
+            <TabsTrigger value="negative" className="data-[state=active]:bg-white">Negative (2-1★)</TabsTrigger>
           </TabsList>
         </Tabs>
       </div>
@@ -357,7 +362,7 @@ const ReviewsPage = () => {
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search reviews..."
-            className="pl-10"
+            className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-300"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -365,7 +370,7 @@ const ReviewsPage = () => {
 
         <div className="flex gap-2">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger>
+            <SelectTrigger className="border-gray-200 focus:border-orange-300 focus:ring-orange-300">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -379,7 +384,7 @@ const ReviewsPage = () => {
           {showFilters && (
             <>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-gray-200 focus:border-orange-300 focus:ring-orange-300">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -394,25 +399,25 @@ const ReviewsPage = () => {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
+      <div className="overflow-x-auto bg-white rounded-lg border border-gray-100 shadow-sm">
+        <Table className="w-full">
+          <TableHeader className="bg-gray-50">
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead>Product</TableHead>
-              <TableHead>Rating</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-gray-600 font-medium">Customer</TableHead>
+              <TableHead className="text-gray-600 font-medium">Product</TableHead>
+              <TableHead className="text-gray-600 font-medium">Rating</TableHead>
+              <TableHead className="text-gray-600 font-medium">Date</TableHead>
+              <TableHead className="text-gray-600 font-medium">Status</TableHead>
+              <TableHead className="text-right text-gray-600 font-medium">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {reviews.length > 0 ? (
               reviews.map((review) => (
-                <TableRow key={review.id} className="animate-fade-in">
+                <TableRow key={review.id} className="animate-fade-in hover:bg-gray-50 transition-colors">
                   <TableCell>
                     <div>
-                      <div className="font-medium">
+                      <div className="font-medium text-gray-800">
                         {review.customer?.name || review.name}
                       </div>
                       <div className="text-sm text-muted-foreground">
@@ -421,7 +426,7 @@ const ReviewsPage = () => {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium">
+                    <div className="font-medium text-gray-800">
                       {review.product?.title || "Unknown Product"}
                     </div>
                     <div className="text-sm text-muted-foreground truncate max-w-[200px]">
@@ -431,7 +436,7 @@ const ReviewsPage = () => {
                   <TableCell>
                     <RatingStars rating={review.ratio} />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-gray-700">
                     {new Date(review.feedbackDate).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
@@ -441,40 +446,55 @@ const ReviewsPage = () => {
                         value: "PENDING" | "PROCESSED" | "REJECTED"
                       ) => handleStatusUpdate(review.id, value)}
                     >
-                      <SelectTrigger className="w-[120px]">
+                      <SelectTrigger className="w-[120px] border-gray-200 focus:border-orange-300 focus:ring-orange-300">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="PENDING">Pending</SelectItem>
-                        <SelectItem value="PROCESSED">Processed</SelectItem>
-                        <SelectItem value="REJECTED">Rejected</SelectItem>
+                        <SelectItem value="PENDING">
+                          <span className="flex items-center">
+                            <span className="h-2 w-2 rounded-full bg-amber-400 mr-2"></span>
+                            Pending
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="PROCESSED">
+                          <span className="flex items-center">
+                            <span className="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span>
+                            Processed
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="REJECTED">
+                          <span className="flex items-center">
+                            <span className="h-2 w-2 rounded-full bg-red-400 mr-2"></span>
+                            Rejected
+                          </span>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="hover:bg-gray-100">
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
+                      <DropdownMenuContent align="end" className="w-56 bg-white border-gray-200">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-gray-50">
                           <MessageSquare className="mr-2 h-4 w-4" />
                           <span>Reply to Review</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-gray-50">
                           <ExternalLink className="mr-2 h-4 w-4" />
                           <span>View Original</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-gray-50">
                           <Mail className="mr-2 h-4 w-4" />
                           <span>Send Follow-up</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem className="hover:bg-gray-50">
                           <AlertCircle className="mr-2 h-4 w-4" />
                           <span>Flag Review</span>
                         </DropdownMenuItem>
@@ -485,7 +505,7 @@ const ReviewsPage = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center text-gray-500">
                   No reviews found.
                 </TableCell>
               </TableRow>
@@ -495,14 +515,16 @@ const ReviewsPage = () => {
       </div>
 
       {totalPages > 1 && (
-        <div className="py-4">
+        <div className="py-4 mt-4">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
                   onClick={goToPreviousPage}
                   className={
-                    currentPage === 1 ? "pointer-events-none opacity-50" : ""
+                    currentPage === 1 
+                      ? "pointer-events-none opacity-50" 
+                      : "hover:bg-gray-50"
                   }
                 />
               </PaginationItem>
@@ -512,6 +534,7 @@ const ReviewsPage = () => {
                   <PaginationLink
                     isActive={currentPage === i + 1}
                     onClick={() => setCurrentPage(i + 1)}
+                    className={currentPage === i + 1 ? "bg-orange-100 border-orange-200" : "hover:bg-gray-50"}
                   >
                     {i + 1}
                   </PaginationLink>
@@ -524,7 +547,7 @@ const ReviewsPage = () => {
                   className={
                     currentPage === totalPages
                       ? "pointer-events-none opacity-50"
-                      : ""
+                      : "hover:bg-gray-50"
                   }
                 />
               </PaginationItem>
