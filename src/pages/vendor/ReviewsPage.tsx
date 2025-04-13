@@ -437,7 +437,7 @@ const ReviewsPage = () => {
                       value={review.status}
                       onValueChange={(
                         value: "PENDING" | "PROCESSED" | "REJECTED"
-                      ) => handleStatusUpdate(review.id, value)}
+                      ) => handleStatusUpdate(Number(review.id), value)}
                     >
                       <SelectTrigger className="w-[120px]">
                         <SelectValue />

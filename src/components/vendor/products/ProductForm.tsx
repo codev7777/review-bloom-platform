@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -274,8 +275,11 @@ const ProductForm = () => {
       }
 
       if (typeof formData.image === "object" && formData.image !== null) {
+        // Safe to use formData.image here after the null check
         if ('size' in formData.image && 'type' in formData.image) {
-          formDataToSend.append("image", formData.image as unknown as File);
+          // Additional type narrowing ensures formData.image is treated as a File
+          const imageFile = formData.image as File;
+          formDataToSend.append("image", imageFile);
         }
       } else if (typeof formData.image === "string" && hasImageChanged) {
         const response = await fetch(formData.image);
