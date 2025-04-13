@@ -11,6 +11,7 @@ import {
   X,
   Plus,
   Gift,
+  MessageSquare,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
@@ -32,6 +33,7 @@ import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/api/products/products.api";
 import { getPromotions } from "@/lib/api/promotions/promotions.api";
+import ReviewsPage from "@/pages/vendor/ReviewsPage";
 
 const Sidebar = ({
   isOpen,
@@ -68,6 +70,11 @@ const Sidebar = ({
       icon: <Gift size={20} />,
       label: "Promotions",
       path: "/vendor-dashboard/promotions",
+    },
+    {
+      icon: <MessageSquare size={20} />,
+      label: "Reviews",
+      path: "/vendor-dashboard/reviews",
     },
     {
       icon: <SettingsIcon size={20} />,
@@ -296,6 +303,7 @@ const VendorDashboard: React.FC = () => {
             <Route path="/promotions" element={<PromotionsList />} />
             <Route path="/promotions/new" element={<PromotionForm />} />
             <Route path="/promotions/edit/:id" element={<PromotionForm />} />
+            <Route path="/reviews" element={<ReviewsPage />} />
             <Route path="/settings" element={<SettingsPanel />} />
           </Routes>
         </div>

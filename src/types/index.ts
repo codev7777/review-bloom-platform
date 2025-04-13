@@ -167,4 +167,15 @@ export interface Review {
   feedbackDate: Date;
   promotionId?: number;
   status: "PENDING" | "PROCESSED" | "REJECTED";
+  product?: {
+    id: number;
+    title: string;
+    image: string;
+    asin: string;
+  };
+  customer?: {
+    id: number;
+    name: string;
+    email: string;
+  };
 }
