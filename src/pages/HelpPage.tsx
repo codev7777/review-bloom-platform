@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -471,7 +472,7 @@ const HelpPage = () => {
       content: (
         <div className="space-y-6">
           <section>
-            <p className="mb-3">Log in to Seller Central and navigate to Avertising > Promotions and on the Percentage Off option, click Create.</p>
+            <p className="mb-3">Log in to Seller Central and navigate to Avertising {'>'}  Promotions and on the Percentage Off option, click Create.</p>
             <div className="border rounded-lg overflow-hidden mb-3">
               <img 
                 src="/images/help/percentage-off-promo.png" 
@@ -525,3 +526,81 @@ const HelpPage = () => {
               <li><strong>One Redemption per customer:</strong> *IMPORTANT* Make sure this is checkmarked</li>
               <li><strong>Claim Code:</strong> If set to Group, enter the promo code the shoppers will use to claim this promotion</li>
               <li><strong>Stacked Promotions:</strong> Choose if you want to allow shoppers to stack additional discounts with this promotions</li>
+            </ul>
+          </section>
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container max-w-6xl py-12 mx-auto px-4 md:px-6">
+        <div className="space-y-8">
+          <div>
+            <h1 className="text-3xl font-bold mb-6">Knowledge Center</h1>
+            <p className="text-muted-foreground mb-8">
+              Find answers to common questions about using our platform to collect Amazon reviews.
+            </p>
+
+            <div className="relative mb-8">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input 
+                type="text"
+                placeholder="Search for help topics..."
+                className="pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <Accordion 
+            type="single"
+            collapsible
+            defaultValue={activeSection || helpSections[0].id}
+            onValueChange={setActiveSection}
+            className="space-y-4 mb-8"
+          >
+            {helpSections
+              .filter(section => 
+                section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                searchQuery === ""
+              )
+              .map((section) => (
+                <AccordionItem 
+                  key={section.id} 
+                  value={section.id}
+                  className="bg-card border rounded-lg px-6 py-2"
+                >
+                  <AccordionTrigger className="text-lg font-medium hover:no-underline">
+                    {section.title}
+                  </AccordionTrigger>
+                  <AccordionContent className="pt-4">
+                    {section.content}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+          </Accordion>
+
+          <div className="bg-card border rounded-lg p-8 text-center">
+            <h2 className="text-xl font-semibold mb-4">Couldn't find what you're looking for?</h2>
+            <p className="mb-6 text-muted-foreground">
+              Our support team is ready to help. Contact us for personalized assistance.
+            </p>
+            <Button 
+              onClick={() => window.location.href = 'mailto:support@reviewscango.com'}
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+            >
+              Contact Support
+            </Button>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </div>
+  );
+};
+
+export default HelpPage;
