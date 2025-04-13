@@ -95,7 +95,7 @@ const ProductForm = () => {
     description: string;
     categoryId: string;
     companyId: string;
-    image: string | null;
+    image: string | File | null;
     asin?: string;
   }>({
     title: "",
@@ -185,12 +185,10 @@ const ProductForm = () => {
     fetchProduct();
   }, [productId, isEditMode, auth?.user?.companyId, navigate]);
 
-  // Add effect to log formData changes
   useEffect(() => {
     console.log("formData updated:", formData);
   }, [formData]);
 
-  // Add effect to log imagePreview changes
   useEffect(() => {
     console.log("imagePreview updated:", imagePreview);
   }, [imagePreview]);
@@ -211,7 +209,6 @@ const ProductForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       setFileError(
         `File size must be less than ${MAX_FILE_SIZE / 1024 / 1024}MB`
@@ -219,7 +216,6 @@ const ProductForm = () => {
       return;
     }
 
-    // Validate file type
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
       setFileError("File must be an image (JPEG, PNG, or WebP)");
       return;
@@ -227,14 +223,13 @@ const ProductForm = () => {
 
     setFileError(null);
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
       setImagePreview(base64String);
       setFormData((prev) => ({
         ...prev,
-        image: file, // Store the actual file object
+        image: file,
       }));
       setHasImageChanged(true);
     };
@@ -258,7 +253,6 @@ const ProductForm = () => {
     setIsLoading(true);
 
     try {
-      // Validate required fields
       if (!formData.title || !formData.description || !formData.categoryId) {
         toast({
           title: "Error",
@@ -279,11 +273,9 @@ const ProductForm = () => {
         formDataToSend.append("asin", formData.asin);
       }
 
-      // Handle image upload
-      if (formData.image instanceof File) {
+      if (formData.image && formData.image instanceof File) {
         formDataToSend.append("image", formData.image);
-      } else if (typeof formData.image === "string" && hasImageChanged) {
-        // If it's a base64 string and has been changed
+      } else if (formData.image && typeof formData.image === "string" && hasImageChanged) {
         const response = await fetch(formData.image);
         const blob = await response.blob();
         const file = new File([blob], "image.jpg", { type: "image/jpeg" });
@@ -327,7 +319,7 @@ const ProductForm = () => {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in-50 duration-500">
+    <div className="space-y-6 animate-in fade-in-500">
       <div>
         <h1 className="text-2xl font-semibold">
           {isEditMode ? "Edit Product" : "Add New Product"}

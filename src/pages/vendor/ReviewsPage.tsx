@@ -230,11 +230,13 @@ const ReviewsPage = () => {
   }, [user?.companyId, statusFilter, currentPage, sortBy]);
 
   const handleStatusUpdate = async (
-    reviewId: number,
+    reviewId: number | string,
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      await updateReviewStatus(Number(reviewId), newStatus);
+      const numericReviewId = typeof reviewId === 'string' ? parseInt(reviewId, 10) : reviewId;
+      
+      await updateReviewStatus(numericReviewId, newStatus);
       setReviews(
         reviews.map((review) =>
           review.id === reviewId ? { ...review, status: newStatus } : review
