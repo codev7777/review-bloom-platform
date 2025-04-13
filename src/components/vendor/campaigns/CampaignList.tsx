@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFetchWithFallback } from "../../hooks/useFetchWithFallback";
-import { getCampaigns } from "../../services/campaigns";
-import { Campaign } from "../../types/campaign";
-import { SortField, SortOrder } from "../../types/sort";
+import useFetchWithFallback from "@/hooks/useFetchWithFallback";
+import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
+import { Campaign } from "@/types";
+
+// Define sort related types locally since they don't exist in the project
+type SortField = "title" | "promotionType" | "createdAt";
+type SortOrder = "asc" | "desc";
 
 const CampaignList = () => {
   const navigate = useNavigate();

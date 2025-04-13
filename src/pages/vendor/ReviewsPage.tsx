@@ -234,7 +234,7 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      await updateReviewStatus(Number(reviewId), newStatus);
+      await updateReviewStatus(reviewId, newStatus);
       setReviews(
         reviews.map((review) =>
           review.id === reviewId ? { ...review, status: newStatus } : review
