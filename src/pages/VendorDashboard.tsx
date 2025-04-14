@@ -1,4 +1,5 @@
 
+import React from "react";
 import VendorDashboardComponent from "@/components/vendor/VendorDashboard";
 import { useEffect } from "react";
 import { toast } from "@/components/ui/use-toast";

@@ -1,3 +1,5 @@
+
+import React from "react";
 import {
   BrowserRouter,
   Routes,
@@ -30,6 +32,7 @@ import ContactUsPage from "./pages/ContactUsPage";
 import FAQsPage from "./pages/FAQsPage";
 import { PrivateRoute } from "./components/auth/PrivateRoute";
 import ScrollToTop from "./lib/ScrollToTop";
+
 const queryClient = new QueryClient();
 
 const ReviewRedirect = () => {
@@ -46,8 +49,7 @@ const App = () => {
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <ScrollToTop />{" "}
-              {/* Ensure this component is inside BrowserRouter */}
+              <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route

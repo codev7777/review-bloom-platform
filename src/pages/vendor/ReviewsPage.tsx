@@ -237,15 +237,17 @@ const ReviewsPage = () => {
     try {
       // Convert string ID to number if needed
       const numericReviewId = typeof reviewId === 'string' 
-        ? parseInt(reviewId, 10) 
+        ? parseInt(reviewId) 
         : reviewId;
       
       await updateReviewStatus(numericReviewId, newStatus);
+      
       setReviews(
         reviews.map((review) =>
           review.id === reviewId ? { ...review, status: newStatus } : review
         )
       );
+      
       toast({
         title: "Success",
         description: "Review status updated successfully",
