@@ -240,7 +240,12 @@ const ReviewsPage = () => {
         ? parseInt(reviewId) 
         : reviewId;
       
-      await updateReviewStatus(numericReviewId, newStatus);
+      // Ensure numericReviewId is actually a number before passing to the API
+      if (isNaN(numericReviewId as number)) {
+        throw new Error("Invalid review ID");
+      }
+      
+      await updateReviewStatus(numericReviewId as number, newStatus);
       
       setReviews(
         reviews.map((review) =>
