@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -234,12 +235,19 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
+      // Convert string IDs to numbers, ensuring a numeric value
       const numericReviewId = typeof reviewId === 'string' 
         ? parseInt(reviewId, 10) 
         : reviewId;
 
+      // Add explicit error handling for invalid IDs
       if (isNaN(numericReviewId)) {
-        throw new Error("Invalid review ID");
+        toast({
+          variant: "destructive",
+          title: "Invalid Review ID",
+          description: "The review ID could not be processed.",
+        });
+        return;
       }
 
       await updateReviewStatus(numericReviewId, newStatus);
