@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -235,17 +235,21 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      // Convert string ID to number if needed
-      const numericReviewId = typeof reviewId === 'string' 
-        ? parseInt(reviewId) 
-        : reviewId;
+      // Make sure we have a numeric review ID - parse string IDs to numbers
+      let numericReviewId: number;
       
-      // Ensure numericReviewId is actually a number before passing to the API
-      if (isNaN(numericReviewId as number)) {
-        throw new Error("Invalid review ID");
+      if (typeof reviewId === 'string') {
+        const parsed = parseInt(reviewId, 10);
+        if (isNaN(parsed)) {
+          throw new Error("Invalid review ID format");
+        }
+        numericReviewId = parsed;
+      } else {
+        numericReviewId = reviewId;
       }
       
-      await updateReviewStatus(numericReviewId as number, newStatus);
+      // Now we can safely pass the numeric ID to the API
+      await updateReviewStatus(numericReviewId, newStatus);
       
       setReviews(
         reviews.map((review) =>
