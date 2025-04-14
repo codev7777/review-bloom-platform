@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -235,20 +234,14 @@ const ReviewsPage = () => {
     newStatus: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
     try {
-      // Make sure we have a numeric review ID - parse string IDs to numbers
-      let numericReviewId: number;
-      
-      if (typeof reviewId === 'string') {
-        const parsed = parseInt(reviewId, 10);
-        if (isNaN(parsed)) {
-          throw new Error("Invalid review ID format");
-        }
-        numericReviewId = parsed;
-      } else {
-        numericReviewId = reviewId;
+      const numericReviewId = typeof reviewId === 'string' 
+        ? parseInt(reviewId, 10) 
+        : reviewId;
+
+      if (isNaN(numericReviewId)) {
+        throw new Error("Invalid review ID");
       }
-      
-      // Now we can safely pass the numeric ID to the API
+
       await updateReviewStatus(numericReviewId, newStatus);
       
       setReviews(
