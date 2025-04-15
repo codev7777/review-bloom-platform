@@ -8,7 +8,10 @@ import Logo from "@/components/layout/navbar/Logo";
 import { Link } from "react-router-dom";
 import { getCampaign } from "@/lib/api/campaigns/campaigns.api";
 import { getProducts } from "@/lib/api/products/products.api";
+import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
+import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { useQuery } from "@tanstack/react-query";
+import ReviewFunnelNavbar from "@/components/layout/ReviewFunnelNavbar";
 
 const ReviewPage = () => {
   const { campaignId, step } = useParams<{
@@ -39,9 +42,16 @@ const ReviewPage = () => {
     error: campaignError,
   } = useQuery({
     queryKey: ["campaign", campaignId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!campaignId) return null;
-      return getCampaign(campaignId);
+      try {
+        // Try authenticated endpoint first
+        return await getCampaign(campaignId);
+      } catch (error) {
+        console.log("Auth campaign request failed, trying public endpoint");
+        // If it fails, try public endpoint
+        return await getPublicCampaign(campaignId);
+      }
     },
     enabled: !!campaignId,
     retry: 1,
@@ -54,10 +64,23 @@ const ReviewPage = () => {
     error: productsError,
   } = useQuery({
     queryKey: ["campaign-products", campaignId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!campaign?.productIds?.length) return { data: [] };
       const productIds = campaign.productIds.map((id) => Number(id));
-      return getProducts({ ids: productIds });
+
+      try {
+        // Try authenticated endpoint first
+        return await getProducts({ ids: productIds });
+      } catch (error) {
+        console.log("Auth products request failed, trying public endpoint");
+        // If it fails, try public endpoint
+        const publicProducts = await getPublicProducts(productIds);
+        return {
+          data: publicProducts,
+          totalPages: 1,
+          totalCount: publicProducts.length,
+        };
+      }
     },
     enabled: !!campaign?.productIds?.length,
   });
@@ -116,8 +139,8 @@ const ReviewPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="container mx-auto px-4 py-8">
+      <ReviewFunnelNavbar />
+      <div className="container mx-auto px-4 pt-[10vh]">
         <div className="mb-6">
           <Button variant="ghost" asChild>
             <Link to="/">

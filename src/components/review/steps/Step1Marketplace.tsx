@@ -38,21 +38,49 @@ interface Step1MarketplaceProps {
 const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
   US: "United States (Amazon.com)",
   CA: "Canada (Amazon.ca)",
+  MX: "Mexico (Amazon.com.mx)",
   GB: "United Kingdom (Amazon.co.uk)",
-  DE: "Germany (Amazon.de)",
   FR: "France (Amazon.fr)",
+  DE: "Germany (Amazon.de)",
+  IT: "Italy (Amazon.it)",
+  ES: "Spain (Amazon.es)",
+  IN: "India (Amazon.in)",
   JP: "Japan (Amazon.co.jp)",
+  NL: "Netherlands (Amazon.nl)",
+  SE: "Sweden (Amazon.se)",
   AU: "Australia (Amazon.com.au)",
+  BR: "Brazil (Amazon.com.br)",
+  SG: "Singapore (Amazon.sg)",
+  TR: "Turkey (Amazon.com.tr)",
+  SA: "Saudi Arabia (Amazon.sa)",
+  AE: "United Arab Emirates (Amazon.ae)",
+  PL: "Poland (Amazon.pl)",
+  EG: "Egypt (Amazon.eg)",
+  ZA: "South Africa (Amazon.co.za)",
 };
 
 const amazonOrderUrls: Record<string, string> = {
   US: "https://www.amazon.com/gp/css/order-history",
   CA: "https://www.amazon.ca/gp/css/order-history",
+  MX: "https://www.amazon.com.mx/gp/css/order-history",
   GB: "https://www.amazon.co.uk/gp/css/order-history",
-  DE: "https://www.amazon.de/gp/css/order-history",
   FR: "https://www.amazon.fr/gp/css/order-history",
+  DE: "https://www.amazon.de/gp/css/order-history",
+  IT: "https://www.amazon.it/gp/css/order-history",
+  ES: "https://www.amazon.es/gp/css/order-history",
+  IN: "https://www.amazon.in/gp/css/order-history",
   JP: "https://www.amazon.co.jp/gp/css/order-history",
+  NL: "https://www.amazon.nl/gp/css/order-history",
+  SE: "https://www.amazon.se/gp/css/order-history",
   AU: "https://www.amazon.com.au/gp/css/order-history",
+  BR: "https://www.amazon.com.br/gp/css/order-history",
+  SG: "https://www.amazon.sg/gp/css/order-history",
+  TR: "https://www.amazon.com.tr/gp/css/order-history",
+  SA: "https://www.amazon.sa/gp/css/order-history",
+  AE: "https://www.amazon.ae/gp/css/order-history",
+  PL: "https://www.amazon.pl/gp/css/order-history",
+  EG: "https://www.amazon.eg/gp/css/order-history",
+  ZA: "https://www.amazon.co.za/gp/css/order-history",
 };
 
 const Step1Marketplace = ({
@@ -130,10 +158,6 @@ const Step1Marketplace = ({
       newErrors.productType = "Please select a product";
     }
 
-    if (!formData.usedMoreThanSevenDays) {
-      newErrors.usedMoreThanSevenDays = "Please confirm product usage";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -153,7 +177,7 @@ const Step1Marketplace = ({
         <img
           src={`http://localhost:3000/uploads/${promotion?.image}`}
           alt={promotion?.title}
-          className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
+          className=" h-[200px] object-contain rounded border border-gray-200"
         />
       </div>
       {/* <h2 className="text-2xl font-semibold text-center">Select Marketplace</h2>

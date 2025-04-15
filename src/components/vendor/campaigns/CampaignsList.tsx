@@ -56,7 +56,7 @@ import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 
-type SortField = "name" | "status" | "reviews" | "updatedAt";
+type SortField = "title" | "isActive" | "claims" | "updatedAt";
 type SortOrder = "asc" | "desc";
 
 const CampaignsList: React.FC = () => {
@@ -236,10 +236,10 @@ const CampaignsList: React.FC = () => {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Sort by</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => handleSort("name")}>
+              <DropdownMenuItem onClick={() => handleSort("title")}>
                 <div className="flex items-center justify-between w-full">
                   <span>Campaign Name</span>
-                  {sortField === "name" &&
+                  {sortField === "title" &&
                     (sortOrder === "asc" ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -247,10 +247,10 @@ const CampaignsList: React.FC = () => {
                     ))}
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort("status")}>
+              <DropdownMenuItem onClick={() => handleSort("isActive")}>
                 <div className="flex items-center justify-between w-full">
                   <span>Status</span>
-                  {sortField === "status" &&
+                  {sortField === "isActive" &&
                     (sortOrder === "asc" ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -258,10 +258,10 @@ const CampaignsList: React.FC = () => {
                     ))}
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleSort("reviews")}>
+              <DropdownMenuItem onClick={() => handleSort("claims")}>
                 <div className="flex items-center justify-between w-full">
                   <span>Reviews</span>
-                  {sortField === "reviews" &&
+                  {sortField === "claims" &&
                     (sortOrder === "asc" ? (
                       <ChevronUp className="h-4 w-4" />
                     ) : (
@@ -371,15 +371,16 @@ const CampaignsList: React.FC = () => {
                   <TableCell className="hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
                       {campaign.products && campaign.products.length > 0 ? (
-                        campaign.products.map((product, idx) => (
-                          <Badge
-                            key={idx}
-                            variant="outline"
-                            className="font-normal"
-                          >
-                            {product}
-                          </Badge>
-                        ))
+                        // campaign.products.map((product, idx) => (
+                        //   <Badge
+                        //     key={idx}
+                        //     variant="outline"
+                        //     className="font-normal"
+                        //   >
+                        //     {product}
+                        //   </Badge>
+                        // ))
+                        campaign.products.length
                       ) : (
                         <span className="text-muted-foreground text-sm">
                           No products
@@ -388,7 +389,7 @@ const CampaignsList: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
-                    {campaign.promotionName || "N/A"}
+                    {campaign.promotionId || "N/A"}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     {campaign.reviews || 0}

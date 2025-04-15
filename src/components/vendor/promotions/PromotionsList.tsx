@@ -276,7 +276,7 @@ const PromotionsList = () => {
               <img
                 src={getImageUrl(promotion.image)}
                 alt={promotion.title}
-                className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
+                className="h-full w-full object-contain transition-transform duration-200 hover:scale-105"
               />
             </div>
             <CardContent className="p-5">

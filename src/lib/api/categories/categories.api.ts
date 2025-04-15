@@ -1,13 +1,21 @@
 import api from "../axiosConfig";
 import { Category } from "@/types";
 
-export const getCategories = async (): Promise<{
+export const getCategories = async (
+  page = 1,
+  limit = 1000
+): Promise<{
   data: Category[];
   totalPages: number;
   totalCount: number;
 }> => {
   try {
-    const response = await api.get("/categories");
+    const response = await api.get("/categories", {
+      params: {
+        page,
+        limit,
+      },
+    });
     console.log("Categories API Response:", response.data);
 
     // Handle different response formats

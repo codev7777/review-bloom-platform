@@ -85,7 +85,6 @@ const SAMPLE_CAMPAIGN: Partial<Campaign> = {
   productIds: ["1", "4"],
   marketplaces: ["US", "CA", "GB"],
   isActive: "YES",
-  claims: 0,
 };
 
 // Update the Campaign interface to include qrCode
@@ -134,7 +133,6 @@ const CampaignForm = () => {
     promotionId: "",
     productIds: [],
     marketplaces: [],
-    claims: 0,
   });
 
   const [qrCode, setQrCode] = useState<string>("");
@@ -150,7 +148,6 @@ const CampaignForm = () => {
         productIds: campaignData.productIds,
         marketplaces: campaignData.marketplaces,
         isActive: campaignData.isActive,
-        claims: campaignData.claims,
       });
 
       setCampaignUrl(`${GetDomain()}/review/${campaignData.id}`);
@@ -265,7 +262,6 @@ const CampaignForm = () => {
         marketplaces: Array.isArray(formData.marketplaces)
           ? formData.marketplaces
           : [formData.marketplaces],
-        claims: formData.claims || 0,
       };
 
       if (isEditMode && id) {
@@ -413,18 +409,6 @@ const CampaignForm = () => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div>
-              <Label htmlFor="claims">Number of Claims</Label>
-              <Input
-                id="claims"
-                name="claims"
-                type="number"
-                value={formData.claims}
-                onChange={handleInputChange}
-                min="0"
-              />
             </div>
 
             <div className="flex items-center space-x-2">

@@ -18,9 +18,11 @@ import {
   updateProduct,
   getProduct,
 } from "@/lib/api/products/products.api";
+import { getCategories } from "@/lib/api/categories/categories.api";
 import { useAuth } from "@/hooks/use-auth";
-import { Product } from "@/types";
+import { Product, Category } from "@/types";
 import { getImageUrl, getImageHeaders } from "@/utils/imageUrl";
+import { useQuery } from "@tanstack/react-query";
 
 const MOCK_PRODUCTS = [
   {
@@ -52,18 +54,6 @@ const MOCK_PRODUCTS = [
   },
 ];
 
-const CATEGORIES = [
-  { id: 1, name: "Electronics" },
-  { id: 2, name: "Kitchen" },
-  { id: 3, name: "Fitness" },
-  { id: 4, name: "Home & Garden" },
-  { id: 5, name: "Beauty" },
-  { id: 6, name: "Toys" },
-  { id: 7, name: "Clothing" },
-  { id: 8, name: "Books" },
-  { id: 9, name: "Other" },
-];
-
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const BACKEND_URL =
@@ -81,6 +71,35 @@ const ProductForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const isEditMode = Boolean(productId);
+
+  // Fetch categories using react-query
+  const {
+    data: categoriesResponse = { data: [] },
+    isLoading: isLoadingCategories,
+    isError: isCategoriesError,
+  } = useQuery<{
+    data: Category[];
+    totalPages: number;
+    totalCount: number;
+  }>({
+    queryKey: ["categories"],
+    queryFn: () => getCategories(1, 1000), // Fetch up to 1000 categories
+    retry: false,
+  });
+
+  // Handle categories error
+  useEffect(() => {
+    if (isCategoriesError) {
+      toast({
+        variant: "destructive",
+        title: "Failed to load categories",
+        description:
+          "There was an error loading the categories. Please try again.",
+      });
+    }
+  }, [isCategoriesError, toast]);
+
+  const categories: Category[] = categoriesResponse?.data ?? [];
 
   console.log("Initial setup:", {
     params,
@@ -275,7 +294,11 @@ const ProductForm = () => {
 
       if (formData.image && formData.image instanceof File) {
         formDataToSend.append("image", formData.image);
-      } else if (formData.image && typeof formData.image === "string" && hasImageChanged) {
+      } else if (
+        formData.image &&
+        typeof formData.image === "string" &&
+        hasImageChanged
+      ) {
         const response = await fetch(formData.image);
         const blob = await response.blob();
         const file = new File([blob], "image.jpg", { type: "image/jpeg" });
@@ -386,12 +409,13 @@ const ProductForm = () => {
                 onValueChange={(value) =>
                   setFormData((prev) => ({ ...prev, categoryId: value }))
                 }
+                disabled={isLoadingCategories}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((category) => (
+                  {categories.map((category) => (
                     <SelectItem
                       key={category.id}
                       value={category.id.toString()}
@@ -424,7 +448,7 @@ const ProductForm = () => {
                     <img
                       src={imagePreview}
                       alt="Product preview"
-                      className="h-48 w-48 object-cover rounded-lg"
+                      className="max-h-60 max-w-60 object-contain rounded-lg"
                     />
                     <Button
                       type="button"

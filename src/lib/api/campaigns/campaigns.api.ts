@@ -3,7 +3,7 @@ import { Campaign, CampaignStatus } from "@/types";
 
 // Campaign API endpoints
 export const createCampaign = async (
-  campaign: Omit<Campaign, "id">
+  campaign: Omit<Campaign, "id" | "claims">
 ): Promise<Campaign> => {
   // Ensure arrays are properly formatted
   const formData = {

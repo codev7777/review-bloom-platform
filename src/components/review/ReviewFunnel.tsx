@@ -10,6 +10,9 @@ import Step4Thanks from "./steps/Step4Thanks";
 import { createReview } from "@/lib/api/reviews/reviews.api";
 import { getCampaign } from "@/lib/api/campaigns/campaigns.api";
 import { getProducts } from "@/lib/api/products/products.api";
+import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
+import { getPublicProducts } from "@/lib/api/public/publicProduct";
+import { createPublicReview } from "@/lib/api/public/publicReview";
 import { Campaign, Product, Promotion } from "@/types";
 
 interface ReviewFunnelProps {
@@ -103,7 +106,17 @@ const ReviewFunnel = ({
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const campaignData = await getCampaign(campaignId);
+        let campaignData;
+
+        try {
+          // First try to get campaign with authentication
+          campaignData = await getCampaign(campaignId);
+        } catch (authError) {
+          console.log("Auth request failed, trying public endpoint");
+          // If authenticated request fails, try public endpoint
+          campaignData = await getPublicCampaign(campaignId);
+        }
+
         setCampaign(campaignData);
 
         if (campaignData.productIds?.length) {
@@ -116,11 +129,26 @@ const ReviewFunnel = ({
             })
             .filter((id): id is number => !isNaN(id));
 
-          const productsData = await getProducts({
-            ids: numericProductIds,
-          });
-          if (productsData.data.length > 0) {
-            console.log("New products data available:", productsData.data);
+          try {
+            // Try to get products with authentication first
+            const productsData = await getProducts({
+              ids: numericProductIds,
+            });
+            if (productsData.data.length > 0) {
+              console.log("New products data available:", productsData.data);
+            }
+          } catch (authError) {
+            console.log("Auth products request failed, trying public endpoint");
+            // If authenticated request fails, try public endpoint
+            const publicProductsData = await getPublicProducts(
+              numericProductIds
+            );
+            if (publicProductsData.length > 0) {
+              console.log(
+                "New public products data available:",
+                publicProductsData
+              );
+            }
           }
         }
       } catch (err) {
@@ -187,7 +215,7 @@ const ReviewFunnel = ({
           return;
         }
 
-        await createReview({
+        const reviewData = {
           email: formData.email,
           name: formData.name,
           productId,
@@ -196,7 +224,16 @@ const ReviewFunnel = ({
           country: formData.country,
           orderNo: formData.orderId,
           promotionId,
-        });
+        };
+
+        try {
+          // First try to submit with authentication
+          await createReview(reviewData);
+        } catch (authError) {
+          console.log("Auth review submission failed, trying public endpoint");
+          // If authenticated request fails, try public endpoint
+          await createPublicReview(reviewData);
+        }
 
         // Move to step 4 after successful submission
         const nextStep = step + 1;

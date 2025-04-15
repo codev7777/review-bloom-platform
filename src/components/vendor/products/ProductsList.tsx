@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Edit,
@@ -54,9 +54,6 @@ import { useQuery } from "@tanstack/react-query";
 type SortField = "name" | "asin" | "category" | "dateAdded";
 type SortOrder = "asc" | "desc";
 
-const BACKEND_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
-
 const ProductsList = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -72,22 +69,38 @@ const ProductsList = () => {
   // Fetch products from the backend with companyId
   const {
     data: products,
-    isLoading,
+    isLoading: isLoadingProducts,
     setData: setProducts,
-    usingMockData,
   } = useFetchWithFallback<Product>(getProducts, [], { companyId });
 
-  // Fetch categories
-  const { data: categoriesResponse = { data: [] } } = useQuery<{
+  // Fetch categories with error handling
+  const {
+    data: categoriesResponse = { data: [] },
+    isLoading: isLoadingCategories,
+    isError: isCategoriesError,
+  } = useQuery<{
     data: Category[];
     totalPages: number;
     totalCount: number;
   }>({
     queryKey: ["categories"],
-    queryFn: () => getCategories(),
+    queryFn: () => getCategories(1, 1000), // Fetch up to 1000 categories
+    retry: false,
   });
 
-  const categories = categoriesResponse.data;
+  // Handle categories error
+  useEffect(() => {
+    if (isCategoriesError) {
+      toast({
+        variant: "destructive",
+        title: "Failed to load categories",
+        description:
+          "There was an error loading the categories. Please try again.",
+      });
+    }
+  }, [isCategoriesError, toast]);
+
+  const categories: Category[] = categoriesResponse?.data ?? [];
 
   // Filter products based on search term and category
   const filteredProducts = products.filter((product) => {
@@ -96,10 +109,9 @@ const ProductsList = () => {
       (product.asin || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesCategory =
-      categoryFilter === null ||
-      (typeof product.category === "object" &&
-        product.category?.name === categoryFilter) ||
-      product.categoryId === categoryFilter;
+      !categoryFilter ||
+      product.categoryId?.toString() === categoryFilter ||
+      Number(product.categoryId) === Number(categoryFilter);
 
     return matchesSearch && matchesCategory;
   });
@@ -162,92 +174,7 @@ const ProductsList = () => {
     }
   };
 
-  const columns: ColumnDef<Product>[] = [
-    {
-      accessorKey: "title",
-      header: "Product",
-      cell: ({ row }) => {
-        const product = row.original;
-        return (
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg overflow-hidden bg-orange-100">
-              <img
-                src={getImageUrl(product.image)}
-                alt={product.title}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div>
-              <div className="font-medium">{product.title}</div>
-              <div className="text-sm text-muted-foreground">
-                ASIN: {product.asin}
-              </div>
-            </div>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "categoryId",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = categories.find((c) => c === row.original.categoryId);
-        return (
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
-              {category || "Uncategorized"}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      id: "actions",
-      cell: ({ row }) => {
-        const product = row.original;
-        return (
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() =>
-                navigate(`/vendor-dashboard/products/edit/${product.id}`)
-              }
-            >
-              <Edit className="h-4 w-4 text-orange-500" />
-            </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete product</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Are you sure you want to delete this product? This action
-                    cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleDeleteProduct()}
-                    className="bg-red-500 hover:bg-red-600"
-                  >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        );
-      },
-    },
-  ];
-
-  if (isLoading) {
+  if (isLoadingProducts || isLoadingCategories) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
@@ -307,7 +234,12 @@ const ProductsList = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
               <SlidersHorizontal className="h-4 w-4" />
-              Filter by Category
+              {categoryFilter
+                ? `Category: ${
+                    categories.find((c) => c.id.toString() === categoryFilter)
+                      ?.name || "All"
+                  }`
+                : "Filter by Category"}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
@@ -319,7 +251,7 @@ const ProductsList = () => {
             {categories.map((category) => (
               <DropdownMenuItem
                 key={category.id}
-                onClick={() => setCategoryFilter(category.name)}
+                onClick={() => setCategoryFilter(category.id.toString())}
               >
                 {category.name}
               </DropdownMenuItem>
@@ -389,12 +321,12 @@ const ProductsList = () => {
                     <img
                       src={getImageUrl(product.image)}
                       alt={product.name}
-                      className="h-10 w-10 rounded object-cover mr-3"
+                      className="h-10 w-10 rounded object-contain mr-3"
                     />
                     <div>
                       <div className="font-medium">{product.name}</div>
                       <div className="text-xs text-muted-foreground hidden sm:block">
-                        {product.asin}
+                        {product.title}
                       </div>
                     </div>
                   </div>
@@ -409,7 +341,13 @@ const ProductsList = () => {
                       : product.category}
                   </Badge>
                 </TableCell>
-                <TableCell>{product.dateAdded}</TableCell>
+                <TableCell>
+                  {new Date(product.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button

@@ -9,8 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("james.s200049@gmail.com");
-  const [password, setPassword] = useState("akfguehdQQ1");
+  const [email, setEmail] = useState("user@example.com");
+  const [password, setPassword] = useState("Password123");
   const { login, isLoading } = useAuth();
 
   // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
