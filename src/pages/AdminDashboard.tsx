@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import AdminHeader from "@/components/admin/AdminHeader";
@@ -19,7 +18,9 @@ const AdminDashboard = () => {
   useEffect(() => {
     const checkBackendConnection = async () => {
       try {
-        const response = await fetch("http://localhost:3000/v1/health");
+        const response = await fetch(
+          "https://reviewbrothers.com/api/v1/health"
+        );
         if (response.ok) {
           toast({
             title: "Backend connection successful",
@@ -33,7 +34,8 @@ const AdminDashboard = () => {
         toast({
           variant: "destructive",
           title: "Backend connection failed",
-          description: "Using mock data. Please ensure localhost:3000 is running.",
+          description:
+            "Using mock data. Please ensure localhost:3000 is running.",
         });
       }
     };
@@ -43,15 +45,12 @@ const AdminDashboard = () => {
 
   return (
     <Layout className="bg-gray-50">
-      <AdminHeader 
-        sidebarOpen={sidebarOpen} 
-        onSidebarOpenChange={setSidebarOpen} 
+      <AdminHeader
+        sidebarOpen={sidebarOpen}
+        onSidebarOpenChange={setSidebarOpen}
       />
       <div className="flex h-screen pt-16">
-        <AdminSidebar 
-          open={sidebarOpen} 
-          onOpenChange={setSidebarOpen} 
-        />
+        <AdminSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
         <LayoutContent className="w-full p-6">
           <Routes>
             <Route path="/" element={<AdminOverview />} />

@@ -3,7 +3,7 @@ import { toast } from "@/components/ui/use-toast";
 
 // Create an Axios instance with default settings
 const api = axios.create({
-  baseURL: "http://localhost:3000/v1", // Backend API base URL
+  baseURL: "https://reviewbrothers.com/api/v1", // Backend API base URL
   headers: {
     "Content-Type": "application/json",
   },
