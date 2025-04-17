@@ -1,9 +1,10 @@
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
+import { API_URL } from "@/config/env";
 
 // Create a public Axios instance that doesn't require authentication
 const publicApi = axios.create({
-  baseURL: "https://reviewbrothers.com/api/v1", // Backend API base URL
+  baseURL: API_URL, // Using environment-based API URL
   headers: {
     "Content-Type": "application/json",
   },
