@@ -32,6 +32,7 @@ import {
 } from "@/lib/api/promotions/promotions.api";
 import { Promotion } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
+import { API_URL } from "@/config/env";
 
 // Mock promotions for fallback
 const MOCK_PROMOTIONS = [
@@ -97,8 +98,7 @@ const PROMOTION_TYPES = [
 ];
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
-const BACKEND_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 type PromotionFormData = Omit<Promotion, "id" | "createdAt" | "updatedAt">;
 

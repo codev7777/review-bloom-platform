@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ReviewFormData } from "../ReviewFunnel";
 import GetDomain from "@/lib/GetDomain";
+import { API_URL } from "@/config/env";
 
 interface Step3FeedbackProps {
   formData: ReviewFormData;
@@ -20,6 +21,8 @@ interface Step3FeedbackProps {
     asin: string;
   }>;
 }
+
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 const Step3Feedback = ({
   formData,
@@ -41,7 +44,7 @@ const Step3Feedback = ({
   // Get the selected product's image
   const selectedProduct = products.find((p) => p.id === formData.productId);
   const productImage = selectedProduct?.image
-    ? `http://localhost:3000/uploads/${selectedProduct.image}`
+    ? `${BACKEND_URL}/uploads/${selectedProduct.image}`
     : "/images/products/default-product.jpg";
 
   // Validate feedback on component mount and when feedback changes

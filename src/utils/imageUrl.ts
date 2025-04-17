@@ -1,9 +1,7 @@
 import { useAuth } from "@/hooks/use-auth";
+import { API_URL } from "@/config/env";
 
-const BACKEND_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://reviewbrothers.com/api"
-    : "http://localhost:3000";
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 /**
  * Get the full URL for an image

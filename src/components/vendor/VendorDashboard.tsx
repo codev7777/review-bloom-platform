@@ -34,6 +34,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/api/products/products.api";
 import { getPromotions } from "@/lib/api/promotions/promotions.api";
 import ReviewsPage from "@/pages/vendor/ReviewsPage";
+import { API_URL } from "@/config/env";
 
 const Sidebar = ({
   isOpen,
@@ -247,11 +248,11 @@ const VendorDashboard: React.FC = () => {
   useEffect(() => {
     const checkBackendConnection = async () => {
       try {
-        const response = await fetch("http://localhost:3000/v1/health");
+        const response = await fetch(`${API_URL}/health`);
         if (response.ok) {
           toast({
             title: "Backend connection successful",
-            description: "Connected to localhost:3000 backend API",
+            description: `Connected to ${API_URL} backend API`,
           });
         } else {
           throw new Error("Failed to connect to backend");
@@ -261,8 +262,7 @@ const VendorDashboard: React.FC = () => {
         toast({
           variant: "destructive",
           title: "Backend connection failed",
-          description:
-            "Using mock data. Please ensure localhost:3000 is running.",
+          description: `Using mock data. Please ensure backend at ${API_URL} is running.`,
         });
       }
     };

@@ -23,6 +23,7 @@ import {
 import { updateUser, getUser } from "@/lib/api/users/users.api";
 import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
+import { API_URL } from "@/config/env";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [
@@ -32,8 +33,7 @@ const ALLOWED_FILE_TYPES = [
   "image/webp",
 ];
 
-const BACKEND_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 // Mock data for fallback
 const MOCK_COMPANY = {

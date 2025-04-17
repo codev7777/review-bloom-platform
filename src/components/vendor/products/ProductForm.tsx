@@ -23,6 +23,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Product, Category } from "@/types";
 import { getImageUrl, getImageHeaders } from "@/utils/imageUrl";
 import { useQuery } from "@tanstack/react-query";
+import { API_URL } from "@/config/env";
 
 const MOCK_PRODUCTS = [
   {
@@ -56,8 +57,7 @@ const MOCK_PRODUCTS = [
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const BACKEND_URL =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 interface FormData extends Omit<Partial<Product>, "image"> {
   image: File | string | null;

@@ -13,6 +13,7 @@ import {
 import StarRating from "../StarRating";
 import { ReviewFormData } from "../ReviewFunnel";
 import { getImageUrl } from "@/utils/imageUrl";
+import { API_URL } from "@/config/env";
 
 interface Step1MarketplaceProps {
   productName: string;
@@ -82,6 +83,8 @@ const amazonOrderUrls: Record<string, string> = {
   EG: "https://www.amazon.eg/gp/css/order-history",
   ZA: "https://www.amazon.co.za/gp/css/order-history",
 };
+
+const BACKEND_URL = API_URL.replace("/v1", "");
 
 const Step1Marketplace = ({
   productName,
@@ -175,7 +178,7 @@ const Step1Marketplace = ({
       {/* Promotion Image */}
       <div className="flex justify-center items-center my-6">
         <img
-          src={`http://localhost:3000/uploads/${promotion?.image}`}
+          src={`${BACKEND_URL}/uploads/${promotion?.image}`}
           alt={promotion?.title}
           className=" h-[200px] object-contain rounded border border-gray-200"
         />
