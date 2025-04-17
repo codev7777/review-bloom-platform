@@ -115,6 +115,7 @@ const CampaignsList: React.FC = () => {
   const extendedCampaigns = campaigns.map((campaign) => {
     console.log("Processing campaign:", campaign);
     const mappedCampaign = mapCampaignForDisplay(campaign);
+    const isActive = mappedCampaign.isActive === "YES";
     return {
       ...mappedCampaign,
       products: mappedCampaign.productIds || [],
@@ -122,9 +123,9 @@ const CampaignsList: React.FC = () => {
       marketplaces: mappedCampaign.marketplaces || [],
       lastUpdated: mappedCampaign.updatedAt || new Date().toISOString(),
       reviews: mappedCampaign.claims || 0,
+      status: isActive ? "active" : "paused",
     };
   });
-  console.log("Extended Campaigns:", extendedCampaigns);
 
   const filteredCampaigns = extendedCampaigns.filter((campaign) => {
     const matchesSearch =
@@ -138,6 +139,7 @@ const CampaignsList: React.FC = () => {
 
     return matchesSearch && matchesStatus;
   });
+
   console.log("Filtered Campaigns:", filteredCampaigns);
 
   const handleSort = (field: SortField) => {
@@ -364,22 +366,12 @@ const CampaignsList: React.FC = () => {
                       ) : (
                         <XCircle className="mr-1 h-3 w-3" />
                       )}
-                      {campaign.status ||
-                        (campaign.isActive === "YES" ? "active" : "paused")}
+                      {campaign.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
                     <div className="flex flex-wrap gap-1">
                       {campaign.products && campaign.products.length > 0 ? (
-                        // campaign.products.map((product, idx) => (
-                        //   <Badge
-                        //     key={idx}
-                        //     variant="outline"
-                        //     className="font-normal"
-                        //   >
-                        //     {product}
-                        //   </Badge>
-                        // ))
                         campaign.products.length
                       ) : (
                         <span className="text-muted-foreground text-sm">
@@ -389,7 +381,7 @@ const CampaignsList: React.FC = () => {
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
-                    {campaign.promotionId || "N/A"}
+                    {campaign.promotionName || "N/A"}
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                     {campaign.reviews || 0}

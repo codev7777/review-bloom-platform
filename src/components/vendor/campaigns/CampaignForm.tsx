@@ -277,7 +277,7 @@ const CampaignForm = () => {
           description: "Campaign created successfully",
         });
       }
-      navigate("/vendor/campaigns");
+      navigate("/vendor-dashboard/campaigns");
     } catch (error) {
       console.error("Error submitting campaign:", error);
       toast({
