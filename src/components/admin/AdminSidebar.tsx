@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
@@ -19,11 +19,15 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isActive = (path: string) => {
-    return (
-      location.pathname === path || location.pathname.startsWith(`${path}/`)
-    );
+    if (path === "/admin-dashboard") {
+      // For Overview, only match exact path
+      return location.pathname === "/admin-dashboard";
+    }
+    // For other items, match if path starts with the item's path
+    return location.pathname.startsWith(path);
   };
 
   const navItems = [

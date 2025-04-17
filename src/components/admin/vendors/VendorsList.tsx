@@ -7,6 +7,8 @@ import {
   Search,
   Trash2,
   Users,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,20 +47,63 @@ import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "@/lib/api/companies/companies.api";
 import { Company } from "@/types";
 
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationProps) => (
+  <div className="flex items-center justify-end space-x-2 py-4">
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => onPageChange(currentPage - 1)}
+      disabled={currentPage <= 1}
+    >
+      <ChevronLeft className="h-4 w-4" />
+      Previous
+    </Button>
+    <div className="text-sm text-muted-foreground">
+      Page {currentPage} of {totalPages}
+    </div>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() => onPageChange(currentPage + 1)}
+      disabled={currentPage >= totalPages}
+    >
+      Next
+      <ChevronRight className="h-4 w-4" />
+    </Button>
+  </div>
+);
+
 const VendorsList = () => {
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
-
+  const [totalVendors, setTotalVendors] = useState(0);
+  const itemsPerPage = 10;
   const {
     data: companiesResponse,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["companies"],
+    queryKey: ["companies", currentPage, searchQuery],
     queryFn: async () => {
       try {
-        const response = await getCompanies();
+        const response = await getCompanies({
+          page: currentPage,
+          limit: itemsPerPage,
+          search: searchQuery,
+        });
         console.log("Companies API response:", response);
+        setTotalVendors(response.totalCount);
         return response;
       } catch (err) {
         console.error("Error fetching companies:", err);
@@ -71,11 +116,13 @@ const VendorsList = () => {
 
   const companies = companiesResponse?.data || [];
 
-  const filteredVendors = companies.filter(
-    (company: Company) =>
-      company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.detail?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const totalPages = companiesResponse
+    ? Math.ceil(companiesResponse.totalCount / itemsPerPage)
+    : 0;
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   const handleExport = () => {
     // In a real app, this would generate and download a CSV or similar
@@ -181,7 +228,7 @@ const VendorsList = () => {
         <CardHeader className="p-4">
           <CardTitle className="text-lg">All Vendors</CardTitle>
           <CardDescription>
-            {filteredVendors.length} total vendors registered
+            {totalVendors} total vendors registered
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -197,7 +244,7 @@ const VendorsList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredVendors.map((company: Company) => (
+              {companies.map((company: Company) => (
                 <TableRow key={company.id} className="group hover:bg-gray-50">
                   <TableCell>
                     <div className="flex flex-col">
@@ -234,7 +281,7 @@ const VendorsList = () => {
                   </TableCell>
                 </TableRow>
               ))}
-              {filteredVendors.length === 0 && (
+              {companies.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex flex-col items-center justify-center">
@@ -249,6 +296,14 @@ const VendorsList = () => {
               )}
             </TableBody>
           </Table>
+
+          <div className="px-4">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </CardContent>
       </Card>
 

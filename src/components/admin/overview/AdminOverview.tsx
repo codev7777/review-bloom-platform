@@ -93,7 +93,7 @@ const AdminOverview = () => {
         </Card>
       </div>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Campaign Performance</CardTitle>
           <CardDescription>
@@ -103,7 +103,7 @@ const AdminOverview = () => {
         <CardContent>
           <BarChart data={statistics?.campaignPerformance || []} />
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };

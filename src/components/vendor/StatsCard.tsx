@@ -1,4 +1,3 @@
-
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { StatsCardProps } from "@/types";
 
@@ -24,9 +23,7 @@ const StatsCard = ({
         {changeType !== "neutral" && change && (
           <div
             className={`flex items-center ml-2 text-sm ${
-              changeType === "positive"
-                ? "text-green-600"
-                : "text-red-600"
+              changeType === "positive" ? "text-green-600" : "text-red-600"
             }`}
           >
             <span className="mr-1">
@@ -39,11 +36,13 @@ const StatsCard = ({
             {change}
           </div>
         )}
-        {percentage && (
+        {/* {percentage && (
           <span className="ml-2 text-sm text-muted-foreground">{percentage}</span>
-        )}
+        )} */}
       </div>
-      {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+      {subtitle && (
+        <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
+      )}
       {period && <p className="text-xs text-muted-foreground mt-1">{period}</p>}
     </div>
   );
