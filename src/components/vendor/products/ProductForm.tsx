@@ -272,50 +272,31 @@ const ProductForm = () => {
     setIsLoading(true);
 
     try {
-      if (!formData.title || !formData.description || !formData.categoryId) {
-        toast({
-          title: "Error",
-          description: "Please fill in all required fields",
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
+      const formDataToSubmit = new FormData();
+      formDataToSubmit.append("title", formData.title);
+      formDataToSubmit.append("description", formData.description);
+      formDataToSubmit.append("categoryId", formData.categoryId);
+      formDataToSubmit.append(
+        "companyId",
+        formData.companyId ? Number(formData.companyId).toString() : ""
+      );
+      formDataToSubmit.append("asin", formData.asin || "");
 
-      const formDataToSend = new FormData();
-      formDataToSend.append("title", formData.title);
-      formDataToSend.append("description", formData.description);
-      formDataToSend.append("categoryId", String(formData.categoryId));
-      formDataToSend.append("companyId", String(formData.companyId));
-
-      if (formData.asin) {
-        formDataToSend.append("asin", formData.asin);
-      }
-
-      if (formData.image && formData.image instanceof File) {
-        formDataToSend.append("image", formData.image);
-      } else if (
-        formData.image &&
-        typeof formData.image === "string" &&
-        hasImageChanged
-      ) {
-        const response = await fetch(formData.image);
-        const blob = await response.blob();
-        const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-        formDataToSend.append("image", file);
+      if (formData.image instanceof File) {
+        formDataToSubmit.append("image", formData.image);
       }
 
       if (isEditMode && productId) {
-        await updateProduct(productId, formDataToSend);
+        await updateProduct(productId, formDataToSubmit);
         toast({
-          title: "Success",
-          description: "Product updated successfully",
+          title: "Product updated",
+          description: "Your product has been updated successfully.",
         });
       } else {
-        await createProduct(formDataToSend);
+        await createProduct(formDataToSubmit);
         toast({
-          title: "Success",
-          description: "Product created successfully",
+          title: "Product created",
+          description: "Your product has been created successfully.",
         });
       }
 
@@ -323,10 +304,9 @@ const ProductForm = () => {
     } catch (error) {
       console.error("Error submitting product:", error);
       toast({
-        title: "Error",
-        description:
-          error instanceof Error ? error.message : "Failed to submit product",
         variant: "destructive",
+        title: "Error",
+        description: "Failed to save product. Please try again.",
       });
     } finally {
       setIsLoading(false);

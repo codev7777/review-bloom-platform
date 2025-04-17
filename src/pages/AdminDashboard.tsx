@@ -9,6 +9,8 @@ import WhiteLabelSettings from "@/components/admin/white-label/WhiteLabelSetting
 import AdminSettings from "@/components/admin/settings/AdminSettings";
 import { Layout, LayoutContent } from "@/components/ui/layout";
 import { useToast } from "@/components/ui/use-toast";
+import { API_URL } from "@/config/env";
+import { checkApiHealth } from "@/lib/api/axiosConfig";
 
 const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -18,13 +20,11 @@ const AdminDashboard = () => {
   useEffect(() => {
     const checkBackendConnection = async () => {
       try {
-        const response = await fetch(
-          "https://reviewbrothers.com/api/v1/health"
-        );
-        if (response.ok) {
+        const isHealthy = await checkApiHealth();
+        if (isHealthy) {
           toast({
             title: "Backend connection successful",
-            description: "Connected to localhost:3000 backend API",
+            description: `Connected to ${API_URL} backend API`,
           });
         } else {
           throw new Error("Failed to connect to backend");
@@ -35,7 +35,7 @@ const AdminDashboard = () => {
           variant: "destructive",
           title: "Backend connection failed",
           description:
-            "Using mock data. Please ensure localhost:3000 is running.",
+            "Unable to connect to the backend API. Please try again later.",
         });
       }
     };
