@@ -11,9 +11,11 @@ import { Layout, LayoutContent } from "@/components/ui/layout";
 import { useToast } from "@/components/ui/use-toast";
 import { API_URL } from "@/config/env";
 import { checkApiHealth } from "@/lib/api/axiosConfig";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const { toast } = useToast();
 
   // Check connectivity to backend on component mount

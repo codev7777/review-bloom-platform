@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -20,9 +19,11 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
   const location = useLocation();
-  
+
   const isActive = (path: string) => {
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+    return (
+      location.pathname === path || location.pathname.startsWith(`${path}/`)
+    );
   };
 
   const navItems = [
@@ -41,16 +42,16 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
       path: "/admin-dashboard/discounts",
       icon: <Tags className="h-5 w-5" />,
     },
-    {
-      name: "White Labeling",
-      path: "/admin-dashboard/white-label",
-      icon: <Palette className="h-5 w-5" />,
-    },
-    {
-      name: "Settings",
-      path: "/admin-dashboard/settings",
-      icon: <Settings className="h-5 w-5" />,
-    },
+    // {
+    //   name: "White Labeling",
+    //   path: "/admin-dashboard/white-label",
+    //   icon: <Palette className="h-5 w-5" />,
+    // },
+    // {
+    //   name: "Settings",
+    //   path: "/admin-dashboard/settings",
+    //   icon: <Settings className="h-5 w-5" />,
+    // },
   ];
 
   return (
@@ -73,8 +74,8 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
       <ScrollArea className="flex-1 overflow-auto py-2">
         <nav className="flex flex-col gap-1 px-2">
           {navItems.map((item) => (
-            <Link 
-              key={item.path} 
+            <Link
+              key={item.path}
               to={item.path}
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-base transition-all hover:bg-sidebar-accent",

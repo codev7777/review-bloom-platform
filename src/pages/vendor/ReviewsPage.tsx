@@ -30,6 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 
 const mockReviews = [
   {
@@ -148,14 +149,14 @@ const mockReviews = [
 
 const RatingStars = ({ rating }: { rating: number }) => {
   return (
-    <div className="flex items-center">
+    <div className="flex">
       {[...Array(5)].map((_, i) => (
-        <StarIcon
+        <span
           key={i}
-          className={`h-4 w-4 ${
-            i < rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-          }`}
-        />
+          className={i < rating ? "text-yellow-400" : "text-gray-300"}
+        >
+          ★
+        </span>
       ))}
     </div>
   );
@@ -163,10 +164,13 @@ const RatingStars = ({ rating }: { rating: number }) => {
 
 const ReviewsPage = () => {
   const { user } = useAuth();
-  const companyId = user?.companyId;
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-  const queryClient = useQueryClient();
+  const companyId = user?.companyId
+    ? parseInt(user.companyId.toString(), 10)
+    : undefined;
 
   const { data: reviewsResponse, isLoading } = useQuery({
     queryKey: ["reviews", companyId],
@@ -175,8 +179,13 @@ const ReviewsPage = () => {
   });
 
   const updateStatusMutation = useMutation({
-    mutationFn: ({ reviewId, status }: { reviewId: number; status: string }) =>
-      updateReviewStatus(reviewId, status),
+    mutationFn: ({
+      reviewId,
+      status,
+    }: {
+      reviewId: number;
+      status: "PENDING" | "PROCESSED" | "REJECTED";
+    }) => updateReviewStatus(reviewId, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", companyId] });
       toast({
@@ -199,7 +208,10 @@ const ReviewsPage = () => {
     review.feedback.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleStatusChange = (reviewId: number, status: string) => {
+  const handleStatusChange = (
+    reviewId: number,
+    status: "PENDING" | "PROCESSED" | "REJECTED"
+  ) => {
     updateStatusMutation.mutate({ reviewId, status });
   };
 
@@ -247,13 +259,30 @@ const ReviewsPage = () => {
                   className="cursor-pointer hover:bg-gray-50"
                   onClick={() => setSelectedReview(review)}
                 >
-                  <TableCell>{review.name}</TableCell>
-                  <TableCell>{review.email}</TableCell>
-                  <TableCell>{review.Product?.title}</TableCell>
-                  <TableCell>{review.Promotion?.title}</TableCell>
-                  <TableCell>{review.Campaign?.title}</TableCell>
+                  <TableCell className="font-medium">
+                    {review.Customer?.name || review.name || "N/A"}
+                  </TableCell>
                   <TableCell>
-                    <RatingStars rating={Number(review.ratio)} />
+                    {review.Customer?.email || review.email || "N/A"}
+                  </TableCell>
+                  <TableCell>{review.Product?.title || "N/A"}</TableCell>
+                  <TableCell>{review.Promotion?.title || "N/A"}</TableCell>
+                  <TableCell>{review.Campaign?.title || "N/A"}</TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        review.Campaign?.isActive === "YES"
+                          ? "default"
+                          : "secondary"
+                      }
+                    >
+                      {review.Campaign?.isActive === "YES"
+                        ? "Active"
+                        : "Paused"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <RatingStars rating={review.ratio} />
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -261,7 +290,7 @@ const ReviewsPage = () => {
                         review.status === "PENDING"
                           ? "default"
                           : review.status === "PROCESSED"
-                          ? "success"
+                          ? "secondary"
                           : "destructive"
                       }
                     >
@@ -322,19 +351,27 @@ const ReviewsPage = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="font-medium">Customer</h4>
-                  <p>{selectedReview.name}</p>
+                  <p>
+                    {selectedReview.Customer?.name ||
+                      selectedReview.name ||
+                      "N/A"}
+                  </p>
                 </div>
                 <div>
                   <h4 className="font-medium">Email</h4>
-                  <p>{selectedReview.email}</p>
+                  <p>
+                    {selectedReview.Customer?.email ||
+                      selectedReview.email ||
+                      "N/A"}
+                  </p>
                 </div>
                 <div>
                   <h4 className="font-medium">Product</h4>
-                  <p>{selectedReview.Product?.title}</p>
+                  <p>{selectedReview.Product?.title || "N/A"}</p>
                 </div>
                 <div>
                   <h4 className="font-medium">Rating</h4>
-                  <RatingStars rating={Number(selectedReview.ratio)} />
+                  <RatingStars rating={selectedReview.ratio} />
                 </div>
                 <div>
                   <h4 className="font-medium">Promotion</h4>

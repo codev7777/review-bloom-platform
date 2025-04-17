@@ -38,7 +38,7 @@ const CampaignCard = ({
         <img
           src={image}
           alt={name}
-          className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
+          className="h-full w-full object-contain transition-transform duration-200 hover:scale-105"
         />
         <Badge
           variant={status === "active" ? "default" : "secondary"}

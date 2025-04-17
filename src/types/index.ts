@@ -70,16 +70,18 @@ export interface StatsCardProps {
 }
 
 export interface Company {
-  id: string | number;
+  id: number;
   name: string;
   detail?: string;
   logo?: string;
   websiteUrl?: string;
   planId?: number;
-  ratio?: number;
-  reviews?: number;
-  createdAt?: string;
-  updatedAt?: string;
+  ratio: number;
+  reviews: number;
+  campaigns?: Campaign[];
+  Products?: Product[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface User {
@@ -167,13 +169,20 @@ export interface Customer {
 
 export interface Review {
   id: number;
-  rating: number;
-  feedback: string;
-  feedbackDate: Date;
-  customerId: number;
+  email: string;
+  name: string;
   productId: number;
+  ratio: number;
+  feedback: string;
+  marketplace: string;
+  customerId: number;
+  orderNo?: string;
+  feedbackDate: Date;
+  promotionId?: number;
   campaignId?: number;
-  customer?: Customer;
-  product?: Product;
-  campaign?: Campaign;
+  status: "PENDING" | "PROCESSED" | "REJECTED";
+  Product?: Product;
+  Promotion?: Promotion;
+  Campaign?: Campaign;
+  Customer?: Customer;
 }

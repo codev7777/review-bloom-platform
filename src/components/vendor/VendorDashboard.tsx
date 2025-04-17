@@ -12,6 +12,8 @@ import {
   Plus,
   Gift,
   MessageSquare,
+  ClipboardList,
+  Star,
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
@@ -36,11 +38,14 @@ import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import { API_URL } from "@/config/env";
 import { getPromotions } from "@/lib/api/promotions/promotions.api";
 import ReviewsPage from "@/pages/vendor/ReviewsPage";
+import { getImageUrl } from "@/utils/imageUrl";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { getCompanyStats, CompanyStats } from "@/lib/api/company/company.api";
 
 // Update Campaign type to include missing properties
-interface DashboardCampaign extends Campaign {
+interface DashboardCampaign extends Omit<Campaign, "reviews"> {
   image?: string;
-  reviews?: number;
+  reviews?: number; // Override reviews to be a number instead of Review[]
   rating?: number;
 }
 
@@ -138,6 +143,7 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const companyId = user?.companyId ? parseInt(user.companyId, 10) : undefined;
+  console.log("Company ID:", companyId);
 
   const { data: campaigns, isLoading: isLoadingCampaigns } = useQuery({
     queryKey: ["campaigns", companyId],
@@ -161,13 +167,31 @@ const Dashboard = () => {
   const activeCampaigns =
     campaigns?.data?.filter((c) => c.isActive === "YES").length || 0;
   const totalProducts = products?.data?.length || 0;
-  const totalReviews = reviews?.data?.length || 0;
-  const averageRating = reviews?.data?.length
+  const totalReviews = reviews?.total || 0;
+  console.log(reviews);
+  // console.log(reviews.reviews.data);
+  // console.log(reviews.reviews.data.length);
+  const averageRating = reviews?.total
     ? (
-        reviews.data.reduce((sum, review) => sum + review.rating, 0) /
-        reviews.data.length
+        reviews.reviews.reduce((sum, review) => sum + review.ratio, 0) /
+        reviews.total
       ).toFixed(1)
     : "0.0";
+
+  // Add a query to fetch company stats
+  const {
+    data: companyStats,
+    isLoading: isLoadingStats,
+    error: statsError,
+  } = useQuery<CompanyStats>({
+    queryKey: ["companyStats", companyId],
+    queryFn: () => getCompanyStats(companyId),
+    enabled: !!companyId,
+  });
+
+  if (statsError) {
+    console.error("Error fetching company stats:", statsError);
+  }
 
   return (
     <div className="space-y-8">
@@ -182,21 +206,41 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard
-          title="Total Reviews"
-          value={totalReviews.toString()}
-          change="+0%"
-          changeType="neutral"
-          period="from last month"
-        />
-        <StatsCard
-          title="Average Rating"
-          value={averageRating}
-          change="+0.0"
-          changeType="neutral"
-          period="from last month"
-        />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
+            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingStats ? (
+                <span className="animate-pulse">Loading...</span>
+              ) : (
+                totalReviews || 0
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Average Rating
+            </CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {isLoadingStats ? (
+                <span className="animate-pulse">Loading...</span>
+              ) : (
+                averageRating || "0.0"
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         <StatsCard
           title="Total Products"
           value={totalProducts.toString()}
@@ -243,17 +287,18 @@ const Dashboard = () => {
                   key={displayCampaign.id}
                   name={displayCampaign.name || displayCampaign.title}
                   image={
-                    displayCampaign.image ||
-                    `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
-                      displayCampaign.name || displayCampaign.title
-                    )}`
+                    displayCampaign.promotion?.image
+                      ? getImageUrl(displayCampaign.promotion?.image)
+                      : `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                          displayCampaign.name || displayCampaign.title
+                        )}`
                   }
                   status={
                     displayCampaign.status ||
                     (displayCampaign.isActive === "YES" ? "active" : "paused")
                   }
                   reviews={displayCampaign.claims || 0}
-                  rating={displayCampaign.ratio || 0}
+                  rating={displayCampaign.claims || 0}
                   date={displayCampaign.createdAt || new Date().toISOString()}
                 />
               );

@@ -1,6 +1,13 @@
-
 import { useState } from "react";
-import { DownloadIcon, Edit, EyeIcon, MoreHorizontal, Search, Trash2, Users } from "lucide-react";
+import {
+  DownloadIcon,
+  Edit,
+  EyeIcon,
+  MoreHorizontal,
+  Search,
+  Trash2,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,76 +41,42 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
-
-// Mock vendor data
-const vendors = [
-  {
-    id: "v1",
-    name: "Kitchen Essentials Co.",
-    email: "contact@kitchenessentials.com",
-    campaigns: 8,
-    products: 15,
-    reviews: 432,
-    status: "active",
-    subscription: "premium",
-    createdAt: "2023-06-12",
-  },
-  {
-    id: "v2",
-    name: "Fitness Revolution",
-    email: "info@fitnessrevolution.com",
-    campaigns: 5,
-    products: 8,
-    reviews: 287,
-    status: "active",
-    subscription: "basic",
-    createdAt: "2023-07-23",
-  },
-  {
-    id: "v3",
-    name: "TechGadgetry",
-    email: "support@techgadgetry.com",
-    campaigns: 6,
-    products: 12,
-    reviews: 356,
-    status: "active",
-    subscription: "premium",
-    createdAt: "2023-05-04",
-  },
-  {
-    id: "v4",
-    name: "Outdoor Adventures",
-    email: "hello@outdooradv.com",
-    campaigns: 4,
-    products: 9,
-    reviews: 198,
-    status: "suspended",
-    subscription: "basic",
-    createdAt: "2023-08-17",
-  },
-  {
-    id: "v5",
-    name: "Home Decor Plus",
-    email: "sales@homedecorplus.com",
-    campaigns: 3,
-    products: 7,
-    reviews: 122,
-    status: "active",
-    subscription: "basic",
-    createdAt: "2023-09-01",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { getCompanies } from "@/lib/api/companies/companies.api";
+import { Company } from "@/types";
 
 const VendorsList = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
-  
-  const filteredVendors = vendors.filter(
-    (vendor) =>
-      vendor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      vendor.email.toLowerCase().includes(searchQuery.toLowerCase())
+
+  const {
+    data: companiesResponse,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["companies"],
+    queryFn: async () => {
+      try {
+        const response = await getCompanies();
+        console.log("Companies API response:", response);
+        return response;
+      } catch (err) {
+        console.error("Error fetching companies:", err);
+        throw err;
+      }
+    },
+  });
+
+  console.log("Companies data:", companiesResponse);
+
+  const companies = companiesResponse?.data || [];
+
+  const filteredVendors = companies.filter(
+    (company: Company) =>
+      company.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      company.detail?.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
   const handleExport = () => {
     // In a real app, this would generate and download a CSV or similar
     toast({
@@ -112,7 +85,7 @@ const VendorsList = () => {
     });
     setShowExportDialog(false);
   };
-  
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
@@ -125,7 +98,7 @@ const VendorsList = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
-  
+
   const getSubscriptionColor = (subscription: string) => {
     switch (subscription) {
       case "premium":
@@ -136,6 +109,47 @@ const VendorsList = () => {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  if (error) {
+    return (
+      <div className="space-y-6 p-6 pb-16 animate-fade-in">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-xl font-semibold">Vendor Accounts</h2>
+        </div>
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <h3 className="text-red-800 font-medium">Error loading vendors</h3>
+          <p className="text-red-600 text-sm mt-1">
+            {error instanceof Error ? error.message : "Failed to fetch vendors"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6 p-6 pb-16 animate-fade-in">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <h2 className="text-xl font-semibold">Vendor Accounts</h2>
+          <div className="flex items-center gap-2">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Input
+                type="search"
+                placeholder="Search vendors..."
+                className="w-full pl-8"
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+        <div className="space-y-4">
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+          <div className="h-96 bg-gray-200 rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-6 pb-16 animate-fade-in">
@@ -152,8 +166,8 @@ const VendorsList = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="ml-auto flex items-center gap-1"
             onClick={() => setShowExportDialog(true)}
           >
@@ -180,92 +194,49 @@ const VendorsList = () => {
                 <TableHead className="text-right">Campaigns</TableHead>
                 <TableHead className="text-right">Products</TableHead>
                 <TableHead className="text-right">Reviews</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredVendors.map((vendor) => (
-                <TableRow key={vendor.id} className="group hover:bg-gray-50">
+              {filteredVendors.map((company: Company) => (
+                <TableRow key={company.id} className="group hover:bg-gray-50">
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-medium">{vendor.name}</span>
-                      <span className="text-sm text-gray-500">{vendor.email}</span>
+                      <span className="font-medium">{company.name}</span>
+                      <span className="text-sm text-gray-500">
+                        {company.detail}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={`${getStatusColor(vendor.status)}`}>
-                      {vendor.status.charAt(0).toUpperCase() + vendor.status.slice(1)}
+                    <Badge
+                      variant="outline"
+                      className="bg-green-100 text-green-800"
+                    >
+                      Active
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className={`${getSubscriptionColor(vendor.subscription)}`}>
-                      {vendor.subscription.charAt(0).toUpperCase() + vendor.subscription.slice(1)}
+                    <Badge
+                      variant="outline"
+                      className="bg-blue-100 text-blue-800"
+                    >
+                      {company.planId ? "Premium" : "Basic"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">{vendor.campaigns}</TableCell>
-                  <TableCell className="text-right">{vendor.products}</TableCell>
-                  <TableCell className="text-right">{vendor.reviews}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hidden h-8 w-8 group-hover:flex"
-                        onClick={() => {
-                          toast({
-                            title: "Vendor details",
-                            description: `Viewing details for ${vendor.name}`,
-                          });
-                        }}
-                      >
-                        <EyeIcon className="h-4 w-4" />
-                        <span className="sr-only">View</span>
-                      </Button>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">More</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem
-                            onClick={() => {
-                              toast({
-                                title: "Edit vendor",
-                                description: `Editing ${vendor.name}`,
-                              });
-                            }}
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                              toast({
-                                title: "Action triggered",
-                                description: "This would show a delete confirmation dialog in a real app",
-                                variant: "destructive",
-                              });
-                            }}
-                            className="text-red-600"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                    {company.campaigns?.length || 0}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {company.Products?.length || 0}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {company.reviews || 0}
                   </TableCell>
                 </TableRow>
               ))}
               {filteredVendors.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex flex-col items-center justify-center">
                       <Users className="h-8 w-8 text-gray-400 mb-2" />
                       <h3 className="font-medium">No vendors found</h3>
@@ -303,25 +274,46 @@ const VendorsList = () => {
               <label className="text-sm font-medium">Include Data</label>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="include-campaigns" className="h-4 w-4 rounded border-gray-300" checked />
+                  <input
+                    type="checkbox"
+                    id="include-campaigns"
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked
+                  />
                   <label htmlFor="include-campaigns">Campaign Statistics</label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="include-reviews" className="h-4 w-4 rounded border-gray-300" checked />
+                  <input
+                    type="checkbox"
+                    id="include-reviews"
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked
+                  />
                   <label htmlFor="include-reviews">Review Data</label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="include-products" className="h-4 w-4 rounded border-gray-300" checked />
+                  <input
+                    type="checkbox"
+                    id="include-products"
+                    className="h-4 w-4 rounded border-gray-300"
+                    checked
+                  />
                   <label htmlFor="include-products">Product Information</label>
                 </div>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowExportDialog(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setShowExportDialog(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleExport} className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]">
+            <Button
+              onClick={handleExport}
+              className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
+            >
               <DownloadIcon className="mr-2 h-4 w-4" />
               Export Data
             </Button>

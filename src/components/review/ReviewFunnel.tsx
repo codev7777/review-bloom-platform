@@ -224,6 +224,7 @@ const ReviewFunnel = ({
           country: formData.country,
           orderNo: formData.orderId,
           promotionId,
+          campaignId: campaignId,
         };
 
         try {

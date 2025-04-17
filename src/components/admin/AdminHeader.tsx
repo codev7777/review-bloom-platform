@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Bell, Menu, Search, User } from "lucide-react";
@@ -18,7 +17,10 @@ interface AdminHeaderProps {
   onSidebarOpenChange: (open: boolean) => void;
 }
 
-const AdminHeader = ({ sidebarOpen, onSidebarOpenChange }: AdminHeaderProps) => {
+const AdminHeader = ({
+  sidebarOpen,
+  onSidebarOpenChange,
+}: AdminHeaderProps) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const [title, setTitle] = useState("Admin Dashboard");
@@ -73,12 +75,18 @@ const AdminHeader = ({ sidebarOpen, onSidebarOpenChange }: AdminHeaderProps) => 
             <DropdownMenuLabel>
               <div className="flex flex-col">
                 <span>{user?.name || "Admin User"}</span>
-                <span className="text-xs text-gray-500">{user?.email || "admin@example.com"}</span>
+                <span className="text-xs text-gray-500">
+                  {user?.email || "admin@example.com"}
+                </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer">
+              Settings
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer" onClick={logout}>
               Log out
