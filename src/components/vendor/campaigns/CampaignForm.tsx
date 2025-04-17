@@ -97,11 +97,12 @@ const CampaignForm = () => {
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const { user } = useAuth();
+  const companyId = user?.companyId ? parseInt(user.companyId, 10) : undefined;
 
   // Fetch campaign data in edit mode
-  const { data: campaignData } = useQuery({
+  const { data: campaignData } = useQuery<Campaign>({
     queryKey: ["campaign", id],
-    queryFn: () => (id ? getCampaign(id) : null),
+    queryFn: () => (id ? getCampaign(parseInt(id, 10)) : null),
     enabled: isEditMode,
   });
 
@@ -111,9 +112,9 @@ const CampaignForm = () => {
     totalPages: number;
     totalCount: number;
   }>({
-    queryKey: ["products", user?.companyId],
-    queryFn: () => getProducts({ companyId: user?.companyId }),
-    enabled: !!user?.companyId,
+    queryKey: ["products", companyId],
+    queryFn: () => getProducts({ companyId }),
+    enabled: !!companyId,
   });
 
   // Fetch promotions for the company
@@ -122,9 +123,9 @@ const CampaignForm = () => {
     totalPages: number;
     totalCount: number;
   }>({
-    queryKey: ["promotions", user?.companyId],
-    queryFn: () => getPromotions({ companyId: user?.companyId }),
-    enabled: !!user?.companyId,
+    queryKey: ["promotions", companyId],
+    queryFn: () => getPromotions({ companyId }),
+    enabled: !!companyId,
   });
 
   const [formData, setFormData] = useState<Partial<CampaignWithQR>>({
@@ -242,7 +243,7 @@ const CampaignForm = () => {
         return;
       }
 
-      if (!user?.companyId) {
+      if (!companyId) {
         toast({
           variant: "destructive",
           title: "Error",
@@ -252,10 +253,9 @@ const CampaignForm = () => {
         return;
       }
 
-      const campaignData = {
-        title: formData.title,
-        isActive: formData.isActive || "YES",
-        promotionId: formData.promotionId,
+      const campaignPayload = {
+        ...formData,
+        companyId,
         productIds: Array.isArray(formData.productIds)
           ? formData.productIds
           : [formData.productIds],
@@ -265,28 +265,25 @@ const CampaignForm = () => {
       };
 
       if (isEditMode && id) {
-        await updateCampaign(id, campaignData);
+        await updateCampaign(id, campaignPayload);
         toast({
-          title: "Campaign updated",
-          description: "Your campaign has been updated successfully",
-          variant: "default",
+          title: "Success",
+          description: "Campaign updated successfully",
         });
       } else {
-        await createCampaign(campaignData);
+        await createCampaign(campaignPayload as Campaign);
         toast({
-          title: "Campaign created",
-          description: "Your campaign has been created successfully",
-          variant: "default",
+          title: "Success",
+          description: "Campaign created successfully",
         });
       }
-
-      navigate("/vendor-dashboard/campaigns");
+      navigate("/vendor/campaigns");
     } catch (error) {
       console.error("Error submitting campaign:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "Failed to submit campaign. Please try again.",
+        description: "Failed to save campaign",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -377,89 +374,90 @@ const CampaignForm = () => {
                 </p>
               )}
             </div>
-
-            <div>
-              <Label>Marketplaces</Label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {MARKETPLACE_COUNTRIES.map((country) => (
-                  <div
-                    key={country}
-                    className="flex items-center space-x-2 p-2 border rounded-md"
-                  >
-                    <input
-                      type="checkbox"
-                      id={`marketplace-${country}`}
-                      checked={formData.marketplaces?.includes(country)}
-                      onChange={() => {
-                        const newMarketplaces = formData.marketplaces?.includes(
-                          country
-                        )
-                          ? formData.marketplaces.filter((m) => m !== country)
-                          : [...(formData.marketplaces || []), country];
-                        handleSelectChange("marketplaces", newMarketplaces);
-                      }}
-                      className="h-4 w-4"
-                    />
-                    <label
-                      htmlFor={`marketplace-${country}`}
-                      className="flex-1 cursor-pointer"
-                    >
-                      {MARKETPLACE_COUNTRY_NAMES[country]}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isActive"
-                checked={formData.isActive === "YES"}
-                onCheckedChange={(checked) =>
-                  handleSelectChange("isActive", checked ? "YES" : "NO")
-                }
-              />
-              <Label htmlFor="isActive">Active Campaign</Label>
-            </div>
           </div>
 
-          {qrCode && (
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center space-y-4">
-                    <img
-                      src={qrCode}
-                      alt="Campaign QR Code"
-                      className="w-48 h-48"
-                    />
-                    <div className="text-center">
-                      <p className="text-sm text-gray-500">
-                        Scan to access campaign
-                      </p>
-                      <p className="text-xs text-gray-400 break-all">
-                        {campaignUrl}
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(campaignUrl);
-                        toast({
-                          title: "URL Copied",
-                          description:
-                            "Campaign URL has been copied to clipboard",
-                        });
-                      }}
+          {1 && (
+            <div>
+              <div>
+                <Label>Marketplaces</Label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {MARKETPLACE_COUNTRIES.map((country) => (
+                    <div
+                      key={country}
+                      className="flex items-center space-x-2 p-2 border rounded-md"
                     >
-                      <Copy className="mr-2 h-4 w-4" />
-                      Copy URL
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                      <input
+                        type="checkbox"
+                        id={`marketplace-${country}`}
+                        checked={formData.marketplaces?.includes(country)}
+                        onChange={() => {
+                          const newMarketplaces =
+                            formData.marketplaces?.includes(country)
+                              ? formData.marketplaces.filter(
+                                  (m) => m !== country
+                                )
+                              : [...(formData.marketplaces || []), country];
+                          handleSelectChange("marketplaces", newMarketplaces);
+                        }}
+                        className="h-4 w-4"
+                      />
+                      <label
+                        htmlFor={`marketplace-${country}`}
+                        className="flex-1 cursor-pointer"
+                      >
+                        {MARKETPLACE_COUNTRY_NAMES[country]}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 my-8">
+                <Switch
+                  id="isActive"
+                  checked={formData.isActive === "YES"}
+                  onCheckedChange={(checked) =>
+                    handleSelectChange("isActive", checked ? "YES" : "NO")
+                  }
+                />
+                <Label htmlFor="isActive">Active Campaign</Label>
+              </div>
             </div>
+            // <div className="space-y-4">
+            //   <Card>
+            //     <CardContent className="p-6">
+            //       <div className="flex flex-col items-center space-y-4">
+            //         <img
+            //           src={qrCode}
+            //           alt="Campaign QR Code"
+            //           className="w-48 h-48"
+            //         />
+            //         <div className="text-center">
+            //           <p className="text-sm text-gray-500">
+            //             Scan to access campaign
+            //           </p>
+            //           <p className="text-xs text-gray-400 break-all">
+            //             {campaignUrl}
+            //           </p>
+            //         </div>
+            //         <Button
+            //           type="button"
+            //           variant="outline"
+            //           onClick={() => {
+            //             navigator.clipboard.writeText(campaignUrl);
+            //             toast({
+            //               title: "URL Copied",
+            //               description:
+            //                 "Campaign URL has been copied to clipboard",
+            //             });
+            //           }}
+            //         >
+            //           <Copy className="mr-2 h-4 w-4" />
+            //           Copy URL
+            //         </Button>
+            //       </div>
+            //     </CardContent>
+            //   </Card>
+            // </div>
           )}
         </div>
 

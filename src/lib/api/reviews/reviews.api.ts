@@ -1,5 +1,6 @@
 import api from "../axiosConfig";
 import { Review } from "@/types";
+import { API_URL } from "@/config/env";
 
 // Review API endpoints
 export const createReview = async (reviewData: {
@@ -11,6 +12,7 @@ export const createReview = async (reviewData: {
   country: string;
   orderNo?: string;
   promotionId?: number;
+  campaignId?: number;
 }): Promise<Review> => {
   const response = await api.post("/reviews", reviewData);
   return response.data;
@@ -35,5 +37,28 @@ export const updateReviewStatus = async (
   status: "PENDING" | "PROCESSED" | "REJECTED"
 ): Promise<Review> => {
   const response = await api.patch(`/reviews/${reviewId}/status`, { status });
+  return response.data;
+};
+
+export interface GetReviewsParams {
+  companyId?: number;
+  productId?: number;
+  userId?: number;
+}
+
+export const getReviews = async (params?: GetReviewsParams) => {
+  if (params?.companyId) {
+    // If companyId is provided, use the company-specific endpoint
+    const response = await api.get(`/reviews/company/${params.companyId}`);
+    return response.data;
+  }
+
+  // For other cases, use the general reviews endpoint
+  const queryParams = new URLSearchParams();
+  if (params?.productId)
+    queryParams.append("productId", params.productId.toString());
+  if (params?.userId) queryParams.append("userId", params.userId.toString());
+
+  const response = await api.get(`/reviews?${queryParams.toString()}`);
   return response.data;
 };

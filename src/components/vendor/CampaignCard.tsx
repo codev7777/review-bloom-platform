@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Calendar, Edit, Star, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -50,24 +49,19 @@ const CampaignCard = ({
       </div>
       <CardContent className="p-5">
         <h3 className="font-medium line-clamp-1 text-base">{name}</h3>
-        
+
         <div className="flex items-center mt-2 gap-1.5">
-          <StarRating rating={rating} size={16} readonly={true} />
-          <span className="text-sm text-muted-foreground">({reviews})</span>
+          Reviews:{" "}
+          <span className="text-sm text-muted-foreground">{reviews}</span>
         </div>
-        
+
         <div className="flex flex-col gap-3 mt-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Calendar className="h-4 w-4" />
             <span>Created {formatDate(date)}</span>
           </div>
-          
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="w-full mt-2"
-            asChild
-          >
+
+          <Button variant="outline" size="sm" className="w-full mt-2" asChild>
             <Link to={`/vendor-dashboard/campaigns/edit/1`}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Campaign

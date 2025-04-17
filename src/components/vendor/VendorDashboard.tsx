@@ -15,9 +15,12 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
-import { Campaign, mapCampaignForDisplay } from "@/types"; // Import Campaign type
+import { Campaign, mapCampaignForDisplay } from "@/types";
 import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
+import { getProducts } from "@/lib/api/products/products.api";
+import { getReviews } from "@/lib/api/reviews/reviews.api";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
 import CampaignCard from "./CampaignCard";
 import StatsCard from "./StatsCard";
 import ProductsList from "./products/ProductsList";
@@ -30,11 +33,16 @@ import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
 import useFetchWithFallback from "@/hooks/useFetchWithFallback";
-import { useQuery } from "@tanstack/react-query";
-import { getProducts } from "@/lib/api/products/products.api";
+import { API_URL } from "@/config/env";
 import { getPromotions } from "@/lib/api/promotions/promotions.api";
 import ReviewsPage from "@/pages/vendor/ReviewsPage";
-import { API_URL } from "@/config/env";
+
+// Update Campaign type to include missing properties
+interface DashboardCampaign extends Campaign {
+  image?: string;
+  reviews?: number;
+  rating?: number;
+}
 
 const Sidebar = ({
   isOpen,
@@ -52,11 +60,11 @@ const Sidebar = ({
       label: "Dashboard",
       path: "/vendor-dashboard",
     },
-    {
-      icon: <BarChart4 size={20} />,
-      label: "Analytics",
-      path: "/vendor-dashboard/analytics",
-    },
+    // {
+    //   icon: <BarChart4 size={20} />,
+    //   label: "Analytics",
+    //   path: "/vendor-dashboard/analytics",
+    // },
     {
       icon: <ShoppingBag size={20} />,
       label: "Products",
@@ -127,10 +135,39 @@ const Sidebar = ({
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { data: campaigns, isLoading } = useFetchWithFallback<Campaign>(
-    getCampaigns,
-    []
-  );
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const companyId = user?.companyId ? parseInt(user.companyId, 10) : undefined;
+
+  const { data: campaigns, isLoading: isLoadingCampaigns } = useQuery({
+    queryKey: ["campaigns", companyId],
+    queryFn: () => getCampaigns({ companyId }),
+    enabled: !!companyId,
+  });
+
+  const { data: products, isLoading: isLoadingProducts } = useQuery({
+    queryKey: ["products", companyId],
+    queryFn: () => getProducts({ companyId }),
+    enabled: !!companyId,
+  });
+
+  const { data: reviews, isLoading: isLoadingReviews } = useQuery({
+    queryKey: ["reviews", companyId],
+    queryFn: () => getReviews({ companyId }),
+    enabled: !!companyId,
+  });
+
+  // Calculate statistics from real data
+  const activeCampaigns =
+    campaigns?.data?.filter((c) => c.isActive === "YES").length || 0;
+  const totalProducts = products?.data?.length || 0;
+  const totalReviews = reviews?.data?.length || 0;
+  const averageRating = reviews?.data?.length
+    ? (
+        reviews.data.reduce((sum, review) => sum + review.rating, 0) /
+        reviews.data.length
+      ).toFixed(1)
+    : "0.0";
 
   return (
     <div className="space-y-8">
@@ -148,62 +185,76 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatsCard
           title="Total Reviews"
-          value="486"
-          change="+12.5%"
-          changeType="positive"
+          value={totalReviews.toString()}
+          change="+0%"
+          changeType="neutral"
           period="from last month"
         />
         <StatsCard
           title="Average Rating"
-          value="4.7"
-          change="+0.3"
-          changeType="positive"
+          value={averageRating}
+          change="+0.0"
+          changeType="neutral"
           period="from last month"
         />
         <StatsCard
-          title="Review Conversion"
-          value="3.2%"
-          change="-0.5%"
-          changeType="negative"
+          title="Total Products"
+          value={totalProducts.toString()}
+          change="+0"
+          changeType="neutral"
           period="from last month"
         />
         <StatsCard
           title="Active Campaigns"
-          value="5"
-          change="+2"
-          changeType="positive"
+          value={activeCampaigns.toString()}
+          change="+0"
+          changeType="neutral"
           period="from last month"
         />
       </div>
 
       <div className="mt-8">
         <h2 className="text-xl font-medium mb-4">Recent Campaigns</h2>
-        {isLoading ? (
+        {isLoadingCampaigns ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
             <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
             <div className="bg-gray-100 animate-pulse h-64 rounded-lg"></div>
           </div>
+        ) : campaigns?.data?.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">
+              No campaigns found. Create your first campaign to get started!
+            </p>
+            <Button
+              className="mt-4 bg-orange-500 hover:bg-orange-600"
+              onClick={() => navigate("/vendor-dashboard/campaigns/new")}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Create Campaign
+            </Button>
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {campaigns.slice(0, 3).map((campaign) => {
-              // Use the display version of the campaign
+            {campaigns?.data?.slice(0, 3).map((campaign) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
                 <CampaignCard
                   key={displayCampaign.id}
                   name={displayCampaign.name || displayCampaign.title}
-                  // Generate a placeholder image
-                  image={`https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
-                    displayCampaign.name || displayCampaign.title
-                  )}`}
+                  image={
+                    displayCampaign.image ||
+                    `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                      displayCampaign.name || displayCampaign.title
+                    )}`
+                  }
                   status={
                     displayCampaign.status ||
                     (displayCampaign.isActive === "YES" ? "active" : "paused")
                   }
-                  reviews={156} // Sample data
-                  rating={4.8} // Sample data
-                  date={displayCampaign.createdAt || "2023-05-15"}
+                  reviews={displayCampaign.claims || 0}
+                  rating={displayCampaign.ratio || 0}
+                  date={displayCampaign.createdAt || new Date().toISOString()}
                 />
               );
             })}

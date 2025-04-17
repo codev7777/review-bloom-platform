@@ -103,7 +103,7 @@ const CampaignsList: React.FC = () => {
             : undefined,
         sortBy: sortField,
         sortOrder,
-        companyId: user?.companyId,
+        companyId: user?.companyId ? parseInt(user.companyId, 10) : undefined,
       }),
     enabled: isAuthenticated && !!user?.companyId,
   });

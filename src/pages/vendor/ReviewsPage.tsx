@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,44 +17,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Filter,
-  Search,
-  Star,
-  ChevronDown,
-  MoreHorizontal,
-  StarIcon,
-  MessageSquare,
-  AlertCircle,
-  Download,
-  Mail,
-  ExternalLink,
-} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import {
-  getCompanyReviews,
-  updateReviewStatus,
-} from "@/lib/api/reviews/reviews.api";
 import { Review } from "@/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getReviews, updateReviewStatus } from "@/lib/api/reviews/reviews.api";
+import { StarIcon, MoreHorizontal } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const mockReviews = [
   {
@@ -189,384 +163,202 @@ const RatingStars = ({ rating }: { rating: number }) => {
 
 const ReviewsPage = () => {
   const { user } = useAuth();
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [totalReviews, setTotalReviews] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedRating, setSelectedRating] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("date-desc");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showFilters, setShowFilters] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [isLoading, setIsLoading] = useState(true);
+  const companyId = user?.companyId;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const fetchReviews = async () => {
-      if (!user?.companyId) return;
+  const { data: reviewsResponse, isLoading } = useQuery({
+    queryKey: ["reviews", companyId],
+    queryFn: () => getReviews({ companyId }),
+    enabled: !!companyId,
+  });
 
-      try {
-        setIsLoading(true);
-        const response = await getCompanyReviews(user.companyId, {
-          status: statusFilter !== "all" ? statusFilter : undefined,
-          page: currentPage,
-          limit: 10,
-          sortBy: sortBy.split("-")[0],
-          sortOrder: sortBy.split("-")[1] as "asc" | "desc",
-        });
-
-        setReviews(response.reviews);
-        setTotalReviews(response.total);
-      } catch (error) {
-        console.error("Error fetching reviews:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch reviews. Please try again later.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchReviews();
-  }, [user?.companyId, statusFilter, currentPage, sortBy]);
-
-  const handleStatusUpdate = async (
-    reviewId: number | string,
-    newStatus: "PENDING" | "PROCESSED" | "REJECTED"
-  ) => {
-    try {
-      // Convert string IDs to numbers, ensuring a numeric value
-      const numericReviewId = typeof reviewId === 'string' 
-        ? parseInt(reviewId, 10) 
-        : reviewId;
-
-      // Add explicit error handling for invalid IDs
-      if (isNaN(numericReviewId)) {
-        toast({
-          variant: "destructive",
-          title: "Invalid Review ID",
-          description: "The review ID could not be processed.",
-        });
-        return;
-      }
-
-      await updateReviewStatus(numericReviewId, newStatus);
-      
-      setReviews(
-        reviews.map((review) =>
-          review.id === reviewId ? { ...review, status: newStatus } : review
-        )
-      );
-      
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ reviewId, status }: { reviewId: number; status: string }) =>
+      updateReviewStatus(reviewId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["reviews", companyId] });
       toast({
         title: "Success",
         description: "Review status updated successfully",
       });
-    } catch (error) {
-      console.error("Error updating review status:", error);
+    },
+    onError: (error) => {
       toast({
         title: "Error",
-        description: "Failed to update review status. Please try again later.",
+        description: "Failed to update review status",
         variant: "destructive",
       });
-    }
-  };
-
-  const filteredReviews = reviews.filter((review) => {
-    const searchLower = searchQuery.toLowerCase();
-    const matchesSearch =
-      !searchQuery ||
-      review.product?.title.toLowerCase().includes(searchLower) ||
-      review.customer?.name.toLowerCase().includes(searchLower) ||
-      review.feedback.toLowerCase().includes(searchLower);
-
-    const matchesRating =
-      selectedRating === "all" || review.ratio === parseInt(selectedRating);
-
-    return matchesSearch && matchesRating;
+    },
   });
 
-  const pageSize = 10;
-  const totalPages = Math.ceil(totalReviews / pageSize);
+  const reviews = reviewsResponse?.reviews || [];
 
-  const handleReplyToReview = (reviewId: string) => {
-    toast({
-      title: "Reply sent",
-      description: "Your reply has been sent to the customer.",
-    });
+  const filteredReviews = reviews.filter((review: Review) =>
+    review.feedback.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleStatusChange = (reviewId: number, status: string) => {
+    updateStatusMutation.mutate({ reviewId, status });
   };
-
-  const handleFlagReview = (reviewId: string) => {
-    toast({
-      title: "Review flagged",
-      description: "This review has been flagged for moderation.",
-    });
-  };
-
-  const handleOpenOriginal = (reviewId: string, platform: string) => {
-    toast({
-      title: "Opening original review",
-      description: `This would open the review on ${
-        platform.charAt(0).toUpperCase() + platform.slice(1)
-      } in a real implementation.`,
-    });
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF9900]"></div>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6 animate-fade-in bg-white rounded-lg shadow-sm">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800">Customer Reviews</h1>
-          <p className="text-muted-foreground">
-            Manage and respond to all your product reviews
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2 mt-4 md:mt-0">
-          <Button
-            variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-            className="border-gray-200 hover:bg-gray-50"
-          >
-            <Filter className="mr-2 h-4 w-4" />
-            Filters
-          </Button>
-          <Button className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]">
-            <Download className="mr-2 h-4 w-4" />
-            Export
-          </Button>
-        </div>
-      </div>
-
-      <div className="mb-6">
-        <Tabs defaultValue="all" className="w-full">
-          <TabsList className="bg-gray-100">
-            <TabsTrigger value="all" className="data-[state=active]:bg-white">All Reviews</TabsTrigger>
-            <TabsTrigger value="positive" className="data-[state=active]:bg-white">Positive (5-4★)</TabsTrigger>
-            <TabsTrigger value="neutral" className="data-[state=active]:bg-white">Neutral (3★)</TabsTrigger>
-            <TabsTrigger value="negative" className="data-[state=active]:bg-white">Negative (2-1★)</TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
-
-      <div className="space-y-4 mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-semibold">Reviews</h1>
+        <div className="flex gap-4">
           <Input
             placeholder="Search reviews..."
-            className="pl-10 border-gray-200 focus:border-orange-300 focus:ring-orange-300"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-64"
           />
-        </div>
-
-        <div className="flex gap-2">
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="border-gray-200 focus:border-orange-300 focus:ring-orange-300">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="date-desc">Newest First</SelectItem>
-              <SelectItem value="date-asc">Oldest First</SelectItem>
-              <SelectItem value="ratio-desc">Highest Rating</SelectItem>
-              <SelectItem value="ratio-asc">Lowest Rating</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {showFilters && (
-            <>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="border-gray-200 focus:border-orange-300 focus:ring-orange-300">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="PROCESSED">Processed</SelectItem>
-                  <SelectItem value="REJECTED">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-            </>
-          )}
         </div>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-lg border border-gray-100 shadow-sm">
-        <Table className="w-full">
-          <TableHeader className="bg-gray-50">
-            <TableRow>
-              <TableHead className="text-gray-600 font-medium">Customer</TableHead>
-              <TableHead className="text-gray-600 font-medium">Product</TableHead>
-              <TableHead className="text-gray-600 font-medium">Rating</TableHead>
-              <TableHead className="text-gray-600 font-medium">Date</TableHead>
-              <TableHead className="text-gray-600 font-medium">Status</TableHead>
-              <TableHead className="text-right text-gray-600 font-medium">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {reviews.length > 0 ? (
-              reviews.map((review) => (
-                <TableRow key={review.id} className="animate-fade-in hover:bg-gray-50 transition-colors">
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+        </div>
+      ) : filteredReviews.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500">No reviews found.</p>
+        </div>
+      ) : (
+        <div className="border rounded-lg">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Promotion</TableHead>
+                <TableHead>Campaign</TableHead>
+                <TableHead>Rating</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredReviews.map((review: Review) => (
+                <TableRow
+                  key={review.id}
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => setSelectedReview(review)}
+                >
+                  <TableCell>{review.name}</TableCell>
+                  <TableCell>{review.email}</TableCell>
+                  <TableCell>{review.Product?.title}</TableCell>
+                  <TableCell>{review.Promotion?.title}</TableCell>
+                  <TableCell>{review.Campaign?.title}</TableCell>
                   <TableCell>
-                    <div>
-                      <div className="font-medium text-gray-800">
-                        {review.customer?.name || review.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {review.email}
-                      </div>
-                    </div>
+                    <RatingStars rating={Number(review.ratio)} />
                   </TableCell>
                   <TableCell>
-                    <div className="font-medium text-gray-800">
-                      {review.product?.title || "Unknown Product"}
-                    </div>
-                    <div className="text-sm text-muted-foreground truncate max-w-[200px]">
-                      {review.feedback}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <RatingStars rating={review.ratio} />
-                  </TableCell>
-                  <TableCell className="text-gray-700">
-                    {new Date(review.feedbackDate).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    <Select
-                      value={review.status}
-                      onValueChange={(
-                        value: "PENDING" | "PROCESSED" | "REJECTED"
-                      ) => handleStatusUpdate(review.id, value)}
+                    <Badge
+                      variant={
+                        review.status === "PENDING"
+                          ? "default"
+                          : review.status === "PROCESSED"
+                          ? "success"
+                          : "destructive"
+                      }
                     >
-                      <SelectTrigger className="w-[120px] border-gray-200 focus:border-orange-300 focus:ring-orange-300">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PENDING">
-                          <span className="flex items-center">
-                            <span className="h-2 w-2 rounded-full bg-amber-400 mr-2"></span>
-                            Pending
-                          </span>
-                        </SelectItem>
-                        <SelectItem value="PROCESSED">
-                          <span className="flex items-center">
-                            <span className="h-2 w-2 rounded-full bg-emerald-400 mr-2"></span>
-                            Processed
-                          </span>
-                        </SelectItem>
-                        <SelectItem value="REJECTED">
-                          <span className="flex items-center">
-                            <span className="h-2 w-2 rounded-full bg-red-400 mr-2"></span>
-                            Rejected
-                          </span>
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
+                      {review.status}
+                    </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                        <Button variant="ghost" className="h-8 w-8 p-0">
                           <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Open menu</span>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56 bg-white border-gray-200">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Change Status</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="hover:bg-gray-50">
-                          <MessageSquare className="mr-2 h-4 w-4" />
-                          <span>Reply to Review</span>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(review.id, "PENDING")
+                          }
+                        >
+                          Pending
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-50">
-                          <ExternalLink className="mr-2 h-4 w-4" />
-                          <span>View Original</span>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(review.id, "PROCESSED")
+                          }
+                        >
+                          Processed
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-50">
-                          <Mail className="mr-2 h-4 w-4" />
-                          <span>Send Follow-up</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="hover:bg-gray-50">
-                          <AlertCircle className="mr-2 h-4 w-4" />
-                          <span>Flag Review</span>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            handleStatusChange(review.id, "REJECTED")
+                          }
+                        >
+                          Rejected
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-gray-500">
-                  No reviews found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {totalPages > 1 && (
-        <div className="py-4 mt-4">
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={goToPreviousPage}
-                  className={
-                    currentPage === 1 
-                      ? "pointer-events-none opacity-50" 
-                      : "hover:bg-gray-50"
-                  }
-                />
-              </PaginationItem>
-
-              {[...Array(totalPages)].map((_, i) => (
-                <PaginationItem key={i}>
-                  <PaginationLink
-                    isActive={currentPage === i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={currentPage === i + 1 ? "bg-orange-100 border-orange-200" : "hover:bg-gray-50"}
-                  >
-                    {i + 1}
-                  </PaginationLink>
-                </PaginationItem>
               ))}
-
-              <PaginationItem>
-                <PaginationNext
-                  onClick={goToNextPage}
-                  className={
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "hover:bg-gray-50"
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+            </TableBody>
+          </Table>
         </div>
       )}
+
+      <Dialog
+        open={!!selectedReview}
+        onOpenChange={() => setSelectedReview(null)}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Review Details</DialogTitle>
+          </DialogHeader>
+          {selectedReview && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium">Customer</h4>
+                  <p>{selectedReview.name}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium">Email</h4>
+                  <p>{selectedReview.email}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium">Product</h4>
+                  <p>{selectedReview.Product?.title}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium">Rating</h4>
+                  <RatingStars rating={Number(selectedReview.ratio)} />
+                </div>
+                <div>
+                  <h4 className="font-medium">Promotion</h4>
+                  <p>{selectedReview.Promotion?.title || "N/A"}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium">Campaign</h4>
+                  <p>{selectedReview.Campaign?.title || "N/A"}</p>
+                </div>
+              </div>
+              <div>
+                <h4 className="font-medium">Feedback</h4>
+                <p className="mt-2">{selectedReview.feedback}</p>
+              </div>
+              <div>
+                <h4 className="font-medium">Date</h4>
+                <p>
+                  {new Date(selectedReview.feedbackDate).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

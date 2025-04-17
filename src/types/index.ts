@@ -23,6 +23,10 @@ export interface Campaign {
   endDate?: Date;
   giftOffer?: boolean;
   giftDescription?: string;
+  company?: Company;
+  promotion?: Promotion;
+  products?: Product[];
+  reviews?: Review[];
 }
 
 export type CampaignStatus = "YES" | "NO";
@@ -154,28 +158,22 @@ export interface Plan {
   updatedAt?: string;
 }
 
+export interface Customer {
+  id: number;
+  name: string;
+  email: string;
+  reviews?: Review[];
+}
+
 export interface Review {
   id: number;
-  email: string;
-  name: string;
-  productId: number;
-  ratio: number;
+  rating: number;
   feedback: string;
-  marketplace: string;
-  customerId: number;
-  orderNo?: string;
   feedbackDate: Date;
-  promotionId?: number;
-  status: "PENDING" | "PROCESSED" | "REJECTED";
-  product?: {
-    id: number;
-    title: string;
-    image: string;
-    asin: string;
-  };
-  customer?: {
-    id: number;
-    name: string;
-    email: string;
-  };
+  customerId: number;
+  productId: number;
+  campaignId?: number;
+  customer?: Customer;
+  product?: Product;
+  campaign?: Campaign;
 }

@@ -1,5 +1,6 @@
 import api from "../axiosConfig";
 import { Campaign, CampaignStatus } from "@/types";
+import { API_URL } from "@/config/env";
 
 // Campaign API endpoints
 export const createCampaign = async (
@@ -20,43 +21,40 @@ export const createCampaign = async (
   return response.data;
 };
 
-export const getCampaigns = async (params?: {
+export interface GetCampaignsParams {
+  companyId?: number;
   title?: string;
-  isActive?: CampaignStatus;
-  promotionId?: string | number;
-  companyId?: string | number;
+  isActive?: boolean;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  limit?: number;
-  page?: number;
-}): Promise<{ data: Campaign[]; totalPages: number; totalCount: number }> => {
-  try {
-    const response = await api.get("/campaigns", { params });
-    console.log("API Response:", response.data);
+  sortOrder?: string;
+}
 
-    // Handle different response formats
-    if (response.data && Array.isArray(response.data.results)) {
-      // Format: {results: Array, page: number, limit: number, totalPages: number, totalResults: number}
-      return {
-        data: response.data.results,
-        totalPages: response.data.totalPages || 1,
-        totalCount: response.data.totalResults || response.data.results.length,
-      };
-    } else if (response.data && Array.isArray(response.data.data)) {
-      // Format: {data: Array, totalPages: number, totalCount: number}
-      return response.data;
-    } else {
-      console.error("Invalid response format:", response.data);
-      return { data: [], totalPages: 0, totalCount: 0 };
-    }
-  } catch (error) {
-    console.error("Error fetching campaigns:", error);
-    // Return empty result if API fails
-    return { data: [], totalPages: 0, totalCount: 0 };
+export const getCampaigns = async (
+  params?: GetCampaignsParams
+): Promise<{ data: Campaign[] }> => {
+  const queryParams = new URLSearchParams();
+
+  if (params?.companyId) {
+    queryParams.append("companyId", params.companyId.toString());
   }
+  if (params?.title) {
+    queryParams.append("title", params.title);
+  }
+  if (params?.isActive) {
+    queryParams.append("isActive", params.isActive);
+  }
+  if (params?.sortBy) {
+    queryParams.append("sortBy", params.sortBy);
+  }
+  if (params?.sortOrder) {
+    queryParams.append("sortOrder", params.sortOrder);
+  }
+
+  const response = await api.get(`/campaigns?${queryParams.toString()}`);
+  return { data: response.data.results || [] };
 };
 
-export const getCampaign = async (id: string | number): Promise<Campaign> => {
+export const getCampaign = async (id: number): Promise<Campaign> => {
   const response = await api.get(`/campaigns/${id}`);
   return response.data;
 };
