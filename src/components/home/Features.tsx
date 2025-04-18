@@ -88,7 +88,7 @@ const Features = () => {
           <AnimatedCard delay={300}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-02.jpg"
+                src="/images/landing/features/card-02.png"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
@@ -98,7 +98,7 @@ const Features = () => {
           <AnimatedCard delay={500}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-03.png"
+                src="/images/landing/features/card-03.jpg"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
@@ -118,7 +118,7 @@ const Features = () => {
           <AnimatedCard delay={200}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-05.png"
+                src="/images/landing/features/card-05.jpg"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
@@ -128,7 +128,7 @@ const Features = () => {
           <AnimatedCard delay={400}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-06.png"
+                src="/images/landing/features/card-06.jpg"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
@@ -138,7 +138,7 @@ const Features = () => {
           <AnimatedCard delay={600}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-07.png"
+                src="/images/landing/features/card-07.jpg"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
@@ -148,7 +148,7 @@ const Features = () => {
           <AnimatedCard delay={800}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
-                src="/images/landing/features/card-08.png"
+                src="/images/landing/features/card-08.jpg"
                 alt="Card Image"
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />

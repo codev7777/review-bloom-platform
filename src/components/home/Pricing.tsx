@@ -21,49 +21,49 @@ const RandomStars = ({ count = 8 }) => {
   return <>{stars}</>;
 };
 
-const RandomRockets = ({ count }) => {
-  const [rockets, setRockets] = useState([]);
+// const RandomRockets = ({ count }) => {
+//   const [rockets, setRockets] = useState([]);
 
-  // Random position generator function
-  const generateRocketPositions = () => {
-    return Array.from({ length: count }, (_, i) => {
-      const size = Math.floor(Math.random() * 20) + 30; // 40px to 90px size
-      const top = Math.random() * 90 + "%"; // 0-90% from top
-      const left = Math.random() * 90 + "%"; // 0-90% from left
-      const delay = Math.random() * 5; // 0 to 5 seconds delay
-      const imgSrc = `/images/landing/rocket-${
-        Math.floor(Math.random() * 4) + 1
-      }.png`;
+//   // Random position generator function
+//   const generateRocketPositions = () => {
+//     return Array.from({ length: count }, (_, i) => {
+//       const size = Math.floor(Math.random() * 20) + 30; // 40px to 90px size
+//       const top = Math.random() * 90 + "%"; // 0-90% from top
+//       const left = Math.random() * 90 + "%"; // 0-90% from left
+//       const delay = Math.random() * 5; // 0 to 5 seconds delay
+//       const imgSrc = `/images/landing/rocket-${
+//         Math.floor(Math.random() * 4) + 1
+//       }.png`;
 
-      return {
-        id: i,
-        size,
-        delay,
-        style: { top, left },
-        imgSrc,
-      };
-    });
-  };
+//       return {
+//         id: i,
+//         size,
+//         delay,
+//         style: { top, left },
+//         imgSrc,
+//       };
+//     });
+//   };
 
-  // On component mount and every render, generate rocket positions
-  useEffect(() => {
-    setRockets(generateRocketPositions());
-  }, [count]); // Re-run when `count` changes
+//   // On component mount and every render, generate rocket positions
+//   useEffect(() => {
+//     setRockets(generateRocketPositions());
+//   }, [count]); // Re-run when `count` changes
 
-  return (
-    <>
-      {rockets.map((rocket) => (
-        <FloatingRocket
-          key={rocket.id}
-          size={rocket.size}
-          delay={rocket.delay}
-          style={rocket.style}
-          imgSrc={rocket.imgSrc}
-        />
-      ))}
-    </>
-  );
-};
+//   return (
+//     <>
+//       {rockets.map((rocket) => (
+//         <FloatingRocket
+//           key={rocket.id}
+//           size={rocket.size}
+//           delay={rocket.delay}
+//           style={rocket.style}
+//           imgSrc={rocket.imgSrc}
+//         />
+//       ))}
+//     </>
+//   );
+// };
 
 const PricingTier = ({
   title,
@@ -94,7 +94,7 @@ const PricingTier = ({
         className={`w-[500px] lg:w-[320px] xl:w-[400px] relative flex flex-col rounded-xl shadow-xl transition-all duration-300 hover:shadow-custom border-2 bg-white mb-20 pb-8`}
       >
         <RandomStars count={50} />
-        <RandomRockets count={3} />
+        {/* <RandomRockets count={3} /> */}
         {isPopular && (
           <motion.div
             initial={{ y: -20, opacity: 0 }}

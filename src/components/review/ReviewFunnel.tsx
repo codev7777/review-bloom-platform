@@ -16,7 +16,7 @@ import { createPublicReview } from "@/lib/api/public/publicReview";
 import { Campaign, Product, Promotion } from "@/types";
 
 interface ReviewFunnelProps {
-  campaignId: string;
+  campaignId: any;
   productName: string;
   productImage: string;
   vendor: string;
@@ -105,6 +105,22 @@ const ReviewFunnel = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // if (campaignId === "demo-campaign") {
+        //   setCampaign({
+        //     id: 1,
+        //     title: "Demo Campaign",
+        //     isActive: "Yes",
+        //     promotionId: 1,
+        //     productIds: [1, 2, 3],
+        //     product: {
+        //       id: 1,
+        //       title: "Demo Product",
+        //       image: "https://via.placeholder.com/150",
+        //       companyId: 1,
+        //     },
+        //   });
+        //   return;
+        // }
         setIsLoading(true);
         let campaignData;
 

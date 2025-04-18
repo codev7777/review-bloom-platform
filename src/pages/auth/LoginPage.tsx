@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
+import { Eye, EyeOff } from "lucide-react";
 
 const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
 
 const LoginPage = () => {
-  const [email, setEmail] = useState("user@example.com");
-  const [password, setPassword] = useState("Password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuth();
 
   // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
@@ -60,27 +62,40 @@ const LoginPage = () => {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-start mb-2">
                 <Label htmlFor="password">Password</Label>
-                <Button
-                  type="button"
-                  variant="link"
-                  className="px-0 text-sm"
-                  asChild
-                >
-                  <Link to="/auth/forgot-password">Forgot password?</Link>
-                </Button>
               </div>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="password"
-                required
-              />
+              <div className="relative w-full">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  required
+                  className="w-full pr-10 p-2 border border-gray-300 rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
             </div>
-
+            <div className="flex items-center justify-end">
+              <Button
+                type="button"
+                variant="link"
+                className="px-0 text-sm"
+                asChild
+              >
+                <Link to="/auth/forgot-password" className="underline">
+                  Forgot password?
+                </Link>
+              </Button>
+            </div>
             {/* 👇 Add reCAPTCHA here */}
             {/* <div className="flex items-center justify-center">
               <ReCAPTCHA

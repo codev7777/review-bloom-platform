@@ -145,7 +145,7 @@ const PromotionsList = () => {
         </p>
         <Button
           variant="outline"
-          className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
+          className="mt-4 bg-orange-500 hover:bg-orange-600"
           onClick={() => navigate("/vendor-dashboard/promotions/new")}
         >
           <Plus className="mr-2 h-4 w-4" />

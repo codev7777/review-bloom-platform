@@ -1,19 +1,28 @@
-
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/use-auth';
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/use-auth";
+import { Eye, EyeOff } from "lucide-react";
 
 const SignupPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState("");
   const { signup, isLoading } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+    setError("");
     await signup(name, email, password);
   };
 
@@ -31,14 +40,14 @@ const SignupPage = () => {
             Start collecting and managing your Amazon reviews
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
               <Label htmlFor="name">Full Name</Label>
-              <Input 
-                id="name" 
-                type="text" 
+              <Input
+                id="name"
+                type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your full name"
@@ -46,12 +55,12 @@ const SignupPage = () => {
                 className="mt-1"
               />
             </div>
-            
+
             <div>
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
+              <Input
+                id="email"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
@@ -59,53 +68,101 @@ const SignupPage = () => {
                 className="mt-1"
               />
             </div>
-            
-            <div>
+
+            <div className="relative">
               <Label htmlFor="password">Password</Label>
-              <Input 
-                id="password" 
-                type="password"
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a password"
                 required
-                className="mt-1"
+                className="mt-1 pr-10"
               />
+              {/* <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-9 text-gray-500"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button> */}
               <p className="mt-1 text-xs text-gray-500">
                 Password must be at least 8 characters
               </p>
             </div>
+
+            <div className="relative">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your password"
+                required
+                className="mt-1 pr-10"
+              />
+              {/* <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-9 text-gray-500"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button> */}
+            </div>
+
+            {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
-          
+
           <div>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               className="w-full bg-orange-500 hover:bg-orange-600"
               disabled={isLoading}
             >
               {isLoading ? (
                 <span className="flex items-center">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
                   </svg>
                   Creating account...
                 </span>
               ) : (
-                'Create account'
+                "Create account"
               )}
             </Button>
           </div>
-          
+
           <p className="text-xs text-center text-gray-500">
             By signing up, you agree to our Terms of Service and Privacy Policy
           </p>
         </form>
-        
+
         <div className="text-center">
           <p className="text-sm text-gray-500">
-            Already have an account?{' '}
-            <Link to="/auth/login" className="text-orange-500 hover:text-orange-600 font-medium">
+            Already have an account?{" "}
+            <Link
+              to="/auth/login"
+              className="text-orange-500 hover:text-orange-600 font-medium"
+            >
               Sign in
             </Link>
           </p>
