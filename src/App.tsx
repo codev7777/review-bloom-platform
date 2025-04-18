@@ -31,6 +31,7 @@ import CareersPage from "./pages/CareersPage";
 import ContactUsPage from "./pages/ContactUsPage";
 import FAQsPage from "./pages/FAQsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
+import VerificationEmailSent from "./pages/VerificationEmailSent";
 import { PrivateRoute } from "./components/auth/PrivateRoute";
 import ScrollToTop from "./lib/ScrollToTop";
 
@@ -79,6 +80,10 @@ const App = () => {
                 <Route path="/contact" element={<ContactUsPage />} />
                 <Route path="/faqs" element={<FAQsPage />} />
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
+                <Route
+                  path="/verification-email-sent"
+                  element={<VerificationEmailSent />}
+                />
 
                 {/* Vendor Dashboard Routes */}
                 <Route
