@@ -105,12 +105,12 @@ const Sidebar = ({
               isOpen ? "translate-x-0" : "-translate-x-full"
             } transition-transform duration-300 ease-in-out`
           : "sticky top-0 h-screen w-64 flex-shrink-0"
-      } bg-white border-r border-border`}
+      }  bg-[#212631] border-r border-gray-700 text-white font-medium`}
     >
       {isMobile && (
         <button
           onClick={toggleSidebar}
-          className="absolute right-4 top-4 text-foreground md:hidden"
+          className="absolute right-4 top-4 text-white md:hidden"
         >
           <X size={24} />
         </button>
@@ -194,7 +194,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-white">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <Button
@@ -206,14 +206,16 @@ const Dashboard = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reviews</CardTitle>
-            <ClipboardList className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-white">
+        <Card className="bg-[#6c66d3] border-gray-700">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 text-white">
+            <CardTitle className="text-sm font-medium text-white ">
+              Total Reviews
+            </CardTitle>
+            <ClipboardList className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {isLoadingStats ? (
                 <span className="animate-pulse">Loading...</span>
               ) : (
@@ -223,15 +225,15 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
+        <Card className="bg-[#3589d4] border-gray-700">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
+            <CardTitle className="text-sm font-medium text-white">
               Average Rating
             </CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+            <Star className="h-4 w-4 text-whtie" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {isLoadingStats ? (
                 <span className="animate-pulse">Loading...</span>
               ) : (
@@ -247,6 +249,7 @@ const Dashboard = () => {
           change="+0"
           changeType="neutral"
           period="from last month"
+          bgColor="bg-[#eb9b19]"
         />
         <StatsCard
           title="Active Campaigns"
@@ -254,6 +257,7 @@ const Dashboard = () => {
           change="+0"
           changeType="neutral"
           period="from last month"
+          bgColor="bg-[#d54747]"
         />
       </div>
 
@@ -283,24 +287,50 @@ const Dashboard = () => {
             {campaigns?.data?.slice(0, 3).map((campaign) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
-                <CampaignCard
-                  key={displayCampaign.id}
-                  name={displayCampaign.name || displayCampaign.title}
-                  image={
-                    displayCampaign.promotion?.image
-                      ? getImageUrl(displayCampaign.promotion?.image)
-                      : `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
-                          displayCampaign.name || displayCampaign.title
-                        )}`
-                  }
-                  status={
-                    displayCampaign.status ||
-                    (displayCampaign.isActive === "YES" ? "active" : "paused")
-                  }
-                  reviews={displayCampaign.claims || 0}
-                  rating={displayCampaign.claims || 0}
-                  date={displayCampaign.createdAt || new Date().toISOString()}
-                />
+                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2">
+                  <figure>
+                    <img
+                      src={
+                        displayCampaign.promotion?.image
+                          ? getImageUrl(displayCampaign.promotion?.image)
+                          : `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                              displayCampaign.name || displayCampaign.title
+                            )}`
+                      }
+                      className="w-full h-48 object-contain"
+                      alt="Shoes"
+                    />
+                  </figure>
+                  <div className="card-body m-4">
+                    <h2 className="card-title">
+                      {displayCampaign.title}
+                      <div className="badge badge-secondary">NEW</div>
+                    </h2>
+                    <p>{displayCampaign.description}</p>
+                    <div className="card-actions justify-end">
+                      <div className="badge badge-outline">Fashion</div>
+                      <div className="badge badge-outline">Products</div>
+                    </div>
+                  </div>
+                </div>
+                // <CampaignCard
+                //   key={displayCampaign.id}
+                //   name={displayCampaign.name || displayCampaign.title}
+                //   image={
+                // displayCampaign.promotion?.image
+                //   ? getImageUrl(displayCampaign.promotion?.image)
+                //   : `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                //       displayCampaign.name || displayCampaign.title
+                //     )}`
+                //   }
+                //   status={
+                //     displayCampaign.status ||
+                //     (displayCampaign.isActive === "YES" ? "active" : "paused")
+                //   }
+                //   reviews={displayCampaign.claims || 0}
+                //   rating={displayCampaign.claims || 0}
+                //   date={displayCampaign.createdAt || new Date().toISOString()}
+                // />
               );
             })}
           </div>
@@ -371,10 +401,10 @@ const VendorDashboard: React.FC = () => {
   };
   console.log(products);
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen  bg-[#212631]">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
-      <main className="flex-1 overflow-y-auto bg-gray-50 flex flex-col">
+      <main className="flex-1 overflow-y-auto  bg-[#212631] flex flex-col">
         <VendorNavbar />
         {isMobile && (
           <button

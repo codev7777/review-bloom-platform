@@ -67,6 +67,7 @@ export interface StatsCardProps {
   trend?: string;
   percentage?: string;
   icon?: React.ReactNode;
+  bgColor?: string;
 }
 
 export interface Company {

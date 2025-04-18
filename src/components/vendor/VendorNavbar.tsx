@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
@@ -15,7 +14,7 @@ const VendorNavbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full bg-white border-b border-border h-16 px-6">
+    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full  bg-[#212631] border-b border-gray-700 h-16 px-6">
       <div>
         <Link to="/vendor-dashboard" className="flex items-center">
           <img
@@ -36,9 +35,7 @@ const VendorNavbar = () => {
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <div className="flex flex-col space-y-1 p-2">
               <p className="text-sm font-medium leading-none">{user?.name}</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {user?.email}
-              </p>
+              <p className="text-xs leading-none text-white">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

@@ -11,11 +11,14 @@ const StatsCard = ({
   trend,
   percentage,
   icon,
+  bgColor,
 }: StatsCardProps) => {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-border">
+    <div
+      className={`p-6 rounded-xl shadow-sm border border-gray-700 ${bgColor}`}
+    >
       <div className="flex justify-between items-start mb-2">
-        <p className="text-sm text-muted-foreground">{title}</p>
+        <p className="text-sm text-white">{title}</p>
         {icon && <div className="ml-2">{icon}</div>}
       </div>
       <div className="flex items-baseline">
@@ -40,10 +43,8 @@ const StatsCard = ({
           <span className="ml-2 text-sm text-muted-foreground">{percentage}</span>
         )} */}
       </div>
-      {subtitle && (
-        <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
-      )}
-      {period && <p className="text-xs text-muted-foreground mt-1">{period}</p>}
+      {subtitle && <p className="text-xs text-white mt-1">{subtitle}</p>}
+      {period && <p className="text-xs text-white mt-1">{period}</p>}
     </div>
   );
 };
