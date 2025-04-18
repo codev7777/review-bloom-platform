@@ -21,7 +21,8 @@ import VendorDashboard from "./pages/VendorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
-import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
+import ForgotPasswordPage from "./pages/auth/ForgotPassword";
+import ResetPasswordPage from "./pages/auth/ResetPassword";
 import ContractPage from "./pages/ContractPage";
 import HelpPage from "./pages/HelpPage";
 import AboutUsPage from "./pages/AboutUsPage";
@@ -65,6 +66,10 @@ const App = () => {
                 <Route
                   path="/auth/forgot-password"
                   element={<ForgotPasswordPage />}
+                />
+                <Route
+                  path="/auth/reset-password"
+                  element={<ResetPasswordPage />}
                 />
                 <Route path="/contract" element={<ContractPage />} />
                 <Route path="/help" element={<HelpPage />} />

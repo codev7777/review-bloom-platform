@@ -10,6 +10,7 @@ import { AxiosError } from "axios";
 import { toast } from "@/components/ui/use-toast";
 import * as userApi from "@/lib/api/users/users.api";
 import { User } from "@/lib/api/users/users.api";
+import { Button } from "@/components/ui/button";
 
 interface AuthContextType {
   user: User | null;
@@ -92,12 +93,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const error = err as AxiosError<{ message?: string }>;
       if (DEBUG) console.error("Login error:", error);
 
-      toast({
-        variant: "destructive",
-        title: "Login failed",
-        description:
-          error?.response?.data?.message || "Invalid email or password",
-      });
+      const errorMessage = error?.response?.data?.message;
+      if (errorMessage?.includes("verify your email")) {
+        toast({
+          variant: "destructive",
+          title: "Email not verified",
+          description: "Please check your email for a verification link.",
+          action: (
+            <Button
+              variant="outline"
+              onClick={() => navigate("/auth/verify-email")}
+            >
+              Resend verification email
+            </Button>
+          ),
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: errorMessage || "Invalid email or password",
+        });
+      }
     } finally {
       setIsLoading(false);
     }

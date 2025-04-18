@@ -56,7 +56,13 @@ export const resetPassword = async (
   token: string,
   password: string
 ): Promise<{ message: string }> => {
-  const response = await api.post("/auth/reset-password", { token, password });
+  const response = await api.post(
+    "/auth/reset-password",
+    { password },
+    {
+      params: { token },
+    }
+  );
   return response.data;
 };
 
