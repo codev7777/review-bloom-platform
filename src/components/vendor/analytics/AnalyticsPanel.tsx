@@ -1,26 +1,20 @@
-
-import { useState, useEffect } from 'react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   LineChart,
   Line,
-  Legend
-} from 'recharts';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+  Legend,
+} from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
   CardContent,
@@ -35,138 +29,142 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from '@/components/ui/button';
-import { 
-  CalendarIcon, 
-  Download, 
-  Filter, 
-  ArrowDownIcon, 
-  ArrowUpIcon, 
+import { Button } from "@/components/ui/button";
+import {
+  CalendarIcon,
+  Download,
+  Filter,
+  ArrowDownIcon,
+  ArrowUpIcon,
   BarChart3,
   PieChart as PieChartIcon,
   LineChart as LineChartIcon,
-  ListFilter
-} from 'lucide-react';
+  ListFilter,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from 'date-fns';
-import { toast } from '@/components/ui/use-toast';
-import { Badge } from '@/components/ui/badge';
+import { format } from "date-fns";
+import { toast } from "@/components/ui/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 // Sample data for analytics
 const ratingDistribution = [
-  { name: '5 Stars', value: 65, color: '#16a34a' },
-  { name: '4 Stars', value: 20, color: '#84cc16' },
-  { name: '3 Stars', value: 8, color: '#facc15' },
-  { name: '2 Stars', value: 4, color: '#f97316' },
-  { name: '1 Star', value: 3, color: '#ef4444' },
+  { name: "5 Stars", value: 65, color: "#16a34a" },
+  { name: "4 Stars", value: 20, color: "#84cc16" },
+  { name: "3 Stars", value: 8, color: "#facc15" },
+  { name: "2 Stars", value: 4, color: "#f97316" },
+  { name: "1 Star", value: 3, color: "#ef4444" },
 ];
 
 const reviewsOverTime = [
-  { date: '2023-01', reviews: 18, average: 4.2 },
-  { date: '2023-02', reviews: 25, average: 4.3 },
-  { date: '2023-03', reviews: 33, average: 4.5 },
-  { date: '2023-04', reviews: 42, average: 4.4 },
-  { date: '2023-05', reviews: 55, average: 4.6 },
-  { date: '2023-06', reviews: 48, average: 4.7 },
-  { date: '2023-07', reviews: 60, average: 4.5 },
-  { date: '2023-08', reviews: 73, average: 4.8 },
-  { date: '2023-09', reviews: 82, average: 4.6 },
-  { date: '2023-10', reviews: 91, average: 4.7 },
-  { date: '2023-11', reviews: 105, average: 4.8 },
-  { date: '2023-12', reviews: 120, average: 4.9 },
+  { date: "2023-01", reviews: 18, average: 4.2 },
+  { date: "2023-02", reviews: 25, average: 4.3 },
+  { date: "2023-03", reviews: 33, average: 4.5 },
+  { date: "2023-04", reviews: 42, average: 4.4 },
+  { date: "2023-05", reviews: 55, average: 4.6 },
+  { date: "2023-06", reviews: 48, average: 4.7 },
+  { date: "2023-07", reviews: 60, average: 4.5 },
+  { date: "2023-08", reviews: 73, average: 4.8 },
+  { date: "2023-09", reviews: 82, average: 4.6 },
+  { date: "2023-10", reviews: 91, average: 4.7 },
+  { date: "2023-11", reviews: 105, average: 4.8 },
+  { date: "2023-12", reviews: 120, average: 4.9 },
 ];
 
 const recentReviews = [
   {
-    id: '1',
-    customerName: 'Alex Johnson',
-    productName: 'Kitchen Knife Set',
+    id: "1",
+    customerName: "Alex Johnson",
+    productName: "Kitchen Knife Set",
     rating: 5,
-    comment: 'Excellent quality knives, they stay sharp for a long time and the handles feel premium.',
-    date: '2023-11-28',
+    comment:
+      "Excellent quality knives, they stay sharp for a long time and the handles feel premium.",
+    date: "2023-11-28",
   },
   {
-    id: '2',
-    customerName: 'Samantha Lee',
-    productName: 'Yoga Mat',
+    id: "2",
+    customerName: "Samantha Lee",
+    productName: "Yoga Mat",
     rating: 4,
-    comment: 'Good grip and comfortable thickness, but wish it was slightly wider.',
-    date: '2023-11-26',
+    comment:
+      "Good grip and comfortable thickness, but wish it was slightly wider.",
+    date: "2023-11-26",
   },
   {
-    id: '3',
-    customerName: 'Michael Patel',
-    productName: 'Bluetooth Headphones',
+    id: "3",
+    customerName: "Michael Patel",
+    productName: "Bluetooth Headphones",
     rating: 5,
-    comment: 'Amazing sound quality and battery life. Very comfortable for long sessions.',
-    date: '2023-11-25',
+    comment:
+      "Amazing sound quality and battery life. Very comfortable for long sessions.",
+    date: "2023-11-25",
   },
   {
-    id: '4',
-    customerName: 'Emily Rodriguez',
-    productName: 'Kitchen Knife Set',
+    id: "4",
+    customerName: "Emily Rodriguez",
+    productName: "Kitchen Knife Set",
     rating: 3,
-    comment: 'Decent knives but not as sharp as I expected. The block is nice though.',
-    date: '2023-11-22',
+    comment:
+      "Decent knives but not as sharp as I expected. The block is nice though.",
+    date: "2023-11-22",
   },
   {
-    id: '5',
-    customerName: 'James Wilson',
-    productName: 'Bluetooth Headphones',
+    id: "5",
+    customerName: "James Wilson",
+    productName: "Bluetooth Headphones",
     rating: 5,
-    comment: 'Noise cancellation is fantastic. Perfect for my daily commute.',
-    date: '2023-11-20',
+    comment: "Noise cancellation is fantastic. Perfect for my daily commute.",
+    date: "2023-11-20",
   },
 ];
 
 const productPerformance = [
   {
-    id: '1',
-    name: 'Kitchen Knife Set',
+    id: "1",
+    name: "Kitchen Knife Set",
     reviews: 156,
     rating: 4.8,
-    trending: 'up',
+    trending: "up",
   },
   {
-    id: '2',
-    name: 'Yoga Mat',
+    id: "2",
+    name: "Yoga Mat",
     reviews: 98,
     rating: 4.5,
-    trending: 'stable',
+    trending: "stable",
   },
   {
-    id: '3',
-    name: 'Bluetooth Headphones',
+    id: "3",
+    name: "Bluetooth Headphones",
     reviews: 212,
     rating: 4.7,
-    trending: 'up',
+    trending: "up",
   },
   {
-    id: '4',
-    name: 'Smart Watch',
+    id: "4",
+    name: "Smart Watch",
     reviews: 67,
     rating: 4.3,
-    trending: 'down',
+    trending: "down",
   },
   {
-    id: '5',
-    name: 'Coffee Maker',
+    id: "5",
+    name: "Coffee Maker",
     reviews: 134,
     rating: 4.2,
-    trending: 'stable',
+    trending: "stable",
   },
 ];
 
 const AnalyticsPanel = () => {
-  const [selectedProduct, setSelectedProduct] = useState('all');
-  const [selectedTimeframe, setSelectedTimeframe] = useState('all');
-  const [selectedCampaign, setSelectedCampaign] = useState('all');
-  const [selectedTab, setSelectedTab] = useState('overview');
+  const [selectedProduct, setSelectedProduct] = useState("all");
+  const [selectedTimeframe, setSelectedTimeframe] = useState("all");
+  const [selectedCampaign, setSelectedCampaign] = useState("all");
+  const [selectedTab, setSelectedTab] = useState("overview");
   const [dateRange, setDateRange] = useState({
     from: undefined,
     to: undefined,
@@ -174,14 +172,14 @@ const AnalyticsPanel = () => {
   const [isExporting, setIsExporting] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [filterCount, setFilterCount] = useState(0);
-  const [chartType, setChartType] = useState<'bar' | 'line' | 'pie'>('bar');
+  const [chartType, setChartType] = useState<"bar" | "line" | "pie">("bar");
 
   useEffect(() => {
     // Calculate how many filters are active
     let count = 0;
-    if (selectedProduct !== 'all') count++;
-    if (selectedTimeframe !== 'all') count++;
-    if (selectedCampaign !== 'all') count++;
+    if (selectedProduct !== "all") count++;
+    if (selectedTimeframe !== "all") count++;
+    if (selectedCampaign !== "all") count++;
     if (dateRange.from || dateRange.to) count++;
     setFilterCount(count);
   }, [selectedProduct, selectedTimeframe, selectedCampaign, dateRange]);
@@ -200,15 +198,17 @@ const AnalyticsPanel = () => {
   const applyFilters = () => {
     toast({
       title: "Filters applied",
-      description: `Showing data with ${filterCount} active filter${filterCount !== 1 ? 's' : ''}`,
+      description: `Showing data with ${filterCount} active filter${
+        filterCount !== 1 ? "s" : ""
+      }`,
     });
     setIsFilterOpen(false);
   };
 
   const resetFilters = () => {
-    setSelectedProduct('all');
-    setSelectedTimeframe('all');
-    setSelectedCampaign('all');
+    setSelectedProduct("all");
+    setSelectedTimeframe("all");
+    setSelectedCampaign("all");
     setDateRange({
       from: undefined,
       to: undefined,
@@ -220,10 +220,10 @@ const AnalyticsPanel = () => {
   };
 
   const getTrendIcon = (trend: string) => {
-    switch(trend) {
-      case 'up':
+    switch (trend) {
+      case "up":
         return <ArrowUpIcon className="text-green-500 h-4 w-4" />;
-      case 'down':
+      case "down":
         return <ArrowDownIcon className="text-red-500 h-4 w-4" />;
       default:
         return <span className="text-gray-400">→</span>;
@@ -235,12 +235,17 @@ const AnalyticsPanel = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold mb-1">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Get insights into your reviews and campaign performance</p>
+          <p className="text-white">
+            Get insights into your reviews and campaign performance
+          </p>
         </div>
         <div className="flex items-center space-x-3">
           <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2 border-orange-200 hover:border-orange-300 transition-all duration-300">
+              <Button
+                variant="outline"
+                className="flex items-center gap-2 border-orange-200 hover:border-orange-300 transition-all duration-300"
+              >
                 <Filter className="h-4 w-4 text-orange-500" />
                 Filters
                 {filterCount > 0 && (
@@ -253,27 +258,37 @@ const AnalyticsPanel = () => {
             <PopoverContent className="w-80 p-4 animate-in zoom-in-95 duration-200">
               <div className="space-y-4">
                 <h4 className="font-medium">Filter Analytics</h4>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Product</label>
-                  <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                  <Select
+                    value={selectedProduct}
+                    onValueChange={setSelectedProduct}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select product" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Products</SelectItem>
-                      <SelectItem value="knife-set">Kitchen Knife Set</SelectItem>
+                      <SelectItem value="knife-set">
+                        Kitchen Knife Set
+                      </SelectItem>
                       <SelectItem value="yoga-mat">Yoga Mat</SelectItem>
-                      <SelectItem value="headphones">Bluetooth Headphones</SelectItem>
+                      <SelectItem value="headphones">
+                        Bluetooth Headphones
+                      </SelectItem>
                       <SelectItem value="watch">Smart Watch</SelectItem>
                       <SelectItem value="coffee-maker">Coffee Maker</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Time Period</label>
-                  <Select value={selectedTimeframe} onValueChange={setSelectedTimeframe}>
+                  <Select
+                    value={selectedTimeframe}
+                    onValueChange={setSelectedTimeframe}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select timeframe" />
                     </SelectTrigger>
@@ -287,25 +302,36 @@ const AnalyticsPanel = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Campaign</label>
-                  <Select value={selectedCampaign} onValueChange={setSelectedCampaign}>
+                  <Select
+                    value={selectedCampaign}
+                    onValueChange={setSelectedCampaign}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select campaign" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Campaigns</SelectItem>
-                      <SelectItem value="summer">Summer Kitchen Sale</SelectItem>
+                      <SelectItem value="summer">
+                        Summer Kitchen Sale
+                      </SelectItem>
                       <SelectItem value="fitness">Fitness Promo</SelectItem>
-                      <SelectItem value="electronics">Electronics Flash Deal</SelectItem>
-                      <SelectItem value="holiday">Holiday Gift Guide</SelectItem>
+                      <SelectItem value="electronics">
+                        Electronics Flash Deal
+                      </SelectItem>
+                      <SelectItem value="holiday">
+                        Holiday Gift Guide
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Custom Date Range</label>
+                  <label className="text-sm font-medium">
+                    Custom Date Range
+                  </label>
                   <div className="grid grid-cols-2 gap-2">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -316,7 +342,7 @@ const AnalyticsPanel = () => {
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {dateRange.from ? (
-                            format(dateRange.from, 'PPP')
+                            format(dateRange.from, "PPP")
                           ) : (
                             <span>From date</span>
                           )}
@@ -326,12 +352,14 @@ const AnalyticsPanel = () => {
                         <Calendar
                           mode="single"
                           selected={dateRange.from}
-                          onSelect={(date) => setDateRange(prev => ({ ...prev, from: date }))}
+                          onSelect={(date) =>
+                            setDateRange((prev) => ({ ...prev, from: date }))
+                          }
                           initialFocus
                         />
                       </PopoverContent>
                     </Popover>
-                    
+
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
@@ -341,7 +369,7 @@ const AnalyticsPanel = () => {
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {dateRange.to ? (
-                            format(dateRange.to, 'PPP')
+                            format(dateRange.to, "PPP")
                           ) : (
                             <span>To date</span>
                           )}
@@ -351,25 +379,27 @@ const AnalyticsPanel = () => {
                         <Calendar
                           mode="single"
                           selected={dateRange.to}
-                          onSelect={(date) => setDateRange(prev => ({ ...prev, to: date }))}
+                          onSelect={(date) =>
+                            setDateRange((prev) => ({ ...prev, to: date }))
+                          }
                           initialFocus
                         />
                       </PopoverContent>
                     </Popover>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-between pt-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={resetFilters}
                     className="transition-all duration-300"
                   >
                     Reset
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     onClick={applyFilters}
                     className="bg-orange-500 hover:bg-orange-600 transition-all duration-300"
                   >
@@ -379,9 +409,9 @@ const AnalyticsPanel = () => {
               </div>
             </PopoverContent>
           </Popover>
-          
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             className="border-orange-200 text-orange-500 hover:border-orange-300 hover:text-orange-600 transition-all duration-300"
             onClick={handleExportData}
             disabled={isExporting}
@@ -400,13 +430,17 @@ const AnalyticsPanel = () => {
           </Button>
         </div>
       </div>
-      
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Reviews</CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">486</CardDescription>
+            <CardTitle className="text-sm font-medium text-white">
+              Total Reviews
+            </CardTitle>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              486
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
@@ -415,11 +449,15 @@ const AnalyticsPanel = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Average Rating</CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">4.7</CardDescription>
+            <CardTitle className="text-sm font-medium text-white">
+              Average Rating
+            </CardTitle>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              4.7
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
@@ -428,11 +466,15 @@ const AnalyticsPanel = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Active Campaigns</CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">5</CardDescription>
+            <CardTitle className="text-sm font-medium text-white">
+              Active Campaigns
+            </CardTitle>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              5
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-green-600">
@@ -441,11 +483,15 @@ const AnalyticsPanel = () => {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Conversion Rate</CardTitle>
-            <CardDescription className="text-3xl font-bold text-foreground">3.2%</CardDescription>
+            <CardTitle className="text-sm font-medium text-white">
+              Conversion Rate
+            </CardTitle>
+            <CardDescription className="text-3xl font-bold text-foreground">
+              3.2%
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center text-sm text-red-600">
@@ -455,74 +501,89 @@ const AnalyticsPanel = () => {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Detailed Analytics */}
-      <Tabs 
-        defaultValue="overview" 
-        value={selectedTab} 
+      <Tabs
+        defaultValue="overview"
+        value={selectedTab}
         onValueChange={setSelectedTab}
         className="w-full"
       >
         <div className="flex justify-between items-center mb-4">
           <TabsList className="bg-orange-50">
-            <TabsTrigger 
-              value="overview" 
+            <TabsTrigger
+              value="overview"
               className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-200"
             >
               Overview
             </TabsTrigger>
-            <TabsTrigger 
-              value="products" 
+            <TabsTrigger
+              value="products"
               className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-200"
             >
               Products
             </TabsTrigger>
-            <TabsTrigger 
-              value="reviews" 
+            <TabsTrigger
+              value="reviews"
               className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-200"
             >
               Reviews
             </TabsTrigger>
-            <TabsTrigger 
-              value="campaigns" 
+            <TabsTrigger
+              value="campaigns"
               className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-200"
             >
               Campaigns
             </TabsTrigger>
           </TabsList>
-          
-          {selectedTab === 'overview' && (
+
+          {selectedTab === "overview" && (
             <div className="flex items-center space-x-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`p-2 ${chartType === 'bar' ? 'bg-orange-100 text-orange-500 border-orange-200' : ''}`} 
-                onClick={() => setChartType('bar')}
+              <Button
+                variant="outline"
+                size="sm"
+                className={`p-2 ${
+                  chartType === "bar"
+                    ? "bg-orange-100 text-orange-500 border-orange-200"
+                    : ""
+                }`}
+                onClick={() => setChartType("bar")}
               >
                 <BarChart3 className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`p-2 ${chartType === 'line' ? 'bg-orange-100 text-orange-500 border-orange-200' : ''}`}
-                onClick={() => setChartType('line')}
+              <Button
+                variant="outline"
+                size="sm"
+                className={`p-2 ${
+                  chartType === "line"
+                    ? "bg-orange-100 text-orange-500 border-orange-200"
+                    : ""
+                }`}
+                onClick={() => setChartType("line")}
               >
                 <LineChartIcon className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className={`p-2 ${chartType === 'pie' ? 'bg-orange-100 text-orange-500 border-orange-200' : ''}`}
-                onClick={() => setChartType('pie')}
+              <Button
+                variant="outline"
+                size="sm"
+                className={`p-2 ${
+                  chartType === "pie"
+                    ? "bg-orange-100 text-orange-500 border-orange-200"
+                    : ""
+                }`}
+                onClick={() => setChartType("pie")}
               >
                 <PieChartIcon className="h-4 w-4" />
               </Button>
             </div>
           )}
         </div>
-        
+
         {/* Overview Content */}
-        <TabsContent value="overview" className="animate-in fade-in-50 duration-300 space-y-6">
+        <TabsContent
+          value="overview"
+          className="animate-in fade-in-50 duration-300 space-y-6"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="hover:shadow-md transition-shadow duration-300">
               <CardHeader>
@@ -530,7 +591,7 @@ const AnalyticsPanel = () => {
               </CardHeader>
               <CardContent>
                 <div className="h-80">
-                  {chartType === 'bar' && (
+                  {chartType === "bar" && (
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={ratingDistribution}>
                         <CartesianGrid strokeDasharray="3 3" />
@@ -545,8 +606,8 @@ const AnalyticsPanel = () => {
                       </BarChart>
                     </ResponsiveContainer>
                   )}
-                  
-                  {chartType === 'pie' && (
+
+                  {chartType === "pie" && (
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -554,7 +615,9 @@ const AnalyticsPanel = () => {
                           cx="50%"
                           cy="50%"
                           labelLine={true}
-                          label={({name, percent}) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                          label={({ name, percent }) =>
+                            `${name} (${(percent * 100).toFixed(0)}%)`
+                          }
                           outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
@@ -568,34 +631,39 @@ const AnalyticsPanel = () => {
                       </PieChart>
                     </ResponsiveContainer>
                   )}
-                  
-                  {chartType === 'line' && (
+
+                  {chartType === "line" && (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-center text-muted-foreground">
-                        Rating distribution data is better visualized with a bar or pie chart
+                      <p className="text-center text-white">
+                        Rating distribution data is better visualized with a bar
+                        or pie chart
                       </p>
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
-            
+
             <Card className="hover:shadow-md transition-shadow duration-300">
               <CardHeader>
                 <CardTitle>Reviews Over Time</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-80">
-                  {(chartType === 'bar' || chartType === 'line') && (
+                  {(chartType === "bar" || chartType === "line") && (
                     <ResponsiveContainer width="100%" height="100%">
-                      {chartType === 'bar' ? (
+                      {chartType === "bar" ? (
                         <BarChart data={reviewsOverTime}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
                           <YAxis />
                           <Tooltip />
                           <Legend />
-                          <Bar dataKey="reviews" fill="#f97316" radius={[4, 4, 0, 0]} />
+                          <Bar
+                            dataKey="reviews"
+                            fill="#f97316"
+                            radius={[4, 4, 0, 0]}
+                          />
                         </BarChart>
                       ) : (
                         <LineChart data={reviewsOverTime}>
@@ -604,18 +672,18 @@ const AnalyticsPanel = () => {
                           <YAxis />
                           <Tooltip />
                           <Legend />
-                          <Line 
-                            type="monotone" 
-                            dataKey="reviews" 
-                            stroke="#f97316" 
+                          <Line
+                            type="monotone"
+                            dataKey="reviews"
+                            stroke="#f97316"
                             strokeWidth={2}
                             activeDot={{ r: 8 }}
                             animationDuration={1500}
                           />
-                          <Line 
-                            type="monotone" 
-                            dataKey="average" 
-                            stroke="#3b82f6" 
+                          <Line
+                            type="monotone"
+                            dataKey="average"
+                            stroke="#3b82f6"
                             strokeWidth={2}
                             activeDot={{ r: 8 }}
                             animationDuration={1500}
@@ -624,11 +692,12 @@ const AnalyticsPanel = () => {
                       )}
                     </ResponsiveContainer>
                   )}
-                  
-                  {chartType === 'pie' && (
+
+                  {chartType === "pie" && (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-center text-muted-foreground">
-                        Time series data is better visualized with a line or bar chart
+                      <p className="text-center text-white">
+                        Time series data is better visualized with a line or bar
+                        chart
                       </p>
                     </div>
                   )}
@@ -636,7 +705,7 @@ const AnalyticsPanel = () => {
               </CardContent>
             </Card>
           </div>
-          
+
           <Card className="hover:shadow-md transition-shadow duration-300">
             <CardHeader>
               <CardTitle>Product Performance</CardTitle>
@@ -654,15 +723,21 @@ const AnalyticsPanel = () => {
                   </thead>
                   <tbody>
                     {productPerformance.map((product) => (
-                      <tr key={product.id} className="border-t hover:bg-orange-50/30 transition-colors">
+                      <tr
+                        key={product.id}
+                        className="border-t hover:bg-orange-50/30 transition-colors"
+                      >
                         <td className="py-3 font-medium">{product.name}</td>
                         <td className="py-3">{product.reviews}</td>
                         <td className="py-3">{product.rating.toFixed(1)}</td>
                         <td className="py-3 flex items-center">
                           {getTrendIcon(product.trending)}
                           <span className="ml-2">
-                            {product.trending === 'up' ? 'Increasing' : 
-                             product.trending === 'down' ? 'Decreasing' : 'Stable'}
+                            {product.trending === "up"
+                              ? "Increasing"
+                              : product.trending === "down"
+                              ? "Decreasing"
+                              : "Stable"}
                           </span>
                         </td>
                       </tr>
@@ -673,13 +748,18 @@ const AnalyticsPanel = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Products Content */}
-        <TabsContent value="products" className="animate-in fade-in-50 duration-300">
+        <TabsContent
+          value="products"
+          className="animate-in fade-in-50 duration-300"
+        >
           <Card>
             <CardHeader>
               <CardTitle>Product Analytics</CardTitle>
-              <CardDescription>Detailed analytics for each product</CardDescription>
+              <CardDescription>
+                Detailed analytics for each product
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -690,17 +770,21 @@ const AnalyticsPanel = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Products</SelectItem>
-                      <SelectItem value="knife-set">Kitchen Knife Set</SelectItem>
+                      <SelectItem value="knife-set">
+                        Kitchen Knife Set
+                      </SelectItem>
                       <SelectItem value="yoga-mat">Yoga Mat</SelectItem>
-                      <SelectItem value="headphones">Bluetooth Headphones</SelectItem>
+                      <SelectItem value="headphones">
+                        Bluetooth Headphones
+                      </SelectItem>
                       <SelectItem value="watch">Smart Watch</SelectItem>
                       <SelectItem value="coffee-maker">Coffee Maker</SelectItem>
                     </SelectContent>
                   </Select>
-                  
+
                   <div className="flex items-center space-x-2">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="border-orange-200 text-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300"
                       onClick={() => {
                         toast({
@@ -711,8 +795,8 @@ const AnalyticsPanel = () => {
                     >
                       Last 30 Days
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="border-orange-200 text-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300"
                       onClick={() => {
                         toast({
@@ -723,8 +807,8 @@ const AnalyticsPanel = () => {
                     >
                       Last 90 Days
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="border-orange-200 text-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300"
                       onClick={() => {
                         toast({
@@ -737,7 +821,7 @@ const AnalyticsPanel = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={productPerformance}>
@@ -746,28 +830,30 @@ const AnalyticsPanel = () => {
                       <YAxis />
                       <Tooltip />
                       <Legend />
-                      <Bar 
-                        dataKey="reviews" 
-                        name="Total Reviews" 
-                        fill="#f97316" 
+                      <Bar
+                        dataKey="reviews"
+                        name="Total Reviews"
+                        fill="#f97316"
                         radius={[4, 4, 0, 0]}
                         animationDuration={1000}
                       />
-                      <Bar 
-                        dataKey="rating" 
-                        name="Average Rating" 
-                        fill="#3b82f6" 
+                      <Bar
+                        dataKey="rating"
+                        name="Average Rating"
+                        fill="#3b82f6"
                         radius={[4, 4, 0, 0]}
                         animationDuration={1000}
                       />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   <Card className="border-orange-100">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">Top Performing Product</CardTitle>
+                      <CardTitle className="text-lg">
+                        Top Performing Product
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center space-x-4">
@@ -775,7 +861,9 @@ const AnalyticsPanel = () => {
                           <BarChart3 className="h-8 w-8 text-orange-500" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-lg">Kitchen Knife Set</h4>
+                          <h4 className="font-semibold text-lg">
+                            Kitchen Knife Set
+                          </h4>
                           <div className="flex items-center">
                             <span className="text-sm mr-2">4.8 rating</span>
                             <div className="flex">
@@ -790,17 +878,20 @@ const AnalyticsPanel = () => {
                               ))}
                             </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            156 reviews · Most positive mentions: "sharp", "durable", "premium"
+                          <p className="text-sm text-white mt-1">
+                            156 reviews · Most positive mentions: "sharp",
+                            "durable", "premium"
                           </p>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
-                  
+
                   <Card className="border-red-100">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">Needs Improvement</CardTitle>
+                      <CardTitle className="text-lg">
+                        Needs Improvement
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center space-x-4">
@@ -808,7 +899,9 @@ const AnalyticsPanel = () => {
                           <ArrowDownIcon className="h-8 w-8 text-red-500" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-lg">Coffee Maker</h4>
+                          <h4 className="font-semibold text-lg">
+                            Coffee Maker
+                          </h4>
                           <div className="flex items-center">
                             <span className="text-sm mr-2">4.2 rating</span>
                             <div className="flex">
@@ -829,8 +922,9 @@ const AnalyticsPanel = () => {
                               </svg>
                             </div>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            134 reviews · Common complaints: "leaks", "difficult to clean", "loud"
+                          <p className="text-sm text-white mt-1">
+                            134 reviews · Common complaints: "leaks", "difficult
+                            to clean", "loud"
                           </p>
                         </div>
                       </div>
@@ -841,20 +935,25 @@ const AnalyticsPanel = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Reviews Content */}
-        <TabsContent value="reviews" className="animate-in fade-in-50 duration-300">
+        <TabsContent
+          value="reviews"
+          className="animate-in fade-in-50 duration-300"
+        >
           <Card>
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                   <CardTitle>Recent Reviews</CardTitle>
-                  <CardDescription>Latest customer feedback across all products</CardDescription>
+                  <CardDescription>
+                    Latest customer feedback across all products
+                  </CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="flex items-center gap-1 border-orange-200 hover:bg-orange-50 transition-all duration-300"
                     onClick={() => {
                       toast({
@@ -866,12 +965,18 @@ const AnalyticsPanel = () => {
                     <ListFilter className="h-4 w-4 text-orange-500" />
                     Filter
                   </Button>
-                  <Select 
+                  <Select
                     defaultValue="recent"
                     onValueChange={(value) => {
                       toast({
                         title: "Sort order changed",
-                        description: `Reviews are now sorted by ${value === 'recent' ? 'most recent' : value === 'highest' ? 'highest rating' : 'lowest rating'}`,
+                        description: `Reviews are now sorted by ${
+                          value === "recent"
+                            ? "most recent"
+                            : value === "highest"
+                            ? "highest rating"
+                            : "lowest rating"
+                        }`,
                       });
                     }}
                   >
@@ -890,17 +995,26 @@ const AnalyticsPanel = () => {
             <CardContent>
               <div className="space-y-6">
                 {recentReviews.map((review) => (
-                  <div key={review.id} className="p-4 border rounded-lg hover:shadow-sm transition-shadow duration-300">
+                  <div
+                    key={review.id}
+                    className="p-4 border rounded-lg hover:shadow-sm transition-shadow duration-300"
+                  >
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="font-medium">{review.customerName}</h3>
-                        <p className="text-sm text-muted-foreground">{review.productName} • {review.date}</p>
+                        <p className="text-sm text-white">
+                          {review.productName} • {review.date}
+                        </p>
                       </div>
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
                           <svg
                             key={i}
-                            className={`w-4 h-4 ${i < review.rating ? 'fill-orange-500' : 'fill-gray-300'}`}
+                            className={`w-4 h-4 ${
+                              i < review.rating
+                                ? "fill-orange-500"
+                                : "fill-gray-300"
+                            }`}
                             viewBox="0 0 24 24"
                           >
                             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -910,14 +1024,15 @@ const AnalyticsPanel = () => {
                     </div>
                     <p className="mt-2">{review.comment}</p>
                     <div className="flex justify-end mt-2">
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         className="text-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300"
                         onClick={() => {
                           toast({
                             title: "Response added",
-                            description: "Your response to this review has been saved",
+                            description:
+                              "Your response to this review has been saved",
                           });
                         }}
                       >
@@ -928,8 +1043,8 @@ const AnalyticsPanel = () => {
                 ))}
               </div>
               <div className="flex justify-center mt-6">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="border-orange-200 text-orange-500 hover:text-orange-600 hover:bg-orange-50 transition-all duration-300"
                   onClick={() => {
                     toast({
@@ -944,15 +1059,20 @@ const AnalyticsPanel = () => {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         {/* Campaigns Content */}
-        <TabsContent value="campaigns" className="animate-in fade-in-50 duration-300">
+        <TabsContent
+          value="campaigns"
+          className="animate-in fade-in-50 duration-300"
+        >
           <Card>
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                   <CardTitle>Campaign Performance</CardTitle>
-                  <CardDescription>Tracking review collection efforts</CardDescription>
+                  <CardDescription>
+                    Tracking review collection efforts
+                  </CardDescription>
                 </div>
                 <Select
                   defaultValue="active"
@@ -984,20 +1104,20 @@ const AnalyticsPanel = () => {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line 
-                      type="monotone" 
-                      dataKey="reviews" 
-                      name="Summer Kitchen Sale" 
-                      stroke="#f97316" 
+                    <Line
+                      type="monotone"
+                      dataKey="reviews"
+                      name="Summer Kitchen Sale"
+                      stroke="#f97316"
                       strokeWidth={2}
                       activeDot={{ r: 8 }}
                       animationDuration={1500}
                     />
-                    <Line 
-                      type="monotone" 
-                      dataKey="average" 
-                      name="Fitness Promo" 
-                      stroke="#3b82f6" 
+                    <Line
+                      type="monotone"
+                      dataKey="average"
+                      name="Fitness Promo"
+                      stroke="#3b82f6"
                       strokeWidth={2}
                       activeDot={{ r: 8 }}
                       animationDuration={1500}
@@ -1005,12 +1125,16 @@ const AnalyticsPanel = () => {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="p-4 border rounded-lg hover:shadow-sm transition-shadow duration-300 bg-green-50">
-                  <h3 className="font-medium text-center">Most Effective Campaign</h3>
+                  <h3 className="font-medium text-center">
+                    Most Effective Campaign
+                  </h3>
                   <div className="text-center my-4">
-                    <span className="text-xl font-semibold block">Summer Kitchen Sale</span>
+                    <span className="text-xl font-semibold block">
+                      Summer Kitchen Sale
+                    </span>
                     <div className="flex justify-center mt-1">
                       <div className="flex">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -1025,7 +1149,9 @@ const AnalyticsPanel = () => {
                       </div>
                     </div>
                   </div>
-                  <p className="text-sm text-center text-muted-foreground">156 reviews · 4.8 average rating</p>
+                  <p className="text-sm text-center text-white">
+                    156 reviews · 4.8 average rating
+                  </p>
                   <div className="text-center mt-4">
                     <Button
                       variant="outline"
@@ -1034,7 +1160,8 @@ const AnalyticsPanel = () => {
                       onClick={() => {
                         toast({
                           title: "Campaign details",
-                          description: "Viewing detailed analytics for Summer Kitchen Sale",
+                          description:
+                            "Viewing detailed analytics for Summer Kitchen Sale",
                         });
                       }}
                     >
@@ -1042,14 +1169,22 @@ const AnalyticsPanel = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg hover:shadow-sm transition-shadow duration-300 bg-blue-50">
-                  <h3 className="font-medium text-center">Highest Conversion Rate</h3>
+                  <h3 className="font-medium text-center">
+                    Highest Conversion Rate
+                  </h3>
                   <div className="text-center my-4">
-                    <span className="text-xl font-semibold block">Electronics Flash Deal</span>
-                    <span className="text-blue-600 font-medium block mt-1">5.8% Conversion</span>
+                    <span className="text-xl font-semibold block">
+                      Electronics Flash Deal
+                    </span>
+                    <span className="text-blue-600 font-medium block mt-1">
+                      5.8% Conversion
+                    </span>
                   </div>
-                  <p className="text-sm text-center text-muted-foreground">212 reviews · 3,658 QR code scans</p>
+                  <p className="text-sm text-center text-white">
+                    212 reviews · 3,658 QR code scans
+                  </p>
                   <div className="text-center mt-4">
                     <Button
                       variant="outline"
@@ -1058,7 +1193,8 @@ const AnalyticsPanel = () => {
                       onClick={() => {
                         toast({
                           title: "Campaign details",
-                          description: "Viewing detailed analytics for Electronics Flash Deal",
+                          description:
+                            "Viewing detailed analytics for Electronics Flash Deal",
                         });
                       }}
                     >
@@ -1066,14 +1202,20 @@ const AnalyticsPanel = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="p-4 border rounded-lg hover:shadow-sm transition-shadow duration-300 bg-orange-50">
                   <h3 className="font-medium text-center">Upcoming Campaign</h3>
                   <div className="text-center my-4">
-                    <span className="text-xl font-semibold block">Holiday Gift Guide</span>
-                    <span className="text-orange-600 font-medium block mt-1">Starts Nov 15, 2023</span>
+                    <span className="text-xl font-semibold block">
+                      Holiday Gift Guide
+                    </span>
+                    <span className="text-orange-600 font-medium block mt-1">
+                      Starts Nov 15, 2023
+                    </span>
                   </div>
-                  <p className="text-sm text-center text-muted-foreground">QR codes generated · Materials ready</p>
+                  <p className="text-sm text-center text-white">
+                    QR codes generated · Materials ready
+                  </p>
                   <div className="text-center mt-4">
                     <Button
                       variant="outline"
@@ -1082,7 +1224,8 @@ const AnalyticsPanel = () => {
                       onClick={() => {
                         toast({
                           title: "Campaign details",
-                          description: "Viewing preparation details for Holiday Gift Guide",
+                          description:
+                            "Viewing preparation details for Holiday Gift Guide",
                         });
                       }}
                     >

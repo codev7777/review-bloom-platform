@@ -294,7 +294,7 @@ const CampaignForm = () => {
   const promotions = promotionsResponse.data;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 text-white">
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -306,11 +306,14 @@ const CampaignForm = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 required
+                className="text-black"
               />
             </div>
 
-            <div>
-              <Label htmlFor="promotionId">Promotion</Label>
+            <div className="text-black">
+              <Label htmlFor="promotionId" className="text-white">
+                Promotion
+              </Label>
               <Select
                 value={formData.promotionId?.toString()}
                 onValueChange={(value) =>
@@ -339,7 +342,7 @@ const CampaignForm = () => {
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className="flex items-center space-x-2 p-2 border rounded-md hover:bg-gray-50"
+                    className="flex items-center space-x-2 p-2 border rounded-md hover:bg-gray-600"
                   >
                     <input
                       type="checkbox"
@@ -359,7 +362,7 @@ const CampaignForm = () => {
                       <div className="flex flex-col">
                         <span className="font-medium">{product.title}</span>
                         {product.asin && (
-                          <span className="text-sm text-gray-500">
+                          <span className="text-sm text-white">
                             ASIN: {product.asin}
                           </span>
                         )}
@@ -461,7 +464,7 @@ const CampaignForm = () => {
           )}
         </div>
 
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end space-x-4 text-black">
           <Button
             type="button"
             variant="outline"

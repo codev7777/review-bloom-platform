@@ -116,7 +116,7 @@ const Sidebar = ({
         </button>
       )}
 
-      <div className="flex flex-col h-full py-6 mt-16">
+      <div className="flex flex-col py-6 mt-16">
         <nav className="flex-1 space-y-1 px-3">
           {menuItems.map((item, index) => (
             <Button
@@ -271,7 +271,7 @@ const Dashboard = () => {
           </div>
         ) : campaigns?.data?.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">
+            <p className="text-white">
               No campaigns found. Create your first campaign to get started!
             </p>
             <Button
@@ -287,7 +287,7 @@ const Dashboard = () => {
             {campaigns?.data?.slice(0, 3).map((campaign) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
-                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2">
+                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white">
                   <figure>
                     <img
                       src={
@@ -401,7 +401,7 @@ const VendorDashboard: React.FC = () => {
   };
   console.log(products);
   return (
-    <div className="flex h-screen  bg-[#212631]">
+    <div className="flex h-screen  bg-[#212631] text-white">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
       <main className="flex-1 overflow-y-auto  bg-[#212631] flex flex-col">

@@ -185,14 +185,11 @@ const ProductsList = () => {
   if (products.length === 0) {
     return (
       <div className="text-center py-10 border rounded-lg">
-        <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
+        <Info className="mx-auto h-10 w-10 text-white opacity-50" />
         <h3 className="mt-4 text-lg font-medium">No products found</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Add a product to get started
-        </p>
+        <p className="mt-1 text-sm text-white">Add a product to get started</p>
         <Button
-          variant="outline"
-          className="mt-4 border-orange-200 text-orange-600 hover:bg-orange-50"
+          className="mt-4 bg-orange-500 hover:bg-orange-600"
           onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -207,7 +204,7 @@ const ProductsList = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Products</h1>
-          <p className="text-muted-foreground">Manage your product catalog</p>
+          <p className="text-white">Manage your product catalog</p>
         </div>
         <Button
           className="bg-orange-500 hover:bg-orange-600"
@@ -220,11 +217,11 @@ const ProductsList = () => {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black" />
           <Input
             type="search"
             placeholder="Search products..."
-            className="pl-9"
+            className="pl-9 text-black"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -232,7 +229,10 @@ const ProductsList = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              className="flex items-center gap-2 text-black"
+            >
               <SlidersHorizontal className="h-4 w-4" />
               {categoryFilter
                 ? `Category: ${
@@ -264,9 +264,9 @@ const ProductsList = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Product</TableHead>
+              <TableHead className=" text-white">Product</TableHead>
               <TableHead
-                className="cursor-pointer"
+                className="cursor-pointer text-white"
                 onClick={() => handleSort("asin")}
               >
                 <div className="flex items-center">
@@ -281,10 +281,10 @@ const ProductsList = () => {
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer"
+                className="cursor-pointer text-white"
                 onClick={() => handleSort("category")}
               >
-                <div className="flex items-center">
+                <div className="flex items-center text-white">
                   Category
                   <ArrowUpDown className="ml-2 h-4 w-4" />
                   {sortField === "category" &&
@@ -296,7 +296,7 @@ const ProductsList = () => {
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer"
+                className="cursor-pointer text-white"
                 onClick={() => handleSort("dateAdded")}
               >
                 <div className="flex items-center">
@@ -310,7 +310,9 @@ const ProductsList = () => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right text-white pr-10">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -325,7 +327,7 @@ const ProductsList = () => {
                     />
                     <div>
                       <div className="font-medium">{product.name}</div>
-                      <div className="text-xs text-muted-foreground hidden sm:block">
+                      <div className="text-xs text-white hidden sm:block">
                         {product.title}
                       </div>
                     </div>
@@ -335,7 +337,7 @@ const ProductsList = () => {
                   {product.asin}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="font-normal">
+                  <Badge variant="outline" className="font-normal text-white">
                     {typeof product.category === "object"
                       ? product.category.name
                       : product.category}
@@ -349,7 +351,7 @@ const ProductsList = () => {
                   })}
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-end gap-1">
                     <Button
                       variant="ghost"
                       size="icon"

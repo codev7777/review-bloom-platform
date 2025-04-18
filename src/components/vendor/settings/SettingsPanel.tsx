@@ -204,6 +204,10 @@ const SettingsPanel = () => {
           name: formData.companyName,
           websiteUrl: formData.websiteUrl,
           detail: formData.detail,
+          ratio: 0, // Default or calculated value
+          reviews: 0, // Default number
+          createdAt: new Date(), // Date object
+          updatedAt: new Date(), // Date object
         };
 
         // Only include logo if it's a new base64 string or if it's being removed
@@ -264,10 +268,10 @@ const SettingsPanel = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div>
         <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-muted-foreground">
+        <p className="text-white">
           Manage your account settings and preferences
         </p>
       </div>
@@ -299,7 +303,7 @@ const SettingsPanel = () => {
         <TabsContent value="profile" className="space-y-6">
           <div>
             <h3 className="text-lg font-medium">Personal Information</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white">
               Update your personal information and how others see you on the
               platform
             </p>
@@ -313,6 +317,7 @@ const SettingsPanel = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                className="text-black"
               />
             </div>
 
@@ -325,6 +330,7 @@ const SettingsPanel = () => {
                 value={formData.email}
                 onChange={handleChange}
                 disabled
+                className="text-black"
               />
             </div>
 
@@ -336,6 +342,7 @@ const SettingsPanel = () => {
                 type="tel"
                 value={formData.phone}
                 onChange={handleChange}
+                className="text-black"
               />
             </div>
           </div>
@@ -344,7 +351,7 @@ const SettingsPanel = () => {
         <TabsContent value="company" className="space-y-6">
           <div>
             <h3 className="text-lg font-medium">Company Information</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white">
               Update your company details and business information
             </p>
           </div>
@@ -358,6 +365,7 @@ const SettingsPanel = () => {
                 value={formData.companyName}
                 onChange={handleChange}
                 required
+                className="text-black"
               />
             </div>
 
@@ -370,6 +378,7 @@ const SettingsPanel = () => {
                 placeholder="https://www.example.com"
                 value={formData.websiteUrl}
                 onChange={handleChange}
+                className="text-black"
               />
             </div>
 
@@ -382,6 +391,7 @@ const SettingsPanel = () => {
                 value={formData.detail}
                 onChange={handleChange}
                 rows={4}
+                className="text-black"
               />
             </div>
 
@@ -396,7 +406,7 @@ const SettingsPanel = () => {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <div className="text-center">
+                    <div className="text-center text-black">
                       <Upload className="mx-auto h-8 w-8 text-gray-400" />
                       <span className="mt-1 block text-xs text-gray-500">
                         Upload logo
@@ -425,6 +435,7 @@ const SettingsPanel = () => {
                     type="button"
                     variant="outline"
                     onClick={() => fileInputRef.current?.click()}
+                    className="text-black"
                   >
                     {previewImage ? "Change Logo" : "Upload Logo"}
                   </Button>
@@ -443,7 +454,7 @@ const SettingsPanel = () => {
         <TabsContent value="notifications" className="space-y-6">
           <div>
             <h3 className="text-lg font-medium">Notification Preferences</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white">
               Configure how you want to be notified
             </p>
           </div>
@@ -452,7 +463,7 @@ const SettingsPanel = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Email Notifications</Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Receive notifications via email
                 </p>
               </div>
@@ -462,7 +473,7 @@ const SettingsPanel = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Push Notifications</Label>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white">
                   Receive push notifications in your browser
                 </p>
               </div>
@@ -474,7 +485,7 @@ const SettingsPanel = () => {
         <TabsContent value="billing" className="space-y-6">
           <div>
             <h3 className="text-lg font-medium">Billing Information</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white">
               Manage your billing information and subscription
             </p>
           </div>
@@ -483,9 +494,11 @@ const SettingsPanel = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Current Plan</Label>
-                <p className="text-sm text-muted-foreground">Free Plan</p>
+                <p className="text-sm text-white">Free Plan</p>
               </div>
-              <Button variant="outline">Upgrade Plan</Button>
+              <Button variant="outline" className="text-black">
+                Upgrade Plan
+              </Button>
             </div>
 
             <div className="space-y-2">

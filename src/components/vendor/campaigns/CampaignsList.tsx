@@ -97,9 +97,9 @@ const CampaignsList: React.FC = () => {
         title: searchQuery || undefined,
         isActive:
           statusFilter === "active"
-            ? "YES"
+            ? true
             : statusFilter === "paused"
-            ? "NO"
+            ? false
             : undefined,
         sortBy: sortField,
         sortOrder,
@@ -177,13 +177,11 @@ const CampaignsList: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Campaigns</h1>
-          <p className="text-muted-foreground">
-            Manage your review collection campaigns
-          </p>
+          <p className="text-white">Manage your review collection campaigns</p>
         </div>
         <Button
           className="bg-orange-500 hover:bg-orange-600 transition-all duration-200"
@@ -196,7 +194,7 @@ const CampaignsList: React.FC = () => {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
           <Input
             placeholder="Search campaigns..."
             className="pl-10"
@@ -208,7 +206,7 @@ const CampaignsList: React.FC = () => {
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 text-black">
                 <Filter className="h-4 w-4" />
                 {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
               </Button>
@@ -230,7 +228,7 @@ const CampaignsList: React.FC = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 text-black">
                 <ArrowUpDown className="h-4 w-4" />
                 Sort
               </Button>
@@ -290,16 +288,24 @@ const CampaignsList: React.FC = () => {
       <div className="rounded-md border overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className="min-w-[200px]">Campaign</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="hidden md:table-cell">Products</TableHead>
-              <TableHead className="hidden lg:table-cell">Promotion</TableHead>
-              <TableHead className="hidden lg:table-cell">Reviews</TableHead>
-              <TableHead className="hidden sm:table-cell">
+            <TableRow className="text-white">
+              <TableHead className="min-w-[200px] text-white">
+                Campaign
+              </TableHead>
+              <TableHead className="text-white">Status</TableHead>
+              <TableHead className="hidden md:table-cell text-white">
+                Products
+              </TableHead>
+              <TableHead className="hidden lg:table-cell text-white">
+                Promotion
+              </TableHead>
+              <TableHead className="hidden lg:table-cell text-white">
+                Reviews
+              </TableHead>
+              <TableHead className="hidden sm:table-cell text-white">
                 Last Updated
               </TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-right text-white">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -318,11 +324,11 @@ const CampaignsList: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
-                    <QrCode className="h-10 w-10 text-muted-foreground opacity-40" />
+                    <QrCode className="h-10 w-10 text-black opacity-80" />
                     <h3 className="mt-4 text-lg font-medium">
                       No campaigns found
                     </h3>
-                    <p className="text-muted-foreground max-w-md mx-auto">
+                    <p className="text-white max-w-md mx-auto">
                       {searchQuery || statusFilter
                         ? "Try adjusting your search or filter criteria"
                         : "Get started by creating your first campaign"}
@@ -349,7 +355,7 @@ const CampaignsList: React.FC = () => {
                       <div className="font-medium">
                         {campaign.name || campaign.title}
                       </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-white">
                         Code: {campaign.code || "N/A"}
                       </div>
                     </div>
@@ -374,9 +380,7 @@ const CampaignsList: React.FC = () => {
                       {campaign.products && campaign.products.length > 0 ? (
                         campaign.products.length
                       ) : (
-                        <span className="text-muted-foreground text-sm">
-                          No products
-                        </span>
+                        <span className="text-white text-sm">No products</span>
                       )}
                     </div>
                   </TableCell>
@@ -386,7 +390,7 @@ const CampaignsList: React.FC = () => {
                   <TableCell className="hidden lg:table-cell">
                     {campaign.reviews || 0}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-muted-foreground text-sm">
+                  <TableCell className="hidden sm:table-cell text-white text-sm">
                     {formatDate(campaign.lastUpdated)}
                   </TableCell>
                   <TableCell className="text-right">
@@ -400,7 +404,7 @@ const CampaignsList: React.FC = () => {
                               className="h-8 w-8"
                               onClick={() => showQrCode(campaign)}
                             >
-                              <QrCode className="h-4 w-4" />
+                              <QrCode className="h-4 w-4 text-black" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -418,7 +422,7 @@ const CampaignsList: React.FC = () => {
                               className="h-8 w-8"
                               onClick={() => handleCopyUrl(campaign.url)}
                             >
-                              <Copy className="h-4 w-4" />
+                              <Copy className="h-4 w-4 text-black" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -438,7 +442,7 @@ const CampaignsList: React.FC = () => {
                                 window.open(campaign.url, "_blank")
                               }
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <ExternalLink className="h-4 w-4 text-black" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -460,7 +464,7 @@ const CampaignsList: React.FC = () => {
                                 )
                               }
                             >
-                              <Edit className="h-4 w-4" />
+                              <Edit className="h-4 w-4 text-black" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -494,7 +498,7 @@ const CampaignsList: React.FC = () => {
                 showDialog={false}
               />
 
-              <p className="text-sm text-muted-foreground mt-4 text-center">
+              <p className="text-sm text-black mt-4 text-center">
                 Scan this code to access the review funnel for{" "}
                 <strong>{selectedQrCode.name}</strong>
               </p>

@@ -168,13 +168,34 @@ const ReviewsPage = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<string>("feedbackDate");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(5);
   const companyId = user?.companyId
     ? parseInt(user.companyId.toString(), 10)
     : undefined;
 
   const { data: reviewsResponse, isLoading } = useQuery({
-    queryKey: ["reviews", companyId],
-    queryFn: () => getReviews({ companyId }),
+    queryKey: [
+      "reviews",
+      companyId,
+      statusFilter,
+      sortField,
+      sortOrder,
+      page,
+      limit,
+    ],
+    queryFn: () =>
+      getReviews({
+        companyId,
+        status: statusFilter || undefined,
+        sortBy: sortField,
+        sortOrder,
+        page,
+        limit,
+      }),
     enabled: !!companyId,
   });
 
@@ -215,18 +236,71 @@ const ReviewsPage = () => {
     updateStatusMutation.mutate({ reviewId, status });
   };
 
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortOrder("asc");
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold">Reviews</h1>
         <div className="flex gap-4">
           <Input
             placeholder="Search reviews..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-64"
+            className="w-64 text-black border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
           />
         </div>
+      </div>
+
+      <div className="flex gap-4 mb-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Filter Status</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setStatusFilter(null)}>
+              All Statuses
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("PROCESSED")}>
+              Processed
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("PENDING")}>
+              Pending
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setStatusFilter("REJECTED")}>
+              Rejected
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              Sort by: {sortField} ({sortOrder})
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleSort("feedbackDate")}>
+              Feedback Date
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleSort("rating")}>
+              Rating
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {isLoading ? (
@@ -235,10 +309,10 @@ const ReviewsPage = () => {
         </div>
       ) : filteredReviews.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">No reviews found.</p>
+          <p className="text-white">No reviews found.</p>
         </div>
       ) : (
-        <div className="border rounded-lg">
+        <div className="border rounded-lg text-white">
           <Table>
             <TableHeader>
               <TableRow>
@@ -249,7 +323,7 @@ const ReviewsPage = () => {
                 <TableHead>Campaign</TableHead>
                 <TableHead>Rating</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-right w-30">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -284,7 +358,7 @@ const ReviewsPage = () => {
                   <TableCell>
                     <RatingStars rating={review.ratio} />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="w-30">
                     <Badge
                       variant={
                         review.status === "PENDING"
@@ -297,7 +371,10 @@ const ReviewsPage = () => {
                       {review.status}
                     </Badge>
                   </TableCell>
-                  <TableCell onClick={(e) => e.stopPropagation()}>
+                  <TableCell
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-30"
+                  >
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">

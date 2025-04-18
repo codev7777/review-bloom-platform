@@ -310,12 +310,12 @@ const PromotionForm = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div>
         <h1 className="text-2xl font-semibold">
           {isEditMode ? "Edit Promotion" : "Create Promotion"}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-white">
           {isEditMode
             ? "Update your promotion details"
             : "Create a new promotion for your review campaigns"}
@@ -339,11 +339,12 @@ const PromotionForm = () => {
                   onChange={handleChange}
                   placeholder="e.g., Summer Gift Card"
                   required
+                  className="text-black"
                 />
               </div>
 
-              <div>
-                <Label>Promotion Type</Label>
+              <div className="text-black">
+                <Label className="text-white">Promotion Type</Label>
                 <Select
                   value={formData.promotionType}
                   onValueChange={(value) =>
@@ -351,7 +352,10 @@ const PromotionForm = () => {
                   }
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select promotion type" />
+                    <SelectValue
+                      placeholder="Select promotion type"
+                      className="text-black bg-gray-400"
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {PROMOTION_TYPES.map((type) => (
@@ -376,6 +380,7 @@ const PromotionForm = () => {
                   placeholder="Describe your promotion..."
                   rows={4}
                   required
+                  className="text-black"
                 />
               </div>
 
@@ -456,13 +461,14 @@ const PromotionForm = () => {
                         value={newCouponCode}
                         onChange={(e) => setNewCouponCode(e.target.value)}
                         placeholder="Enter coupon code"
+                        className="text-black"
                       />
                       <Button
                         type="button"
                         variant="outline"
                         onClick={handleAddCouponCode}
                       >
-                        <Plus className="h-4 w-4" />
+                        <Plus className="h-4 w-4 text-black" />
                       </Button>
                     </div>
                     <div className="space-y-2 mt-2">
@@ -500,6 +506,7 @@ const PromotionForm = () => {
                         )
                       }
                       placeholder="Enter file URL"
+                      className="text-black"
                     />
                   </div>
 
@@ -550,7 +557,7 @@ const PromotionForm = () => {
                   <input
                     type="file"
                     ref={fileInputRef}
-                    className="hidden"
+                    className="hidden text-black"
                     accept="image/*"
                     onChange={handleFileInputChange}
                   />
@@ -577,7 +584,7 @@ const PromotionForm = () => {
                           }));
                         }}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-4 w-4 text-black" />
                       </Button>
                     </div>
                   ) : (
@@ -603,7 +610,7 @@ const PromotionForm = () => {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 text-black">
             <Button
               type="button"
               variant="outline"

@@ -322,12 +322,12 @@ const ProductForm = () => {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in-500">
+    <div className="space-y-6 animate-in fade-in-500 text-white">
       <div>
         <h1 className="text-2xl font-semibold">
           {isEditMode ? "Edit Product" : "Add New Product"}
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-white">
           {isEditMode
             ? "Update your product information"
             : "Add a new product to your catalog"}
@@ -348,6 +348,7 @@ const ProductForm = () => {
                 }
                 placeholder="Enter product title"
                 required
+                className="text-black"
               />
             </div>
 
@@ -366,6 +367,7 @@ const ProductForm = () => {
                 placeholder="Enter product description"
                 rows={4}
                 required
+                className="text-black"
               />
             </div>
 
@@ -379,11 +381,12 @@ const ProductForm = () => {
                   setFormData((prev) => ({ ...prev, asin: e.target.value }))
                 }
                 placeholder="Enter product ASIN"
+                className="text-black"
               />
             </div>
 
-            <div>
-              <Label>Category</Label>
+            <div className="text-black">
+              <Label className="text-white">Category</Label>
               <Select
                 value={formData.categoryId}
                 onValueChange={(value) =>
@@ -392,9 +395,12 @@ const ProductForm = () => {
                 disabled={isLoadingCategories}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
+                  <SelectValue
+                    placeholder="Select a category"
+                    className="text-black"
+                  />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-black">
                   {categories.map((category) => (
                     <SelectItem
                       key={category.id}
@@ -434,10 +440,10 @@ const ProductForm = () => {
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+                      className="absolute top-2 right-2 bg-white/80 hover:bg-gray-200"
                       onClick={handleRemoveImage}
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-4 w-4 text-black" />
                     </Button>
                   </div>
                 ) : (
@@ -445,11 +451,11 @@ const ProductForm = () => {
                     className="flex flex-col items-center justify-center cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500">
+                    <Upload className="h-8 w-8 text-white mb-2" />
+                    <p className="text-sm text-white">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-white mt-1">
                       PNG, JPG up to 5MB
                     </p>
                   </div>
@@ -470,7 +476,7 @@ const ProductForm = () => {
             type="button"
             variant="outline"
             onClick={() => navigate("/vendor-dashboard/products")}
-            className="transition-all duration-200 hover:bg-gray-100"
+            className="transition-all duration-200 hover:bg-gray-100 text-black"
           >
             Cancel
           </Button>

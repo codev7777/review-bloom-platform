@@ -137,10 +137,10 @@ const PromotionsList = () => {
 
   if (promotions.length === 0) {
     return (
-      <div className="text-center py-10 border rounded-lg">
-        <Info className="mx-auto h-10 w-10 text-muted-foreground opacity-50" />
+      <div className="text-center py-10 border rounded-lg text-white">
+        <Info className="mx-auto h-10 w-10 text-white opacity-50" />
         <h3 className="mt-4 text-lg font-medium">No promotions found</h3>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-white">
           Add a promotion to get started
         </p>
         <Button
@@ -156,11 +156,11 @@ const PromotionsList = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Promotions</h1>
-          <p className="text-muted-foreground">
+          <p className="text-white">
             Manage your promotional offers for review campaigns
           </p>
         </div>
@@ -175,10 +175,10 @@ const PromotionsList = () => {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black" />
           <Input
             placeholder="Search promotions..."
-            className="pl-10"
+            className="pl-10 text-black"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -187,7 +187,7 @@ const PromotionsList = () => {
         <div className="flex gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 text-black">
                 <SlidersHorizontal className="h-4 w-4" />
                 {typeFilter
                   ? `Type: ${typeFilter.split(" ")[0]}`
@@ -213,7 +213,7 @@ const PromotionsList = () => {
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 text-black">
                 <ArrowUpDown className="h-4 w-4" />
                 Sort
                 {sortField === "title"
@@ -224,8 +224,10 @@ const PromotionsList = () => {
                 {sortOrder === "asc" ? " (A-Z)" : " (Z-A)"}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+            <DropdownMenuContent align="end" className="text-black">
+              <DropdownMenuLabel className="text-black">
+                Sort by
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleSort("title")}>
                 <div className="flex items-center justify-between w-full">
@@ -287,7 +289,7 @@ const PromotionsList = () => {
                   </h3>
                   <div className="flex items-center mt-1 gap-1">
                     <PromotionTypeIcon type={promotion.promotionType} />
-                    <span className="text-xs text-muted-foreground line-clamp-1">
+                    <span className="text-xs text-black line-clamp-1">
                       {promotion.promotionType}
                     </span>
                   </div>
@@ -300,7 +302,7 @@ const PromotionsList = () => {
                 </Badge>
               </div>
 
-              <p className="text-sm text-muted-foreground mt-3 line-clamp-2">
+              <p className="text-sm text-black mt-3 line-clamp-2">
                 {promotion.description}
               </p>
 
