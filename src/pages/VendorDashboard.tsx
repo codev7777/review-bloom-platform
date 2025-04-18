@@ -1,4 +1,3 @@
-
 import React from "react";
 import VendorDashboardComponent from "@/components/vendor/VendorDashboard";
 import { useEffect } from "react";
@@ -16,7 +15,7 @@ const VendorDashboard = () => {
           toast({
             variant: "destructive",
             title: "Backend connection failed",
-            description: "Using mock data. Please ensure localhost:3000 is running.",
+            // description: "Using mock data. Please ensure localhost:3000 is running.",
           });
         } else {
           toast({
@@ -29,14 +28,15 @@ const VendorDashboard = () => {
         toast({
           variant: "destructive",
           title: "Backend connection failed",
-          description: "Using mock data. Please ensure localhost:3000 is running.",
+          // description:
+          // "Using mock data. Please ensure localhost:3000 is running.",
         });
       }
     };
-    
+
     verifyApiConnection();
   }, []);
-  
+
   return (
     <ThemeProvider defaultTheme="light">
       <VendorDashboardComponent />

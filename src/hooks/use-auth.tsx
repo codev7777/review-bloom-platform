@@ -126,13 +126,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const userData = await userApi.register({ name, email, password });
 
-      // After successful registration, automatically log in
-      await login(email, password);
-
       toast({
-        title: "Account created",
-        description: "Welcome to ReviewBrothers!",
+        title: "Registration successful",
+        description:
+          "Please check your email to verify your account before logging in.",
       });
+
+      navigate("/auth/login");
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
       toast({
@@ -140,6 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         title: "Signup failed",
         description: error?.response?.data?.message || "Something went wrong",
       });
+    } finally {
       setIsLoading(false);
     }
   };

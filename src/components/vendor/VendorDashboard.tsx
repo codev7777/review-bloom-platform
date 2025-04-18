@@ -287,7 +287,7 @@ const Dashboard = () => {
             {campaigns?.data?.slice(0, 3).map((campaign) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
-                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white">
+                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
                   <figure>
                     <img
                       src={
@@ -297,19 +297,28 @@ const Dashboard = () => {
                               displayCampaign.name || displayCampaign.title
                             )}`
                       }
-                      className="w-full h-48 object-contain"
+                      className="w-full h-48 object-contain bg-gray-700 rounded-t-3xl"
                       alt="Shoes"
                     />
                   </figure>
                   <div className="card-body m-4">
-                    <h2 className="card-title">
+                    <h2 className="card-title text-2xl">
                       {displayCampaign.title}
-                      <div className="badge badge-secondary">NEW</div>
+                      {/* <div className="badge badge-secondary">NEW</div> */}
                     </h2>
                     <p>{displayCampaign.description}</p>
                     <div className="card-actions justify-end">
-                      <div className="badge badge-outline">Fashion</div>
-                      <div className="badge badge-outline">Products</div>
+                      <div className="badge badge-outline">
+                        {displayCampaign.claims || 0} reviews
+                      </div>
+                      <div className="badge badge-outline">
+                        Added:{" "}
+                        {displayCampaign.createdAt
+                          ? new Date(
+                              displayCampaign.createdAt
+                            ).toLocaleDateString("en-US")
+                          : new Date().toLocaleDateString("en-US")}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -388,7 +397,7 @@ const VendorDashboard: React.FC = () => {
         toast({
           variant: "destructive",
           title: "Backend connection failed",
-          description: `Using mock data. Please ensure backend at ${API_URL} is running.`,
+          // description: `Using mock data. Please ensure backend at ${API_URL} is running.`,
         });
       }
     };

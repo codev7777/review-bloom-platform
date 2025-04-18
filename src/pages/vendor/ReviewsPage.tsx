@@ -161,6 +161,13 @@ const RatingStars = ({ rating }: { rating: number }) => {
     </div>
   );
 };
+const statusColor = (status: string) => {
+  return status === "PENDING"
+    ? "bg-gray-300 text-gray-900"
+    : status === "PROCESSED"
+    ? "bg-blue-300 text-blue-900"
+    : "bg-red-300 text-red-900";
+};
 
 const ReviewsPage = () => {
   const { user } = useAuth();
@@ -262,7 +269,7 @@ const ReviewsPage = () => {
       <div className="flex gap-4 mb-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
+            <Button variant="outline" className="gap-2 text-black">
               {statusFilter ? `Status: ${statusFilter}` : "Filter by Status"}
             </Button>
           </DropdownMenuTrigger>
@@ -286,8 +293,11 @@ const ReviewsPage = () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              Sort by: {sortField} ({sortOrder})
+            <Button variant="outline" className="gap-2 text-black">
+              Sort by: {sortField}
+              <span className="font-bold">
+                {sortOrder == "asc" ? "( ↑ )" : "( ↓ )"}
+              </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -318,19 +328,20 @@ const ReviewsPage = () => {
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Date</TableHead>
                 <TableHead>Product</TableHead>
                 <TableHead>Promotion</TableHead>
                 <TableHead>Campaign</TableHead>
                 <TableHead>Rating</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right w-30">Actions</TableHead>
+                <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredReviews.map((review: Review) => (
                 <TableRow
                   key={review.id}
-                  className="cursor-pointer hover:bg-gray-50"
+                  className="cursor-pointer hover:bg-gray-400"
                   onClick={() => setSelectedReview(review)}
                 >
                   <TableCell className="font-medium">
@@ -339,10 +350,13 @@ const ReviewsPage = () => {
                   <TableCell>
                     {review.Customer?.email || review.email || "N/A"}
                   </TableCell>
+                  <TableCell>
+                    {new Date(review.feedbackDate).toLocaleDateString()}
+                  </TableCell>
                   <TableCell>{review.Product?.title || "N/A"}</TableCell>
                   <TableCell>{review.Promotion?.title || "N/A"}</TableCell>
                   <TableCell>{review.Campaign?.title || "N/A"}</TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Badge
                       variant={
                         review.Campaign?.isActive === "YES"
@@ -354,12 +368,12 @@ const ReviewsPage = () => {
                         ? "Active"
                         : "Paused"}
                     </Badge>
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <RatingStars rating={review.ratio} />
                   </TableCell>
                   <TableCell className="w-30">
-                    <Badge
+                    {/* <Badge
                       variant={
                         review.status === "PENDING"
                           ? "default"
@@ -369,7 +383,14 @@ const ReviewsPage = () => {
                       }
                     >
                       {review.status}
-                    </Badge>
+                    </Badge> */}
+                    <span
+                      className={`px-2 py-1 rounded-3xl text-xs ${statusColor(
+                        review.status
+                      )}`}
+                    >
+                      {review.status}
+                    </span>
                   </TableCell>
                   <TableCell
                     onClick={(e) => e.stopPropagation()}
