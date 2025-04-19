@@ -68,7 +68,7 @@ const VerifyEmailPage = () => {
         <p className="text-gray-700">{message}</p>
         {status === "success" && (
           <p className="text-sm text-gray-500 mt-2">
-            Redirecting to login page in 3 seconds...
+            Redirecting to login page soon...
           </p>
         )}
       </div>

@@ -34,6 +34,7 @@ import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import VerificationEmailSent from "./pages/VerificationEmailSent";
 import { PrivateRoute } from "./components/auth/PrivateRoute";
 import ScrollToTop from "./lib/ScrollToTop";
+import "@lottiefiles/lottie-player";
 
 const queryClient = new QueryClient();
 

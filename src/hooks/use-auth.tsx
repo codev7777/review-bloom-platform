@@ -69,24 +69,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await userApi.login({ email, password });
       const { tokens, user } = response;
 
-      if (DEBUG) console.log("Login successful:", { tokens, user });
-
       localStorage.setItem("refreshToken", tokens.refresh.token);
       localStorage.setItem("accessToken", tokens.access.token);
       localStorage.setItem("user", JSON.stringify(user));
       setUser(user);
-
-      if (DEBUG)
-        console.log("Tokens stored in localStorage:", {
-          accessToken: localStorage.getItem("accessToken"),
-          refreshToken: localStorage.getItem("refreshToken"),
-          user: localStorage.getItem("user"),
-        });
-
-      toast({
-        title: "Login successful",
-        description: "Welcome back to ReviewBrothers!",
-      });
 
       if (user.role === "USER") {
         navigate("/vendor-dashboard");
@@ -98,27 +84,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (DEBUG) console.error("Login error:", error);
 
       const errorMessage = error?.response?.data?.message;
+
       if (errorMessage?.includes("verify your email")) {
-        toast({
-          variant: "destructive",
-          title: "Email not verified",
-          description: "Please check your email for a verification link.",
-          action: (
-            <Button
-              variant="outline"
-              onClick={() => navigate("/auth/verify-email")}
-            >
-              Resend verification email
-            </Button>
-          ),
-        });
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Login failed",
-          description: errorMessage || "Invalid email or password",
-        });
+        navigate("/auth/verify-email");
       }
+
+      throw new Error(errorMessage || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }

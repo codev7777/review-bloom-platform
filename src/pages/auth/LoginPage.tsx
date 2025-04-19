@@ -14,12 +14,14 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { login, isLoading } = useAuth();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
   // const recaptchaRef = useRef<ReCAPTCHA | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError(null);
 
     // if (!recaptchaToken) {
     //   alert("Please verify you're not a robot.");
@@ -27,7 +29,11 @@ const LoginPage = () => {
     // }
 
     // Optionally verify token on server before login
-    await login(email, password);
+    try {
+      await login(email, password);
+    } catch (error) {
+      setLoginError("Login failed! Email or Password wrong.");
+    }
     // await login(email, password, recaptchaToken);
     // recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
   };
@@ -41,10 +47,10 @@ const LoginPage = () => {
               ReviewBrothers
             </h2>
           </Link>
-          <h1 className="mt-6 text-2xl font-bold">Welcome back</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <h1 className="mt-4 text-2xl font-bold">Welcome back!</h1>
+          {/* <p className="mt-2 text-sm text-gray-500">
             Sign in to access your dashboard
-          </p>
+          </p> */}
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -55,9 +61,12 @@ const LoginPage = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="vendor@example.com"
                 required
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (loginError) setLoginError(null); // Clear error
+                }}
               />
             </div>
 
@@ -70,7 +79,10 @@ const LoginPage = () => {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (loginError) setLoginError(null); // Clear error
+                  }}
                   placeholder="Password"
                   required
                   className="w-full pr-10 p-2 border border-gray-300 rounded"
@@ -83,8 +95,13 @@ const LoginPage = () => {
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
+              {loginError && (
+                <p className="text-sm text-red-500 text-left mt-2">
+                  {loginError}
+                </p>
+              )}
             </div>
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-start">
               <Button
                 type="button"
                 variant="link"

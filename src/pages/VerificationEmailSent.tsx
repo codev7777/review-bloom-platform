@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const VerificationEmailSent: React.FC = () => {
   const navigate = useNavigate();
@@ -32,12 +33,14 @@ const VerificationEmailSent: React.FC = () => {
     <div className="verification-email-sent flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md text-center">
         <div className="flex items-center justify-center">
-          <img
-            src="https://media.giphy.com/media/1Pq5Qi6CuWTprafYLT/giphy.gif?cid=ecf05e4774xyeza36qg6v8y13o4pluv23a6kinpyo2t4e5fn&ep=v1_gifs_search&rid=giphy.gif&ct=g"
-            alt="Funny GIF"
-            width="100"
-            loading="lazy"
-          />
+          <div className="h-40 w-40">
+            {" "}
+            <DotLottieReact
+              src="https://lottie.host/e586a267-47b2-4890-aa95-e875ae608e85/VYGwuFmimR.lottie"
+              loop
+              autoplay
+            />
+          </div>
         </div>
         <h1 className="text-2xl font-bold text-orange-600 mb-4">
           Verification Email Sent
@@ -46,16 +49,17 @@ const VerificationEmailSent: React.FC = () => {
           A verification email has been sent to <strong>{email}</strong>.
         </p>
         <p className="text-gray-600 mb-6">
-          If you did not receive the email, please check your spam folder or
-          click the button below to resend the verification email.
+          If you did not receive the email, please check your spam folder.
         </p>
-        <button
+        {/*     <button
           onClick={handleResendEmail}
           className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition-colors duration-300"
         >
           Resend Verification Email
         </button>
         {message && <p className="mt-4 text-sm text-gray-500">{message}</p>}
+
+        */}
       </div>
     </div>
   );

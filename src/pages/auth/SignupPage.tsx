@@ -44,7 +44,7 @@ const SignupPage = () => {
               ReviewBrothers
             </h2>
           </Link>
-          <h1 className="mt-6 text-2xl font-bold">Create an account</h1>
+          <h1 className="mt-2 text-2xl font-bold">Create an account</h1>
           <p className="mt-2 text-sm text-gray-500">
             Start collecting and managing your Amazon reviews
           </p>
