@@ -194,10 +194,10 @@ const CampaignsList: React.FC = () => {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black" />
           <Input
             placeholder="Search campaigns..."
-            className="pl-10"
+            className="pl-10 text-black"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />

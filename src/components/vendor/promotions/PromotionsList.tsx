@@ -321,7 +321,7 @@ const PromotionsList = () => {
           //     </Button>
           //   </CardContent>
           // </Card>
-          <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
+          <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
             <figure>
               <img
                 src={
@@ -331,7 +331,7 @@ const PromotionsList = () => {
                         promotion.title
                       )}`
                 }
-                className="w-full h-48 object-contain bg-gray-700 rounded-t-3xl"
+                className="w-full object-contain bg-gray-700 rounded-t-3xl aspect-[16/9]"
                 alt="Shoes"
               />
             </figure>

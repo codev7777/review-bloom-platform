@@ -287,7 +287,7 @@ const Dashboard = () => {
             {campaigns?.data?.slice(0, 3).map((campaign) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
-                <div className="card bg-base-100 w-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
+                <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
                   <figure>
                     <img
                       src={
