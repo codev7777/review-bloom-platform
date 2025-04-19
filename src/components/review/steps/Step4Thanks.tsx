@@ -2,6 +2,7 @@ import { Gift, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewFormData } from "../ReviewFunnel";
 import { API_URL } from "@/config/env";
+import { useParams } from "react-router-dom";
 
 const BACKEND_URL = API_URL.replace("/v1", "");
 interface Step4ThanksProps {
@@ -13,18 +14,35 @@ interface Step4ThanksProps {
     description: string;
   };
   onGoHome: () => void;
+  isDemo: boolean;
 }
 
-const Step4Thanks = ({ formData, onGoHome, promotion }: Step4ThanksProps) => {
+const Step4Thanks = ({
+  formData,
+  onGoHome,
+  promotion,
+  isDemo,
+}: Step4ThanksProps) => {
+  const { campaignId } = useParams<{
+    campaignId: string;
+  }>();
   return (
     <div className="text-center space-y-6 py-8 animate-fade-in">
       <div className="flex justify-center">
         <div className="flex justify-center items-center">
-          <img
-            src={`${BACKEND_URL}/uploads/${promotion?.image}`}
-            alt={promotion?.title}
-            className=" h-[200px] object-contain rounded border border-gray-200"
-          />
+          {campaignId === "demo-campaign" ? (
+            <img
+              src={promotion?.image}
+              alt={promotion?.title}
+              className=" h-[200px] object-contain rounded border border-gray-200"
+            />
+          ) : (
+            <img
+              src={`${BACKEND_URL}/uploads/${promotion?.image}`}
+              alt={promotion?.title}
+              className=" h-[200px] object-contain rounded border border-gray-200"
+            />
+          )}
         </div>
       </div>
 
@@ -36,11 +54,11 @@ const Step4Thanks = ({ formData, onGoHome, promotion }: Step4ThanksProps) => {
 
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 my-6 mx-auto max-w-md">
         <h3 className="font-medium text-lg mb-2 text-amber-900">
-          Your Amazon Gift Card
+          Your {promotion.title}
         </h3>
         <p className="text-amber-800 mb-4">
           Thank you for your valuable feedback! As a token of our appreciation,
-          we're sending you a free gift: <br />a $5 Amazon Gift Card!
+          we're sending you a free gift: <br />a {promotion?.title}
           <span className="text-secondary mt-6 block">
             We truly appreciate your support and hope you continue to enjoy our
             products!

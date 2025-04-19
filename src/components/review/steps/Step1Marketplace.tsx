@@ -14,6 +14,7 @@ import StarRating from "../StarRating";
 import { ReviewFormData } from "../ReviewFunnel";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
+import { useParams } from "react-router-dom";
 
 interface Step1MarketplaceProps {
   productName: string;
@@ -33,7 +34,8 @@ interface Step1MarketplaceProps {
     image: string;
     description: string;
   };
-  marketplaces?: string[];
+  marketPlaces?: string[];
+  isDemo: boolean;
 }
 
 const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
@@ -94,19 +96,22 @@ const Step1Marketplace = ({
   onNextStep,
   products,
   promotion,
-  marketplaces = [],
+  marketPlaces = [],
+  isDemo,
 }: Step1MarketplaceProps) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof ReviewFormData, string>>
   >({});
-
+  const { campaignId } = useParams<{
+    campaignId: string;
+  }>();
   const handleRatingChange = (rating: number) => {
     updateFormData({ rating });
     if (errors.rating) {
       setErrors((prev) => ({ ...prev, rating: "" }));
     }
   };
-
+  console.log(marketPlaces);
   const handleCountryChange = (value: string) => {
     updateFormData({ country: value });
     if (errors.country) {
@@ -177,11 +182,19 @@ const Step1Marketplace = ({
     <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
       {/* Promotion Image */}
       <div className="flex justify-center items-center my-6">
-        <img
-          src={`${BACKEND_URL}/uploads/${promotion?.image}`}
-          alt={promotion?.title}
-          className=" h-[200px] object-contain rounded border border-gray-200"
-        />
+        {campaignId == "demo-campaign" ? (
+          <img
+            src={promotion?.image}
+            alt={promotion?.title}
+            className=" h-[200px] object-contain rounded border border-gray-200"
+          />
+        ) : (
+          <img
+            src={`${BACKEND_URL}/uploads/${promotion?.image}`}
+            alt={promotion?.title}
+            className=" h-[200px] object-contain rounded border border-gray-200"
+          />
+        )}
       </div>
       {/* <h2 className="text-2xl font-semibold text-center">Select Marketplace</h2>
       <p className="text-center text-muted-foreground">
@@ -225,7 +238,7 @@ const Step1Marketplace = ({
             <SelectValue placeholder="Select your marketplace" />
           </SelectTrigger>
           <SelectContent>
-            {marketplaces.map((marketplace) => (
+            {marketPlaces.map((marketplace) => (
               <SelectItem key={marketplace} value={marketplace.toLowerCase()}>
                 {MARKETPLACE_COUNTRY_NAMES[marketplace] || marketplace}
               </SelectItem>

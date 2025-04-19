@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ReviewFormData } from "../ReviewFunnel";
 import GetDomain from "@/lib/GetDomain";
 import { API_URL } from "@/config/env";
+import { useParams } from "react-router-dom";
 
 interface Step3FeedbackProps {
   formData: ReviewFormData;
@@ -20,6 +21,7 @@ interface Step3FeedbackProps {
     image: string;
     description: string;
   };
+  isDemo: Boolean;
   products: Array<{
     id: number;
     title: string;
@@ -36,6 +38,7 @@ const Step3Feedback = ({
   onNextStep,
   onPreviousStep,
   onGoToAmazon,
+  isDemo,
   products,
   promotion,
 }: Step3FeedbackProps) => {
@@ -50,7 +53,11 @@ const Step3Feedback = ({
 
   // Get the selected product's image
   const selectedProduct = products.find((p) => p.id === formData.productId);
-  const productImage = selectedProduct?.image
+  const productImage = isDemo
+    ? selectedProduct.title == "Desktop"
+      ? "/images/funnel/demo-campaign-product-1.webp"
+      : "/images/funnel/demo-campaign-product-2.webp"
+    : selectedProduct?.image
     ? `${BACKEND_URL}/uploads/${selectedProduct.image}`
     : "/images/products/default-product.jpg";
 
@@ -71,7 +78,9 @@ const Step3Feedback = ({
       setErrors((prev) => ({ ...prev, feedback: "" }));
     }
   };
-
+  const { campaignId } = useParams<{
+    campaignId: string;
+  }>();
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
 
@@ -139,21 +148,37 @@ const Step3Feedback = ({
   return (
     <form onSubmit={handleSubmit} className=" animate-fade-in">
       <div className="flex justify-center items-center mt-10 mb-3">
-        <img
-          src={`${BACKEND_URL}/uploads/${promotion?.image}`}
-          alt={promotion?.title}
-          className=" h-[200px] object-contain rounded border border-gray-200"
-        />
+        {campaignId === "demo-campaign" ? (
+          <img
+            src={promotion?.image}
+            alt={promotion?.title}
+            className=" h-[200px] object-contain rounded border border-gray-200"
+          />
+        ) : (
+          <img
+            src={`${BACKEND_URL}/uploads/${promotion?.image}`}
+            alt={promotion?.title}
+            className=" h-[200px] object-contain rounded border border-gray-200"
+          />
+        )}
       </div>
       <h2 className="text-2xl font-semibold text-center ">
         {promotion?.title}
       </h2>
       <div className="flex justify-center items-center mt-12 mb-3">
-        <img
-          src={productImage}
-          alt={selectedProduct?.title || "Product"}
-          className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
-        />
+        {isDemo ? (
+          <img
+            src={productImage}
+            alt={selectedProduct?.title || "Product"}
+            className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
+          />
+        ) : (
+          <img
+            src={productImage}
+            alt={selectedProduct?.title || "Product"}
+            className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
+          />
+        )}
       </div>
       <p className="text-center text-muted-foreground text-2xl">
         How do you like our <strong>{selectedProduct.title}</strong>?

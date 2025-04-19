@@ -12,6 +12,37 @@ import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { useQuery } from "@tanstack/react-query";
 import ReviewFunnelNavbar from "@/components/layout/ReviewFunnelNavbar";
+const demoCampaignData = {
+  productName: "Demo Product",
+  productImage: "https://via.placeholder.com/150",
+  vendor: "Amazon",
+  productId: 1,
+  asin: "DEMOASIN123",
+  promotionId: 999,
+  marketPlaces: ["US", "GB", "NL"],
+  products: [
+    {
+      id: 1,
+      title: "Desktop",
+      image: "/images/funnel/demo-campaign-product-1.webp",
+      asin: "B012345678",
+    },
+    {
+      id: 2,
+      title: "Laptop",
+      image: "/images/funnel/demo-campaign-product-2.webp",
+      asin: "B087654321",
+    },
+  ],
+  promotion: {
+    id: 0,
+    title: "$5 Gift Card",
+    description: "This is a demo gift card promotion",
+    image: "/images/funnel/demo-campaign-promotion.png",
+    promotionType: "GIFT_CARD",
+    companyId: 1,
+  },
+};
 
 const ReviewPage = () => {
   const { campaignId, step } = useParams<{
@@ -27,6 +58,7 @@ const ReviewPage = () => {
     productId?: number;
     asin?: string;
     promotionId?: number;
+    marketPlaces: [];
     products: Array<{
       id: number;
       title: string;
@@ -53,7 +85,7 @@ const ReviewPage = () => {
         return await getPublicCampaign(campaignId);
       }
     },
-    enabled: !!campaignId,
+    enabled: !!campaignId && campaignId !== "demo-campaign",
     retry: 1,
   });
 
@@ -82,9 +114,14 @@ const ReviewPage = () => {
         };
       }
     },
-    enabled: !!campaign?.productIds?.length,
+    enabled: !!campaign?.productIds?.length && campaignId !== "demo-campaign",
   });
-
+  useEffect(() => {
+    console.log(campaignId);
+    if (campaignId === "demo-campaign") {
+      setCampaignData(demoCampaignData);
+    }
+  }, [campaignId]);
   useEffect(() => {
     if (campaign && productsResponse.data.length > 0) {
       const firstProduct = productsResponse.data[0];
@@ -94,7 +131,8 @@ const ReviewPage = () => {
         vendor: "Amazon",
         productId: firstProduct.id,
         asin: firstProduct.asin,
-        promotionId: campaign.promotionId
+        promotionId: campaign.promotionId,
+        MarketPlaces: campaign.marketplaces
           ? Number(campaign.promotionId)
           : undefined,
         products: productsResponse.data.map((product) => ({
@@ -104,7 +142,11 @@ const ReviewPage = () => {
           asin: product.asin || "",
         })),
       });
-    } else if (!isCampaignLoading && !isProductsLoading) {
+    } else if (
+      campaignId !== "demo-campaign" &&
+      !isCampaignLoading &&
+      !isProductsLoading
+    ) {
       setError("Campaign not found or no products available");
     }
   }, [campaign, productsResponse.data, isCampaignLoading, isProductsLoading]);
@@ -116,7 +158,10 @@ const ReviewPage = () => {
   }, [campaignId, step, navigate]);
 
   // Show loading state while either campaign or products are loading
-  if (isCampaignLoading || isProductsLoading) {
+  const isLoading =
+    (isCampaignLoading || isProductsLoading) && campaignId !== "demo-campaign";
+
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#FF9900]"></div>
@@ -124,7 +169,7 @@ const ReviewPage = () => {
       </div>
     );
   }
-
+  console.log(error, campaignData);
   if (error || !campaignData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -158,6 +203,7 @@ const ReviewPage = () => {
           asin={campaignData.asin}
           promotionId={campaignData.promotionId}
           products={campaignData.products}
+          marketPlaces={campaignData.marketPlaces}
         />
       </div>
     </div>

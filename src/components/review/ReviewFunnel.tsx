@@ -29,6 +29,7 @@ interface ReviewFunnelProps {
     image: string;
     asin: string;
   }>;
+  marketPlaces: string[];
 }
 
 interface ExtendedCampaign extends Campaign {
@@ -77,12 +78,13 @@ const ReviewFunnel = ({
   asin,
   promotionId,
   products,
+  marketPlaces,
 }: ReviewFunnelProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const { step: urlStep } = useParams<{ step: string }>();
-
+  const [isDemo, setIsDemo] = useState(false);
   const [formData, setFormData] = useState<ReviewFormData>({
     orderId: "",
     rating: 0,
@@ -98,38 +100,59 @@ const ReviewFunnel = ({
   });
 
   const [step, setStep] = useState(1);
-  const [campaign, setCampaign] = useState<ExtendedCampaign | null>(null);
+  const [campaign, setCampaign] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (campaignId === "demo-campaign") {
+        // Set up static demo data
+        setIsDemo(true);
+        setCampaign({
+          productName: "Demo Product",
+          productImage: "https://via.placeholder.com/150",
+          vendor: "Amazon",
+          productId: 1,
+          asin: "DEMOASIN123",
+          promotionId: 999,
+          marketPlaces: ["US", "UK"],
+          products: [
+            {
+              id: 1,
+              title: "Desktop",
+              image: "/images/funnel/demo-campaign-product-1.webp",
+              asin: "B012345678",
+            },
+            {
+              id: 2,
+              title: "Laptop",
+              image: "/images/funnel/demo-campaign-product-2.webp",
+              asin: "B087654321",
+            },
+          ],
+          promotion: {
+            id: 0,
+            title: "$5 Gift Card",
+            description: "This is a demo gift card promotion",
+            image: "/images/funnel/demo-campaign-promotion.png",
+            promotionType: "GIFT_CARD",
+            companyId: 1,
+          },
+        });
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        // if (campaignId === "demo-campaign") {
-        //   setCampaign({
-        //     id: 1,
-        //     title: "Demo Campaign",
-        //     isActive: "Yes",
-        //     promotionId: 1,
-        //     productIds: [1, 2, 3],
-        //     product: {
-        //       id: 1,
-        //       title: "Demo Product",
-        //       image: "https://via.placeholder.com/150",
-        //       companyId: 1,
-        //     },
-        //   });
-        //   return;
-        // }
+        setIsDemo(false);
         setIsLoading(true);
         let campaignData;
 
         try {
-          // First try to get campaign with authentication
           campaignData = await getCampaign(campaignId);
         } catch (authError) {
           console.log("Auth request failed, trying public endpoint");
-          // If authenticated request fails, try public endpoint
           campaignData = await getPublicCampaign(campaignId);
         }
 
@@ -137,34 +160,21 @@ const ReviewFunnel = ({
 
         if (campaignData.productIds?.length) {
           const numericProductIds = campaignData.productIds
-            .map((id) => {
-              if (typeof id === "string") {
-                return parseInt(id, 10);
-              }
-              return id;
-            })
+            .map((id) => (typeof id === "string" ? parseInt(id, 10) : id))
             .filter((id): id is number => !isNaN(id));
 
           try {
-            // Try to get products with authentication first
-            const productsData = await getProducts({
-              ids: numericProductIds,
-            });
-            if (productsData.data.length > 0) {
-              console.log("New products data available:", productsData.data);
-            }
+            const productsData = await getProducts({ ids: numericProductIds });
+            console.log("New products data available:", productsData.data);
           } catch (authError) {
             console.log("Auth products request failed, trying public endpoint");
-            // If authenticated request fails, try public endpoint
             const publicProductsData = await getPublicProducts(
               numericProductIds
             );
-            if (publicProductsData.length > 0) {
-              console.log(
-                "New public products data available:",
-                publicProductsData
-              );
-            }
+            console.log(
+              "New public products data available:",
+              publicProductsData
+            );
           }
         }
       } catch (err) {
@@ -205,7 +215,7 @@ const ReviewFunnel = ({
 
   const handleNextStep = async () => {
     // If we're on step 3 and moving to step 4, submit the review
-    if (step === 3) {
+    if (step === 3 && campaignId !== "demo-campaign") {
       if (!productId) {
         toast({
           title: "Error",
@@ -402,7 +412,10 @@ const ReviewFunnel = ({
                 onNextStep={handleNextStep}
                 products={products}
                 promotion={campaign?.promotion}
-                marketplaces={campaign?.marketplaces || []}
+                marketPlaces={
+                  isDemo ? marketPlaces : campaign?.marketplaces || []
+                }
+                isDemo
               />
             </FunnelStep>
 
@@ -424,6 +437,7 @@ const ReviewFunnel = ({
                 onGoToAmazon={handleGoToAmazon}
                 products={products}
                 promotion={campaign?.promotion}
+                isDemo
               />
             </FunnelStep>
 
@@ -432,6 +446,7 @@ const ReviewFunnel = ({
                 promotion={campaign?.promotion}
                 formData={formData}
                 onGoHome={handleGoHome}
+                isDemo
               />
             </FunnelStep>
           </>
