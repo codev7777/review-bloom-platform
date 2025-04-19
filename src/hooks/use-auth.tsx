@@ -17,7 +17,11 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (
+    name: string,
+    email: string,
+    password: string
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   isVendor: () => boolean;
   isAdmin: () => boolean;
@@ -123,7 +127,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signup = async (name: string, email: string, password: string) => {
     try {
       setIsLoading(true);
-
       const userData = await userApi.register({ name, email, password });
 
       toast({
@@ -132,14 +135,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           "Please check your email to verify your account before logging in.",
       });
 
-      navigate("/auth/login");
+      return { success: true };
     } catch (err) {
       const error = err as AxiosError<{ message?: string }>;
+
       toast({
         variant: "destructive",
         title: "Signup failed",
         description: error?.response?.data?.message || "Something went wrong",
       });
+
+      return {
+        success: false,
+        message: error?.response?.data?.message || "Something went wrong",
+      };
     } finally {
       setIsLoading(false);
     }

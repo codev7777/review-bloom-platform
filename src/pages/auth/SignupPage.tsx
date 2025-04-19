@@ -19,13 +19,20 @@ const SignupPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
+
     setError("");
-    await signup(name, email, password);
-    navigate("/verification-email-sent", { state: { email } });
+    const result = await signup(name, email, password);
+
+    if (result.success) {
+      navigate("/verification-email-sent", { state: { email } });
+    } else {
+      setError(result.message); // display error below the form
+    }
   };
 
   return (

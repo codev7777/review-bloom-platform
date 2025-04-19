@@ -31,6 +31,14 @@ const VerificationEmailSent: React.FC = () => {
   return (
     <div className="verification-email-sent flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md text-center">
+        <div className="flex items-center justify-center">
+          <img
+            src="https://media.giphy.com/media/1Pq5Qi6CuWTprafYLT/giphy.gif?cid=ecf05e4774xyeza36qg6v8y13o4pluv23a6kinpyo2t4e5fn&ep=v1_gifs_search&rid=giphy.gif&ct=g"
+            alt="Funny GIF"
+            width="100"
+            loading="lazy"
+          />
+        </div>
         <h1 className="text-2xl font-bold text-orange-600 mb-4">
           Verification Email Sent
         </h1>
