@@ -144,11 +144,13 @@ const PromotionsList = () => {
           Add a promotion to get started
         </p>
         <Button
-          variant="outline"
+          variant="default"
           className="mt-4 bg-orange-500 hover:bg-orange-600"
           onClick={() => navigate("/vendor-dashboard/promotions/new")}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <span className="mr-1 h-7 w-7">
+            <img src="/images/vendor/Add.gif" alt="Cool GIF" />
+          </span>
           Add your first promotion
         </Button>
       </div>

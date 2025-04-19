@@ -56,7 +56,7 @@ function useFetchWithFallback<T>(
             toast({
               variant: "default",
               title: "No data found",
-              description: "Using sample data for display purposes.",
+              // description: "Using sample data for display purposes.",
             });
           }
         } else {
@@ -71,8 +71,8 @@ function useFetchWithFallback<T>(
           toast({
             variant: "destructive",
             title: "Invalid response format",
-            description:
-              "Using sample data. Please check the API response format.",
+            // description:
+            //   "Using sample data. Please check the API response format.",
           });
         }
       } catch (err) {
@@ -124,8 +124,8 @@ function useFetchWithFallback<T>(
             toast({
               variant: "destructive",
               title: "Failed to load data",
-              description:
-                "Using sample data. Please check your backend connection.",
+              // description:
+              //   "Using sample data. Please check your backend connection.",
             });
           }
         } else {

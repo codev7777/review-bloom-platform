@@ -325,7 +325,7 @@ const ReviewFunnel = ({
   return (
     <div className="bg-white rounded-xl shadow-sm border border-border p-6 lg:p-8 max-w-xl mx-auto">
       <div className="text-xl font-bold mt-8 mb-10">
-        {step < 4 && "Don't miss out – tell us where to send your free gift!"}
+        {step < 3 && "Don't miss out – tell us where to send your free gift!"}
       </div>
       {/* Step indicator */}
       <div className="flex justify-center mb-8">
@@ -423,11 +423,16 @@ const ReviewFunnel = ({
                 onPreviousStep={handlePreviousStep}
                 onGoToAmazon={handleGoToAmazon}
                 products={products}
+                promotion={campaign?.promotion}
               />
             </FunnelStep>
 
             <FunnelStep isActive={step === 4}>
-              <Step4Thanks formData={formData} onGoHome={handleGoHome} />
+              <Step4Thanks
+                promotion={campaign?.promotion}
+                formData={formData}
+                onGoHome={handleGoHome}
+              />
             </FunnelStep>
           </>
         )}

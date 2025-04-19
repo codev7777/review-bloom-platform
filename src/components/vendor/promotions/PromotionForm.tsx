@@ -82,7 +82,7 @@ const PROMOTION_TYPES = [
   },
   {
     value: "DISCOUNT_CODE" as const,
-    label: "Discount Code, Promo Code or Virtual Gift Card",
+    label: "Discount Code, Promo Code",
     icon: <Tag className="h-4 w-4" />,
   },
   {
@@ -471,7 +471,7 @@ const PromotionForm = () => {
                         <Plus className="h-4 w-4 text-black" />
                       </Button>
                     </div>
-                    <div className="space-y-2 mt-2">
+                    <div className="space-y-2 mt-2 text-black">
                       {couponCodes.map((code, index) => (
                         <div
                           key={index}

@@ -14,6 +14,12 @@ interface Step3FeedbackProps {
   onNextStep: () => void;
   onPreviousStep: () => void;
   onGoToAmazon: () => void;
+  promotion?: {
+    id: string | number;
+    title: string;
+    image: string;
+    description: string;
+  };
   products: Array<{
     id: number;
     title: string;
@@ -31,6 +37,7 @@ const Step3Feedback = ({
   onPreviousStep,
   onGoToAmazon,
   products,
+  promotion,
 }: Step3FeedbackProps) => {
   const { toast } = useToast();
   const [errors, setErrors] = useState<
@@ -130,22 +137,29 @@ const Step3Feedback = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-semibold text-center">Your Feedback</h2>
-      <p className="text-center text-muted-foreground">
-        Please share your honest experience with this product
-      </p>
-
-      {/* Product Image */}
-      <div className="flex justify-center items-center my-6">
+    <form onSubmit={handleSubmit} className=" animate-fade-in">
+      <div className="flex justify-center items-center mt-10 mb-3">
+        <img
+          src={`${BACKEND_URL}/uploads/${promotion?.image}`}
+          alt={promotion?.title}
+          className=" h-[200px] object-contain rounded border border-gray-200"
+        />
+      </div>
+      <h2 className="text-2xl font-semibold text-center ">
+        {promotion?.title}
+      </h2>
+      <div className="flex justify-center items-center mt-12 mb-3">
         <img
           src={productImage}
           alt={selectedProduct?.title || "Product"}
           className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
         />
       </div>
+      <p className="text-center text-muted-foreground text-2xl">
+        How do you like our <strong>{selectedProduct.title}</strong>?
+      </p>
 
-      <div className="space-y-3">
+      <div className="space-y-3 mt-8">
         <Label htmlFor="feedback">
           Your Review <span className="text-red-500">*</span>
         </Label>

@@ -1,20 +1,29 @@
 import { Gift, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ReviewFormData } from "../ReviewFunnel";
+import { API_URL } from "@/config/env";
 
+const BACKEND_URL = API_URL.replace("/v1", "");
 interface Step4ThanksProps {
   formData: ReviewFormData;
+  promotion?: {
+    id: string | number;
+    title: string;
+    image: string;
+    description: string;
+  };
   onGoHome: () => void;
 }
 
-const Step4Thanks = ({ formData, onGoHome }: Step4ThanksProps) => {
+const Step4Thanks = ({ formData, onGoHome, promotion }: Step4ThanksProps) => {
   return (
     <div className="text-center space-y-6 py-8 animate-fade-in">
       <div className="flex justify-center">
         <div className="flex justify-center items-center">
           <img
-            src="/images/funnel/amazon-gift-card-5.png"
-            className="h-[200px] object-contain rounded"
+            src={`${BACKEND_URL}/uploads/${promotion?.image}`}
+            alt={promotion?.title}
+            className=" h-[200px] object-contain rounded border border-gray-200"
           />
         </div>
       </div>
