@@ -41,13 +41,8 @@ import ReviewsPage from "@/pages/vendor/ReviewsPage";
 import { getImageUrl } from "@/utils/imageUrl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getCompanyStats, CompanyStats } from "@/lib/api/company/company.api";
-
-// Update Campaign type to include missing properties
-interface DashboardCampaign extends Omit<Campaign, "reviews"> {
-  image?: string;
-  reviews?: number; // Override reviews to be a number instead of Review[]
-  rating?: number;
-}
+import ReviewsChart from "./analytics/ReviewsChart";
+import RecentReviews from "./analytics/RecentReviews";
 
 const Sidebar = ({
   isOpen,
@@ -65,11 +60,6 @@ const Sidebar = ({
       label: "Dashboard",
       path: "/vendor-dashboard",
     },
-    // {
-    //   icon: <BarChart4 size={20} />,
-    //   label: "Analytics",
-    //   path: "/vendor-dashboard/analytics",
-    // },
     {
       icon: <ShoppingBag size={20} />,
       label: "Products",
@@ -163,14 +153,11 @@ const Dashboard = () => {
     enabled: !!companyId,
   });
 
-  // Calculate statistics from real data
   const activeCampaigns =
     campaigns?.data?.filter((c) => c.isActive === "YES").length || 0;
   const totalProducts = products?.data?.length || 0;
   const totalReviews = reviews?.total || 0;
   console.log(reviews);
-  // console.log(reviews.reviews.data);
-  // console.log(reviews.reviews.data.length);
   const averageRating = reviews?.total
     ? (
         reviews.reviews.reduce((sum, review) => sum + review.ratio, 0) /
@@ -178,7 +165,6 @@ const Dashboard = () => {
       ).toFixed(1)
     : "0.0";
 
-  // Add a query to fetch company stats
   const {
     data: companyStats,
     isLoading: isLoadingStats,
@@ -192,6 +178,11 @@ const Dashboard = () => {
   if (statsError) {
     console.error("Error fetching company stats:", statsError);
   }
+
+  const reviewsChartData = reviews?.map((review: Review) => ({
+    name: new Date(review.feedbackDate).toLocaleDateString(),
+    value: review.ratio,
+  })) || [];
 
   return (
     <div className="space-y-8 text-white">
@@ -259,6 +250,11 @@ const Dashboard = () => {
           period="from last month"
           bgColor="bg-[#d54747]"
         />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <ReviewsChart data={reviewsChartData} />
+        <RecentReviews reviews={reviews || []} />
       </div>
 
       <div className="mt-8">
@@ -373,13 +369,11 @@ const VendorDashboard: React.FC = () => {
   const products = productsResponse?.data || [];
   const promotions = promotionsResponse?.data || [];
 
-  // Calculate statistics
   const activeCampaigns = campaigns.filter((c) => c.isActive === "YES").length;
   const totalProducts = products.length;
   const totalPromotions = promotions.length;
   const totalClaims = campaigns.reduce((sum, c) => sum + (c.claims || 0), 0);
 
-  // Check connectivity to backend on component mount
   useEffect(() => {
     const checkBackendConnection = async () => {
       try {
@@ -408,7 +402,7 @@ const VendorDashboard: React.FC = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  console.log(products);
+
   return (
     <div className="flex h-screen  bg-[#212631] text-white">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />

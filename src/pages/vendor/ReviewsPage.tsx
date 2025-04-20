@@ -240,7 +240,7 @@ const ReviewsPage = () => {
     reviewId: number,
     status: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
-    updateStatusMutation.mutate({ reviewId, status });
+    updateStatusMutation.mutate({ reviewId: Number(reviewId), status });
   };
 
   const handleSort = (field: string) => {
@@ -356,34 +356,10 @@ const ReviewsPage = () => {
                   <TableCell>{review.Product?.title || "N/A"}</TableCell>
                   <TableCell>{review.Promotion?.title || "N/A"}</TableCell>
                   <TableCell>{review.Campaign?.title || "N/A"}</TableCell>
-                  {/* <TableCell>
-                    <Badge
-                      variant={
-                        review.Campaign?.isActive === "YES"
-                          ? "default"
-                          : "secondary"
-                      }
-                    >
-                      {review.Campaign?.isActive === "YES"
-                        ? "Active"
-                        : "Paused"}
-                    </Badge>
-                  </TableCell> */}
                   <TableCell>
                     <RatingStars rating={review.ratio} />
                   </TableCell>
                   <TableCell className="w-30">
-                    {/* <Badge
-                      variant={
-                        review.status === "PENDING"
-                          ? "default"
-                          : review.status === "PROCESSED"
-                          ? "secondary"
-                          : "destructive"
-                      }
-                    >
-                      {review.status}
-                    </Badge> */}
                     <span
                       className={`px-2 py-1 rounded-3xl text-xs ${statusColor(
                         review.status
