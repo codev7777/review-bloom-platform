@@ -12,6 +12,7 @@ import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { useQuery } from "@tanstack/react-query";
 import ReviewFunnelNavbar from "@/components/layout/ReviewFunnelNavbar";
+
 const demoCampaignData = {
   productName: "Demo Product",
   productImage: "https://via.placeholder.com/150",
@@ -58,7 +59,7 @@ const ReviewPage = () => {
     productId?: number;
     asin?: string;
     promotionId?: number;
-    marketPlaces: [];
+    marketPlaces: string[];
     products: Array<{
       id: number;
       title: string;
@@ -67,7 +68,6 @@ const ReviewPage = () => {
     }>;
   } | null>(null);
 
-  // Fetch campaign data
   const {
     data: campaign,
     isLoading: isCampaignLoading,
@@ -77,11 +77,13 @@ const ReviewPage = () => {
     queryFn: async () => {
       if (!campaignId) return null;
       try {
-        // Try authenticated endpoint first
-        return await getCampaign(campaignId);
+        const campaignIdNum = parseInt(campaignId, 10);
+        if (isNaN(campaignIdNum)) {
+          throw new Error("Invalid campaign ID");
+        }
+        return await getCampaign(campaignIdNum);
       } catch (error) {
         console.log("Auth campaign request failed, trying public endpoint");
-        // If it fails, try public endpoint
         return await getPublicCampaign(campaignId);
       }
     },
@@ -89,7 +91,6 @@ const ReviewPage = () => {
     retry: 1,
   });
 
-  // Fetch products for the campaign
   const {
     data: productsResponse = { data: [] },
     isLoading: isProductsLoading,
@@ -101,11 +102,9 @@ const ReviewPage = () => {
       const productIds = campaign.productIds.map((id) => Number(id));
 
       try {
-        // Try authenticated endpoint first
         return await getProducts({ ids: productIds });
       } catch (error) {
         console.log("Auth products request failed, trying public endpoint");
-        // If it fails, try public endpoint
         const publicProducts = await getPublicProducts(productIds);
         return {
           data: publicProducts,
@@ -116,12 +115,14 @@ const ReviewPage = () => {
     },
     enabled: !!campaign?.productIds?.length && campaignId !== "demo-campaign",
   });
+
   useEffect(() => {
     console.log(campaignId);
     if (campaignId === "demo-campaign") {
       setCampaignData(demoCampaignData);
     }
   }, [campaignId]);
+
   useEffect(() => {
     if (campaign && productsResponse.data.length > 0) {
       const firstProduct = productsResponse.data[0];
@@ -131,10 +132,8 @@ const ReviewPage = () => {
         vendor: "Amazon",
         productId: firstProduct.id,
         asin: firstProduct.asin,
-        promotionId: campaign.promotionId,
-        MarketPlaces: campaign.marketplaces
-          ? Number(campaign.promotionId)
-          : undefined,
+        promotionId: campaign.promotionId ? Number(campaign.promotionId) : undefined,
+        marketPlaces: campaign.marketplaces || [],
         products: productsResponse.data.map((product) => ({
           id: product.id,
           title: product.title,
@@ -157,7 +156,6 @@ const ReviewPage = () => {
     }
   }, [campaignId, step, navigate]);
 
-  // Show loading state while either campaign or products are loading
   const isLoading =
     (isCampaignLoading || isProductsLoading) && campaignId !== "demo-campaign";
 
@@ -169,7 +167,7 @@ const ReviewPage = () => {
       </div>
     );
   }
-  console.log(error, campaignData);
+
   if (error || !campaignData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
@@ -196,14 +194,14 @@ const ReviewPage = () => {
         </div>
         <ReviewFunnel
           campaignId={campaignId || ""}
-          productName={campaignData.productName}
-          productImage={campaignData.productImage}
-          vendor={campaignData.vendor}
-          productId={campaignData.productId}
-          asin={campaignData.asin}
-          promotionId={campaignData.promotionId}
-          products={campaignData.products}
-          marketPlaces={campaignData.marketPlaces}
+          productName={campaignData?.productName || ""}
+          productImage={campaignData?.productImage || ""}
+          vendor={campaignData?.vendor || ""}
+          productId={campaignData?.productId}
+          asin={campaignData?.asin}
+          promotionId={campaignData?.promotionId}
+          products={campaignData?.products || []}
+          marketPlaces={campaignData?.marketPlaces || []}
         />
       </div>
     </div>

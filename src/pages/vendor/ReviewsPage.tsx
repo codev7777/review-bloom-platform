@@ -161,6 +161,7 @@ const RatingStars = ({ rating }: { rating: number }) => {
     </div>
   );
 };
+
 const statusColor = (status: string) => {
   return status === "PENDING"
     ? "bg-gray-300 text-gray-900"
@@ -240,7 +241,18 @@ const ReviewsPage = () => {
     reviewId: number,
     status: "PENDING" | "PROCESSED" | "REJECTED"
   ) => {
-    updateStatusMutation.mutate({ reviewId: Number(reviewId), status });
+    if (reviewId) {
+      updateStatusMutation.mutate({ 
+        reviewId: Number(reviewId), 
+        status 
+      });
+    } else {
+      toast({
+        title: "Error",
+        description: "Invalid review ID",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSort = (field: string) => {

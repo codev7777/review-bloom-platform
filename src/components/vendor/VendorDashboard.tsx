@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
-import { Campaign, mapCampaignForDisplay } from "@/types";
+import { Campaign, mapCampaignForDisplay, Review } from "@/types";
 import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
 import { getProducts } from "@/lib/api/products/products.api";
 import { getReviews } from "@/lib/api/reviews/reviews.api";
@@ -179,7 +179,7 @@ const Dashboard = () => {
     console.error("Error fetching company stats:", statsError);
   }
 
-  const reviewsChartData = reviews?.map((review: Review) => ({
+  const reviewsChartData = reviews?.reviews?.map((review: Review) => ({
     name: new Date(review.feedbackDate).toLocaleDateString(),
     value: review.ratio,
   })) || [];
@@ -254,7 +254,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ReviewsChart data={reviewsChartData} />
-        <RecentReviews reviews={reviews || []} />
+        <RecentReviews reviews={reviews?.reviews || []} />
       </div>
 
       <div className="mt-8">

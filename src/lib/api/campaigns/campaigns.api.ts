@@ -1,3 +1,4 @@
+
 import api from "../axiosConfig";
 import { Campaign, CampaignStatus } from "@/types";
 import { API_URL } from "@/config/env";
@@ -40,8 +41,8 @@ export const getCampaigns = async (
   if (params?.title) {
     queryParams.append("title", params.title);
   }
-  if (params?.isActive) {
-    queryParams.append("isActive", params.isActive);
+  if (params?.isActive !== undefined) {
+    queryParams.append("isActive", params.isActive.toString());
   }
   if (params?.sortBy) {
     queryParams.append("sortBy", params.sortBy);
