@@ -14,15 +14,13 @@ const StatsCard = ({
   bgColor,
 }: StatsCardProps) => {
   return (
-    <div
-      className={`p-6 rounded-xl shadow-sm border border-gray-700 ${bgColor}`}
-    >
+    <div className={`p-6 rounded-xl shadow-sm ${bgColor}`}>
       <div className="flex justify-between items-start mb-2">
-        <p className="text-sm text-white">{title}</p>
+        <p className="text-sm text-white font-bold">{title}</p>
         {icon && <div className="ml-2">{icon}</div>}
       </div>
       <div className="flex items-baseline">
-        <h3 className="text-2xl font-semibold">{value}</h3>
+        <h3 className="text-2xl font-semibold text-white">{value}</h3>
         {changeType !== "neutral" && change && (
           <div
             className={`flex items-center ml-2 text-sm ${
@@ -43,8 +41,8 @@ const StatsCard = ({
           <span className="ml-2 text-sm text-muted-foreground">{percentage}</span>
         )} */}
       </div>
-      {subtitle && <p className="text-xs text-white mt-1">{subtitle}</p>}
-      {period && <p className="text-xs text-white mt-1">{period}</p>}
+      {subtitle && <p className="text-sm text-white mt-1">{subtitle}</p>}
+      {period && <p className="text-sm text-white mt-1">{period}</p>}
     </div>
   );
 };

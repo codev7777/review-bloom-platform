@@ -201,7 +201,7 @@ const AnimatedStep = ({ step, index }) => {
           }`}
         />
         <div
-          className={`self-start mt-10 md:mt-0 ml-10 transition-transform duration-700 ${
+          className={`self-start mt-10 md:mt-0 ml-10  transition-transform  duration-700 ${
             isVisible ? "translate-x-0" : "translate-x-10"
           }`}
         >

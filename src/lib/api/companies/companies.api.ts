@@ -13,21 +13,27 @@ interface GetCompaniesParams {
   page?: number;
   limit?: number;
   search?: string;
+  sortBy?: "createdAt" | "name" | "role"; // or whatever fields your DB supports
+  sortType?: "asc" | "desc";
 }
 
 export const getCompanies = async ({
   page = 1,
   limit = 10,
   search = "",
+  sortBy = "createdAt", // Default to newest first
+  sortType = "desc", // Default to descending order
 }: GetCompaniesParams) => {
   const response = await api.get("/companies", {
     params: {
       page,
       limit,
       search,
+      sortBy, // Add sorting parameters
+      sortType,
     },
   });
-  return response.data; // Should return { data: Company[], totalCount: number, totalPages: number }
+  return response.data;
 };
 
 export const getCompany = async (id: string | number): Promise<Company> => {

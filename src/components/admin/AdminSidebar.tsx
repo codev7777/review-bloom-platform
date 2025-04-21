@@ -61,11 +61,11 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
   return (
     <div
       className={cn(
-        "bg-[#232F3E] border-r border-sidebar-border fixed inset-y-0 z-40 flex flex-col transition-all duration-300 lg:relative lg:left-0 pt-16",
+        "bg-[#232F3E] border-r border-sidebar-border fixed inset-y-0 z-40 flex flex-col transition-all duration-300 lg:relative lg:left-0",
         open ? "left-0" : "-left-full lg:w-20"
       )}
     >
-      <div className="sticky top-0 z-10 flex h-16 items-center justify-between bg-[#232F3E] px-4">
+      <div className="sticky top-0 z-10 flex h-16 items-center justify-end bg-[#232F3E] px-4">
         <Button
           variant="ghost"
           size="icon"

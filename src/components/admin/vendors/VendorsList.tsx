@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DownloadIcon,
   Edit,
@@ -86,21 +86,30 @@ const Pagination = ({
 const VendorsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [totalVendors, setTotalVendors] = useState(0);
   const itemsPerPage = 10;
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 1000); // 500ms debounce
+
+    return () => clearTimeout(delay);
+  }, [searchQuery]);
+
   const {
     data: companiesResponse,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ["companies", currentPage, searchQuery],
+    queryKey: ["companies", currentPage, debouncedSearchQuery],
     queryFn: async () => {
       try {
         const response = await getCompanies({
           page: currentPage,
           limit: itemsPerPage,
-          search: searchQuery,
+          search: debouncedSearchQuery,
         });
         console.log("Companies API response:", response);
         setTotalVendors(response.totalCount);
@@ -249,9 +258,9 @@ const VendorsList = () => {
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-medium">{company.name}</span>
-                      <span className="text-sm text-gray-500">
+                      {/* <span className="text-sm text-gray-500">
                         {company.detail}
-                      </span>
+                      </span> */}
                     </div>
                   </TableCell>
                   <TableCell>
