@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import FloatingStar from "../ui/floatingStar";
 import FloatingRocket from "../ui/floatingRocket";
+
 const RandomStars = ({ count = 8 }) => {
   const stars = Array.from({ length: count }, (_, i) => {
     const size = Math.floor(Math.random() * 10) + 12; // 12 to 22 px
@@ -20,50 +21,6 @@ const RandomStars = ({ count = 8 }) => {
 
   return <>{stars}</>;
 };
-
-// const RandomRockets = ({ count }) => {
-//   const [rockets, setRockets] = useState([]);
-
-//   // Random position generator function
-//   const generateRocketPositions = () => {
-//     return Array.from({ length: count }, (_, i) => {
-//       const size = Math.floor(Math.random() * 20) + 30; // 40px to 90px size
-//       const top = Math.random() * 90 + "%"; // 0-90% from top
-//       const left = Math.random() * 90 + "%"; // 0-90% from left
-//       const delay = Math.random() * 5; // 0 to 5 seconds delay
-//       const imgSrc = `/images/landing/rocket-${
-//         Math.floor(Math.random() * 4) + 1
-//       }.png`;
-
-//       return {
-//         id: i,
-//         size,
-//         delay,
-//         style: { top, left },
-//         imgSrc,
-//       };
-//     });
-//   };
-
-//   // On component mount and every render, generate rocket positions
-//   useEffect(() => {
-//     setRockets(generateRocketPositions());
-//   }, [count]); // Re-run when `count` changes
-
-//   return (
-//     <>
-//       {rockets.map((rocket) => (
-//         <FloatingRocket
-//           key={rocket.id}
-//           size={rocket.size}
-//           delay={rocket.delay}
-//           style={rocket.style}
-//           imgSrc={rocket.imgSrc}
-//         />
-//       ))}
-//     </>
-//   );
-// };
 
 const PricingTier = ({
   title,
@@ -82,8 +39,8 @@ const PricingTier = ({
       id="pricing"
       className={
         isPopular
-          ? "transform lg:scale-110 flex justify-center"
-          : "flex justify-center"
+          ? "transform lg:scale-110 flex justify-center w-full"
+          : "flex justify-center w-full"
       }
     >
       <motion.div
@@ -91,10 +48,9 @@ const PricingTier = ({
         whileInView={{ opacity: 1, y: 100 }}
         viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`w-[500px] lg:w-[320px] xl:w-[400px] relative flex flex-col rounded-xl shadow-xl transition-all duration-300 hover:shadow-custom border-2 bg-white mb-20 pb-8`}
+        className={`w-full max-w-[500px] lg:w-[320px] xl:w-[400px] relative flex flex-col rounded-xl shadow-xl transition-all duration-300 hover:shadow-custom border-2 bg-white mb-10 pb-8`}
       >
         <RandomStars count={50} />
-        {/* <RandomRockets count={3} /> */}
         {isPopular && (
           <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -108,12 +64,12 @@ const PricingTier = ({
             </div>
           </motion.div>
         )}
-        <div className="bg-[#2e3a48] h-[100px] mx-auto w-full p-8 rounded-t-xl">
-          <h3 className="text-4xl font-semibold mt-0 mb-0 text-center text-white  z-10 bg-[#2e3a48]">
+        <div className="bg-[#2e3a48] h-[70px] sm:h-[100px] mx-auto w-full p-6 sm:p-8 rounded-t-xl">
+          <h3 className="text-2xl sm:text-4xl font-semibold mt-0 mb-0 text-center text-white z-10 bg-[#2e3a48]">
             {title}
           </h3>
         </div>
-        <div className="text-center mt-8 mb-2 text-white text-3xl font-bold z-10 bg-white">
+        <div className="text-center mt-6 sm:mt-8 mb-2 text-white text-2xl sm:text-3xl font-bold z-10 bg-white">
           <div className="mb-2">
             {isPopular && (
               <div className="text-2xl mb-6 animate-colorSwap">
@@ -140,23 +96,22 @@ const PricingTier = ({
             or <span className="font-medium">${MonthlyPrice}/mo</span> billed
             monthly
           </div>
-          {/* </div> */}
         </div>
-        <ul className="space-y-3 mb-8 flex-grow ml-7 z-10 bg-white mr-10">
+        <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8 flex-grow ml-4 sm:ml-7 z-10 bg-white mr-4 sm:mr-10">
           {features.map((feature, index) => (
             <motion.li
               key={index}
-              className="flex items-start text-white text-xl z-10 bg-white"
+              className="flex items-start text-white text-lg sm:text-xl z-10 bg-white"
               initial={{ opacity: 0, x: -10 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
             >
               {feature.included ? (
-                <Check className="w-6 h-6 flex-shrink-0 mt-0.5 text-green-500  z-10 bg-white stroke-[5]" />
+                <Check className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-green-500 z-10 bg-white stroke-[5]" />
               ) : (
-                <X className="w-6 h-6 flex-shrink-0 mt-0.5 text-red-500 z-10 bg-white  stroke-[5]" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-red-500 z-10 bg-white stroke-[5]" />
               )}
-              <span className="ml-3 text-lg z-10 bg-white text-[#2e3a48] font-bold">
+              <span className="ml-1 sm:ml-3 text-base sm:text-lg z-10 bg-white text-[#2e3a48] font-bold">
                 {feature.name}
               </span>
             </motion.li>
@@ -166,21 +121,16 @@ const PricingTier = ({
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.2 }}
-          className="mb-10 mt-10 z-50"
+          className="mb-6 sm:mb-10 mt-6 sm:mt-10 z-50"
         >
-          {/* <img
-            src="images/landing/rocket.png"
-            className="absolute -bottom-0 right-0 w-80 h-80 z-40"
-            alt="rocket"
-          /> */}
           <Button
-            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-10 py-5 xl:text-2xl text-2xl lg:text-xl z-50`}
+            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-8 py-4 sm:px-10 sm:py-5 xl:text-2xl text-xl sm:text-2xl lg:text-xl z-50`}
             asChild
           >
             <Link to="/auth/signup">Get Started for Free</Link>
           </Button>
         </motion.div>
-        <span className="text-[#2e3a48] z-50">* No credit card required</span>
+        <span className="text-[#2e3a48] z-50 text-xs sm:text-base">* No credit card required</span>
       </motion.div>
     </div>
   );
@@ -258,20 +208,20 @@ const Pricing = () => {
   ];
 
   return (
-    <section id="pricing" className="py-24 bg-muted/50  max-w-screen">
-      <div className="container mx-auto px-4 text-center max-w-7xl">
+    <section id="pricing" className="py-12 sm:py-24 bg-muted/50 max-w-screen">
+      <div className="container mx-auto px-2 sm:px-4 text-center max-w-7xl">
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="text-lg text-muted-foreground mb-6"
+          className="text-base sm:text-lg text-muted-foreground mb-4 sm:mb-6"
         >
-          <h2 className="text-[35px] lg:text-[25px] xl:text-[35px] font-semibold mt-2 mb-4 text-center lg:flex items-center justify-center font-[700] text-black">
+          <h2 className="text-2xl sm:text-[35px] lg:text-[25px] xl:text-[35px] font-semibold mt-2 mb-2 sm:mb-4 text-center lg:flex items-center justify-center font-[700] text-black">
             Plans Made for &nbsp;
             <div className="flex items-center justify-center">
               <img
                 src="images/amazon-logo.png"
-                className="h-16 mt-2 lg:h-12 lg:mt-1"
+                className="h-10 sm:h-16 mt-2 lg:h-12 lg:mt-1"
               />{" "}
               &nbsp; <b>Sellers</b>
             </div>
@@ -282,41 +232,37 @@ const Pricing = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4 }}
-          className="mt-10 mb-8"
+          className="mt-5 sm:mt-10 mb-4 sm:mb-8"
         >
-          <div className="flex itemx-center justify-center font-bold text-[#ff9900] text-4xl my-5">
+          <div className="flex itemx-center justify-center font-bold text-[#ff9900] text-2xl sm:text-4xl my-2 sm:my-5">
             Save Up to 20%
           </div>
-          <div className="text-2xl text-[#2e3a48] font-bold mb-4 ">
+          <div className="text-lg sm:text-2xl text-[#2e3a48] font-bold mb-2 sm:mb-4 ">
             per month when build annually
           </div>
-          <div className=" flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2 sm:gap-4">
             <span
-              className={`w-20  ${
-                !isAnnual ? "text-xl font-bold text-[#ff9900] " : "text-md"
-              }`}
+              className={`w-10 sm:w-20 ${!isAnnual ? "text-xs sm:text-xl font-bold text-[#ff9900]" : "text-xs sm:text-md"}`}
             >
               Monthly
             </span>
             <button
               onClick={toggleBilling}
-              className="relative w-16 h-8 bg-gray-300 rounded-full flex items-center transition-all duration-300 p-1"
+              className="relative w-10 sm:w-16 h-6 sm:h-8 bg-gray-300 rounded-full flex items-center transition-all duration-300 p-1"
             >
               <motion.div
-                className="w-7 h-7 bg-white rounded-full shadow-md"
-                animate={{ x: isAnnual ? 32 : 0 }}
+                className="w-5 sm:w-7 h-5 sm:h-7 bg-white rounded-full shadow-md"
+                animate={{ x: isAnnual ? 16 : 0, y: 0 }}
               />
             </button>
             <span
-              className={`w-20 ${
-                !isAnnual ? "text-md" : "text-xl font-bold text-[#ff9900] "
-              }`}
+              className={`w-10 sm:w-20 ${!isAnnual ? "text-xs sm:text-md" : "text-xs sm:text-xl font-bold text-[#ff9900]"}`}
             >
               Annually
             </span>
           </div>
         </motion.div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mx-auto">
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-3 mx-auto">
           {tiers.map((tier, index) => (
             <PricingTier key={index} {...tier} isAnnual={isAnnual} />
           ))}

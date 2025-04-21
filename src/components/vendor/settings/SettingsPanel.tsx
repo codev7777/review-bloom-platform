@@ -24,6 +24,7 @@ import { updateUser, getUser } from "@/lib/api/users/users.api";
 import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
+import SubscriptionPanel from "./SubscriptionPanel";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [
@@ -290,10 +291,10 @@ const SettingsPanel = () => {
             <Shield className="mr-2 h-4 w-4" />
             Company
           </TabsTrigger>
-          {/* <TabsTrigger value="notifications">
-            <Bell className="mr-2 h-4 w-4" />
-            Notifications
-          </TabsTrigger> */}
+          <TabsTrigger value="subscription">
+            <CreditCard className="mr-2 h-4 w-4" />
+            Subscription
+          </TabsTrigger>
           <TabsTrigger value="billing">
             <CreditCard className="mr-2 h-4 w-4" />
             Billing
@@ -451,36 +452,7 @@ const SettingsPanel = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="notifications" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Notification Preferences</h3>
-            <p className="text-sm text-white">
-              Configure how you want to be notified
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Email Notifications</Label>
-                <p className="text-sm text-white">
-                  Receive notifications via email
-                </p>
-              </div>
-              <Switch />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Push Notifications</Label>
-                <p className="text-sm text-white">
-                  Receive push notifications in your browser
-                </p>
-              </div>
-              <Switch />
-            </div>
-          </div>
-        </TabsContent>
+        <SubscriptionPanel />
 
         <TabsContent value="billing" className="space-y-6">
           <div>
@@ -501,13 +473,15 @@ const SettingsPanel = () => {
               </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label>Payment Method</Label>
-              <div className="flex items-center gap-4">
-                <CreditCard className="h-8 w-8 text-gray-400" />
-                <span className="text-sm text-gray-500">
-                  No payment method added
-                </span>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Payment Method</Label>
+                <div className="flex items-center gap-4">
+                  <CreditCard className="h-8 w-8 text-gray-400" />
+                  <span className="text-sm text-gray-500">
+                    No payment method added
+                  </span>
+                </div>
               </div>
             </div>
           </div>
