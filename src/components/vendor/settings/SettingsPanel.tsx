@@ -207,8 +207,8 @@ const SettingsPanel = () => {
           detail: formData.detail,
           ratio: 0, // Default or calculated value
           reviews: 0, // Default number
-          createdAt: new Date(), // Date object
-          updatedAt: new Date(), // Date object
+          // createdAt: new Date(), // Date object
+          // updatedAt: new Date(), // Date object
         };
 
         // Only include logo if it's a new base64 string or if it's being removed

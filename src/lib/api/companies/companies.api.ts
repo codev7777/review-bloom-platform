@@ -3,12 +3,17 @@ import { Company } from "@/types";
 
 // Company API endpoints
 export const createCompany = async (
-  company: Omit<Company, "id">
+  company: CompanyCreateInput
 ): Promise<Company> => {
   const response = await api.post("/companies", company);
   return response.data;
 };
-
+export type CompanyCreateInput = {
+  name: string;
+  websiteUrl: string;
+  detail: string;
+  logo?: string;
+};
 interface GetCompaniesParams {
   page?: number;
   limit?: number;
