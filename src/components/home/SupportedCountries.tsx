@@ -77,11 +77,11 @@ const SupportedCountries = () => {
           <div className="text-center mb-16">
             <h2 className="text-[35px] lg:text-[25px] xl:text-[35px] font-semibold mt-2 mb-4 text-center block lg:flex items-center justify-center font-[700]">
               {/* <Globe className="mt-1 mr-2 h-5 w-5 text-[#FF9900]" /> */}
-              🚀 The Ultimate Tool for all &nbsp;
+              🚀 The Ultimate Tool for all&nbsp;
               <div className="flex justify-center items-center">
                 <img
                   src="images/amazon-logo.png"
-                  className="h-16 mt-2xl:h-16  xl:mt-2 lg:h-12"
+                  className="h-16 mt-2 xl:h-16  xl:mt-2 lg:h-12 lg:mt-1"
                 />
                 &nbsp; <b>Sellers</b>
               </div>

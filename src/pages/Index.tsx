@@ -112,7 +112,7 @@ const Index = () => {
         <div>
           <Navbar />
           <main className="flex-grow ">
-            <Hero />
+            {/* <Hero /> */}
             <SupportedCountries />
             <HowItWorks />
             <StatsCounter />

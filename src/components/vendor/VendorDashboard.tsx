@@ -483,7 +483,7 @@ const VendorDashboard: React.FC = () => {
         {isMobile && (
           <button
             onClick={toggleSidebar}
-            className="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-sm"
+            className="fixed top-4 left-4 z-40 bg-white p-2 rounded-md shadow-sm text-black"
           >
             <Menu size={24} />
           </button>

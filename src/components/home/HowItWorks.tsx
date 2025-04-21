@@ -188,13 +188,15 @@ const AnimatedStep = ({ step, index }) => {
     >
       <div
         className={`flex flex-col md:flex-row items-center w-full max-w-6xl transition-all duration-700 ${
-          isVisible ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-20"
+          isVisible
+            ? "opacity-100 translate-x-0"
+            : "opacity-100 translate-x-0 md:opacity-0 md:-translate-x-20"
         }`}
       >
         <img
           src={step.icon}
           alt={step.title}
-          className={`self-center max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain transition-transform duration-700 ${
+          className={`self-center max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain md:transition-transform duration-700 ${
             isVisible ? "translate-x-0" : "-translate-x-10"
           }`}
         />

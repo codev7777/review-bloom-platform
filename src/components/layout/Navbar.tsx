@@ -39,7 +39,7 @@ const Navbar = () => {
     <header
       className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? "h-[8vh] bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
+          ? "h-[8vh] bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg"
           : "h-[10vh] bg-[#232F3E] dark:bg-[#232F3E]"
       }`}
     >
@@ -79,8 +79,8 @@ const Navbar = () => {
           className={`
         ${
           isScrolled
-            ? "py-3 bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
-            : "py-5 bg-[#white] dark:bg-[#232F3E]"
+            ? "bg-[#232F3E]/95 dark:bg-[#232F3E]/95 backdrop-blur-lg shadow-sm"
+            : "bg-[#232F3E] dark:bg-[#232F3E]"
         }`}
         >
           <MobileMenu

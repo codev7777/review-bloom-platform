@@ -290,10 +290,10 @@ const SettingsPanel = () => {
             <Shield className="mr-2 h-4 w-4" />
             Company
           </TabsTrigger>
-          <TabsTrigger value="notifications">
+          {/* <TabsTrigger value="notifications">
             <Bell className="mr-2 h-4 w-4" />
             Notifications
-          </TabsTrigger>
+          </TabsTrigger> */}
           <TabsTrigger value="billing">
             <CreditCard className="mr-2 h-4 w-4" />
             Billing

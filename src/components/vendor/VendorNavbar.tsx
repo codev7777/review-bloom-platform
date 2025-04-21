@@ -14,7 +14,7 @@ const VendorNavbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full  bg-[#212631] border-b border-gray-700 h-16 px-6">
+    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full  bg-[#212631] border-b border-gray-700 h-16 px-6 pl-16">
       <div>
         <Link to="/vendor-dashboard" className="flex items-center">
           <img
