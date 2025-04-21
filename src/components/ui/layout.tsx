@@ -1,4 +1,3 @@
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
@@ -11,7 +10,12 @@ interface LayoutProps {
 
 export function Layout({ children, className }: LayoutProps) {
   return (
-    <div className={cn("flex min-h-screen flex-col bg-background dark:bg-gray-900 transition-colors duration-200", className)}>
+    <div
+      className={cn(
+        "flex min-h-screen flex-col bg-background dark:bg-gray-900 transition-colors duration-200",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -23,9 +27,18 @@ interface LayoutHeaderProps {
   showThemeToggle?: boolean;
 }
 
-export function LayoutHeader({ children, className, showThemeToggle = true }: LayoutHeaderProps) {
+export function LayoutHeader({
+  children,
+  className,
+  showThemeToggle = true,
+}: LayoutHeaderProps) {
   return (
-    <header className={cn("sticky top-0 z-30 flex h-16 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-gray-900/95 dark:border-gray-800", className)}>
+    <header
+      className={cn(
+        "sticky top-0 z-30 flex h-16 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:bg-gray-900/95 dark:border-gray-800",
+        className
+      )}
+    >
       <div className="container flex items-center justify-between">
         {children}
         {showThemeToggle && <ThemeToggle />}
@@ -42,10 +55,13 @@ interface LayoutContentProps {
 
 export function LayoutContent({ children, className }: LayoutContentProps) {
   return (
-    <main className={cn("flex-1 overflow-auto px-4 py-6 md:px-6 lg:px-8", className)}>
-      <div className="mx-auto max-w-7xl">
-        {children}
-      </div>
+    <main
+      className={cn(
+        "flex-1 overflow-auto px-1 py-6 md:px-6 lg:px-8",
+        className
+      )}
+    >
+      <div className="mx-auto max-w-7xl">{children}</div>
     </main>
   );
 }
@@ -57,7 +73,12 @@ interface LayoutSidebarProps {
 
 export function LayoutSidebar({ children, className }: LayoutSidebarProps) {
   return (
-    <aside className={cn("w-64 border-r border-border bg-background dark:bg-gray-900 dark:border-gray-800 hidden md:block", className)}>
+    <aside
+      className={cn(
+        "w-64 border-r border-border bg-background dark:bg-gray-900 dark:border-gray-800 hidden md:block",
+        className
+      )}
+    >
       {children}
     </aside>
   );
@@ -70,10 +91,13 @@ interface LayoutFooterProps {
 
 export function LayoutFooter({ children, className }: LayoutFooterProps) {
   return (
-    <footer className={cn("border-t border-border bg-background dark:bg-gray-900 dark:border-gray-800 py-6", className)}>
-      <div className="container">
-        {children}
-      </div>
+    <footer
+      className={cn(
+        "border-t border-border bg-background dark:bg-gray-900 dark:border-gray-800 py-6",
+        className
+      )}
+    >
+      <div className="container">{children}</div>
     </footer>
   );
 }

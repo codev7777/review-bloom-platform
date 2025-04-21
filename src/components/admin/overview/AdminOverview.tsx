@@ -121,7 +121,7 @@ const AdminOverview = () => {
   }
 
   return (
-    <div className="space-y-6 p-6 pb-16 text-black">
+    <div className="space-y-6 p-0 lg:p-6 pb-16 text-black ">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Total Vendors"
@@ -160,7 +160,7 @@ const AdminOverview = () => {
           bgColor="bg-[#3acbe8]"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:gap-8 gap-0">
         {/* <ReviewsChart data={reviewsChartData} />*/}
         <div className="p-4">
           <h1 className="text-2xl font-semibold mb-8 ">
