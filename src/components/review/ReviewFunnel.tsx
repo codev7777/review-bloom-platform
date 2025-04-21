@@ -350,7 +350,7 @@ const ReviewFunnel = ({
             1
           </div>
           <div
-            className={`w-16 h-1 ${
+            className={`w-12 sm:w-16  h-1 ${
               step >= 2 ? "bg-[#FF9900]" : "bg-gray-200"
             } mx-2`}
           ></div>
@@ -364,7 +364,7 @@ const ReviewFunnel = ({
             2
           </div>
           <div
-            className={`w-16 h-1 ${
+            className={`w-12 sm:w-16 h-1 ${
               step >= 3 ? "bg-[#FF9900]" : "bg-gray-200"
             } mx-2`}
           ></div>
@@ -378,7 +378,7 @@ const ReviewFunnel = ({
             3
           </div>
           <div
-            className={`w-16 h-1 ${
+            className={`w-12 sm:w-16  h-1 ${
               step >= 4 ? "bg-[#FF9900]" : "bg-gray-200"
             } mx-2`}
           ></div>

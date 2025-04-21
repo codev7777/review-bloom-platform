@@ -132,7 +132,9 @@ const ReviewPage = () => {
         vendor: "Amazon",
         productId: firstProduct.id,
         asin: firstProduct.asin,
-        promotionId: campaign.promotionId ? Number(campaign.promotionId) : undefined,
+        promotionId: campaign.promotionId
+          ? Number(campaign.promotionId)
+          : undefined,
         marketPlaces: campaign.marketplaces || [],
         products: productsResponse.data.map((product) => ({
           id: product.id,
@@ -183,7 +185,7 @@ const ReviewPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <ReviewFunnelNavbar />
-      <div className="container mx-auto px-4 pt-[10vh]">
+      <div className="container mx-auto px-0 sm:px-4 pt-[10vh]">
         <div className="mb-6">
           <Button variant="ghost" asChild>
             <Link to="/">

@@ -15,6 +15,8 @@ import {
   ClipboardList,
   Star,
 } from "lucide-react";
+import { subDays, format, isSameDay } from "date-fns";
+import { BarChart, PieChart } from "@mantine/charts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
 import { Campaign, mapCampaignForDisplay, Review } from "@/types";
@@ -179,11 +181,43 @@ const Dashboard = () => {
     console.error("Error fetching company stats:", statsError);
   }
 
-  const reviewsChartData = reviews?.reviews?.map((review: Review) => ({
-    name: new Date(review.feedbackDate).toLocaleDateString(),
-    value: review.ratio,
-  })) || [];
+  const last7Days = Array.from({ length: 7 }).map((_, i) => {
+    const date = subDays(new Date(), 6 - i); // ensures order is oldest -> newest
+    return {
+      date,
+      label: format(date, "M/dd"), // or "yyyy-MM-dd" if you want ISO format
+    };
+  });
 
+  // Step 2: Count reviews per day
+  const reviewsChartData = last7Days.map(({ date, label }) => {
+    const count = reviews?.reviews?.filter((review: Review) =>
+      isSameDay(new Date(review.feedbackDate), date)
+    ).length;
+
+    return {
+      name: label,
+      value: count,
+    };
+  });
+  // const ratioCounts = [1, 2, 3, 4, 5].map((ratio, index) => ({
+  //   name: ratio.toString(),
+  //   value: reviews.reviews.filter((r: Review) => r.ratio === ratio).length,
+  //   color: ["red", "orange", "yellow", "green", "blue"][index], // Assign a color for each ratio
+  // }));
+
+  const formattedRatioCounts = [1, 2, 3, 4, 5].map((ratio, index) => {
+    const count = reviews?.reviews?.filter(
+      (r: Review) => r.ratio === ratio
+    ).length;
+    return {
+      name: `⭐ ${ratio}: ${count}`, // <- label will include both
+      value: count,
+      color: ["red", "orange", "yellow", "green", "blue"][index], // if you're using custom colors
+      label: `⭐ ${ratio}: ${count}`,
+    };
+  });
+  console.log(formattedRatioCounts);
   return (
     <div className="space-y-8 text-white">
       <div className="flex justify-between items-center">
@@ -252,9 +286,46 @@ const Dashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ReviewsChart data={reviewsChartData} />
-        <RecentReviews reviews={reviews?.reviews || []} />
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* <ReviewsChart data={reviewsChartData} />*/}
+        <div className="p-4">
+          <h1 className="text-2xl font-semibold mb-8 ">
+            Reviews from the past 7 days
+          </h1>
+          <BarChart
+            h={300}
+            data={reviewsChartData}
+            dataKey="name"
+            series={[{ name: "value", color: "orange" }]}
+          />
+        </div>
+
+        <div>
+          <RecentReviews reviews={reviews?.reviews || []} />
+        </div>
+        {/* <PieChart
+          withTooltip
+          tooltipDataSource="segment"
+          tooltipProps={{
+            content: ({ payload }: any) => {
+              if (!payload || payload.length === 0) return null;
+              const data = payload[0].payload;
+              console.log(payload);
+              return (
+                <div
+                  style={{
+                    background: "white",
+                    padding: "4px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  ⭐ {data.name}: {data.value}
+                </div>
+              );
+            },
+          }}
+          data={formattedRatioCounts}
+        /> */}
       </div>
 
       <div className="mt-8">
