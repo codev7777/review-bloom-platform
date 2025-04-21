@@ -1,10 +1,10 @@
-
 import { useState, useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
+import { getBillingDetails, addPaymentMethod, removePaymentMethod, setDefaultPaymentMethod, type PaymentMethod } from "@/lib/api/billing/billing.api";
 
 // Subscription tiers, based on Pricing.tsx
 const plans = [
@@ -112,18 +112,100 @@ const useSubscription = () => {
   return { tier, status, loading, subscribe, manage };
 };
 
-const SubscriptionPanel = () => {
+export function SubscriptionPanel() {
   const [annual, setAnnual] = useState(true);
   const { tier, status, loading, subscribe, manage } = useSubscription();
+  const [billing, setBilling] = useState<{
+    paymentMethods: PaymentMethod[];
+    defaultPaymentMethod?: PaymentMethod;
+  }>({
+    paymentMethods: [],
+  });
+
+  useEffect(() => {
+    const loadBillingDetails = async () => {
+      try {
+        const details = await getBillingDetails();
+        setBilling({
+          paymentMethods: details.paymentMethods,
+          defaultPaymentMethod: details.defaultPaymentMethod,
+        });
+      } catch (error) {
+        console.error("Error loading billing details:", error);
+        toast({
+          variant: "destructive",
+          title: "Error loading billing details",
+          description: "Please try again later",
+        });
+      }
+    };
+
+    loadBillingDetails();
+  }, []);
 
   return (
     <TabsContent value="subscription" className="space-y-8">
       <div>
-        <h3 className="text-xl font-semibold mb-1 text-white">Subscription</h3>
+        <h3 className="text-xl font-semibold mb-1 text-white">Subscription & Billing</h3>
         <p className="text-white text-sm">
-          Choose a plan to unlock advanced features, manage or upgrade your subscription anytime.
+          Manage your subscription, payment methods, and billing information
         </p>
       </div>
+
+      {/* Payment Methods Section */}
+      <div className="bg-[#2e3a48] rounded-lg p-6 mb-8">
+        <h4 className="text-lg font-semibold text-white mb-4">Payment Methods</h4>
+        <div className="space-y-4">
+          {billing.paymentMethods.map((method) => (
+            <div key={method.id} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
+              <div className="flex items-center gap-4">
+                <CreditCard className="h-6 w-6 text-gray-400" />
+                <div>
+                  <p className="text-white font-medium">
+                    {method.card?.brand.toUpperCase()} •••• {method.card?.last4}
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    Expires {method.card?.exp_month}/{method.card?.exp_year}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {billing.defaultPaymentMethod?.id !== method.id && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setDefaultPaymentMethod(method.id)}
+                  >
+                    Set Default
+                  </Button>
+                )}
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => removePaymentMethod(method.id)}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button
+            variant="outline"
+            className="w-full mt-4"
+            onClick={() => {
+              // Implement Stripe Elements integration for adding new payment method
+              toast({
+                title: "Add Payment Method",
+                description: "Payment method addition will be implemented with Stripe Elements",
+              });
+            }}
+          >
+            <CreditCard className="mr-2 h-4 w-4" />
+            Add Payment Method
+          </Button>
+        </div>
+      </div>
+
       {/* Billing Switch */}
       <div className="flex items-center gap-4 mb-8">
         <span className={!annual ? "text-orange-400 font-bold" : "text-white"}>Monthly</span>
@@ -193,6 +275,6 @@ const SubscriptionPanel = () => {
       </div>
     </TabsContent>
   );
-};
+}
 
 export default SubscriptionPanel;

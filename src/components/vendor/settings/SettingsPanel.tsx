@@ -36,7 +36,6 @@ const ALLOWED_FILE_TYPES = [
 
 const BACKEND_URL = API_URL.replace("/v1", "");
 
-// Mock data for fallback
 const MOCK_COMPANY = {
   id: "1",
   name: "Sample Company",
@@ -48,13 +47,10 @@ const MOCK_COMPANY = {
   detail: "Sample company description",
 };
 
-// Define a separate interface for the form data
 interface SettingsFormData {
-  // User fields
   name: string;
   email: string;
   phone: string;
-  // Company fields
   companyName: string;
   websiteUrl: string;
   detail: string;
@@ -78,19 +74,10 @@ const SettingsPanel = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // const getImageUrl = (imagePath: string | undefined) => {
-  //   if (!imagePath)
-  //     return "https://placehold.co/100x100/FFF5E8/FF9130?text=No+Logo";
-  //   return imagePath.startsWith("http")
-  //     ? imagePath
-  //     : `${BACKEND_URL}${imagePath}`;
-  // };
-
   useEffect(() => {
     const fetchData = async () => {
       if (auth.user?.id) {
         try {
-          // Fetch user data
           const userData = await getUser(String(auth.user.id));
           setFormData((prev) => ({
             ...prev,
@@ -98,7 +85,6 @@ const SettingsPanel = () => {
             email: userData.email || "",
           }));
 
-          // Fetch company data if user has a company
           if (auth.user.companyId) {
             const company = await getCompany(String(auth.user.companyId));
             setFormData((prev) => ({
@@ -140,13 +126,11 @@ const SettingsPanel = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
       setFileError("File size must be less than 5MB");
       return;
     }
 
-    // Validate file type
     if (!ALLOWED_FILE_TYPES.includes(file.type)) {
       setFileError("File must be a JPEG, PNG, GIF, or WebP image");
       return;
@@ -154,7 +138,6 @@ const SettingsPanel = () => {
 
     setFileError(null);
 
-    // Create preview
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
@@ -177,20 +160,15 @@ const SettingsPanel = () => {
 
     try {
       if (activeTab === "profile") {
-        // Only update user information
         if (auth.user?.id) {
           const updatedUser = await updateUser(String(auth.user.id), {
             name: formData.name,
           });
 
-          // Update local storage with new user data
           localStorage.setItem("user", JSON.stringify(updatedUser));
-
-          // Force page reload to update auth context
           window.location.reload();
         }
       } else if (activeTab === "company") {
-        // Validate required company fields
         if (!formData.companyName || !formData.websiteUrl || !formData.detail) {
           toast({
             variant: "destructive",
@@ -200,54 +178,35 @@ const SettingsPanel = () => {
           return;
         }
 
-        // Prepare company data
         const companyData = {
           name: formData.companyName,
           websiteUrl: formData.websiteUrl,
           detail: formData.detail,
-          ratio: 0, // Default or calculated value
-          reviews: 0, // Default number
-          // createdAt: new Date(), // Date object
-          // updatedAt: new Date(), // Date object
+          ratio: 0,
+          reviews: 0,
         };
 
-        // Only include logo if it's a new base64 string or if it's being removed
         if (formData.logo !== null) {
-          // If it's a base64 string (new image or existing image)
           if (typeof formData.logo === "string") {
-            // Check if it's a base64 string or a URL
             if (formData.logo.startsWith("data:image")) {
-              // It's a new base64 image
               (companyData as any).logo = formData.logo;
             } else if (formData.logo.startsWith("http")) {
-              // It's an existing URL, don't include it in the update
-              // This prevents sending the URL as base64
             }
+          } else {
+            (companyData as any).logo = "";
           }
-        } else {
-          // If logo is null, send empty string to remove the logo
-          (companyData as any).logo = "";
         }
 
-        // If user doesn't have a company, create one
         if (!auth.user?.companyId) {
-          // Create company
           const newCompany = await createCompany(companyData);
-
-          // Update user with new company ID
           if (auth.user?.id) {
             const updatedUser = await updateUser(String(auth.user.id), {
               companyId: String(newCompany.id),
             });
-
-            // Update local storage with new user data
             localStorage.setItem("user", JSON.stringify(updatedUser));
-
-            // Force page reload to update auth context
             window.location.reload();
           }
         } else {
-          // Update existing company
           await updateCompany(String(auth.user.companyId), companyData);
         }
       }
@@ -272,16 +231,10 @@ const SettingsPanel = () => {
     <div className="space-y-6 text-white">
       <div>
         <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-white">
-          Manage your account settings and preferences
-        </p>
+        <p className="text-white">Manage your account settings and preferences</p>
       </div>
 
-      <Tabs
-        defaultValue="profile"
-        className="space-y-6"
-        onValueChange={setActiveTab}
-      >
+      <Tabs defaultValue="profile" className="space-y-6" onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="profile">
             <User className="mr-2 h-4 w-4" />
@@ -293,11 +246,7 @@ const SettingsPanel = () => {
           </TabsTrigger>
           <TabsTrigger value="subscription">
             <CreditCard className="mr-2 h-4 w-4" />
-            Subscription
-          </TabsTrigger>
-          <TabsTrigger value="billing">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Billing
+            Subscription & Billing
           </TabsTrigger>
         </TabsList>
 
@@ -453,39 +402,6 @@ const SettingsPanel = () => {
         </TabsContent>
 
         <SubscriptionPanel />
-
-        <TabsContent value="billing" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Billing Information</h3>
-            <p className="text-sm text-white">
-              Manage your billing information and subscription
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Current Plan</Label>
-                <p className="text-sm text-white">Free Plan</p>
-              </div>
-              <Button variant="outline" className="text-black">
-                Upgrade Plan
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Payment Method</Label>
-                <div className="flex items-center gap-4">
-                  <CreditCard className="h-8 w-8 text-gray-400" />
-                  <span className="text-sm text-gray-500">
-                    No payment method added
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
       </Tabs>
 
       <div className="flex justify-end">
