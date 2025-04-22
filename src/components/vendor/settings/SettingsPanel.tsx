@@ -25,6 +25,7 @@ import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
 import SubscriptionPanel from "./SubscriptionPanel";
+import PaymentSettings from "./PaymentSettings";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [
@@ -231,10 +232,16 @@ const SettingsPanel = () => {
     <div className="space-y-6 text-white">
       <div>
         <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-white">Manage your account settings and preferences</p>
+        <p className="text-white">
+          Manage your account settings and preferences
+        </p>
       </div>
 
-      <Tabs defaultValue="profile" className="space-y-6" onValueChange={setActiveTab}>
+      <Tabs
+        defaultValue="profile"
+        className="space-y-6"
+        onValueChange={setActiveTab}
+      >
         <TabsList>
           <TabsTrigger value="profile">
             <User className="mr-2 h-4 w-4" />
@@ -401,7 +408,8 @@ const SettingsPanel = () => {
           </div>
         </TabsContent>
 
-        <SubscriptionPanel />
+        {/* <SubscriptionPanel /> */}
+        <PaymentSettings />
       </Tabs>
 
       <div className="flex justify-end">
