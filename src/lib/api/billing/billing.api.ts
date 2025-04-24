@@ -1,4 +1,3 @@
-
 import api from "../axiosConfig";
 
 export interface PaymentMethod {
@@ -13,24 +12,36 @@ export interface PaymentMethod {
 }
 
 export interface BillingDetails {
+  subscription: any;
   customerId: string;
   paymentMethods: PaymentMethod[];
   defaultPaymentMethod?: PaymentMethod;
 }
 
-export const getBillingDetails = async (): Promise<BillingDetails> => {
-  const response = await api.get("/billing/details");
-  return response.data;
-};
+export async function getBillingDetails(userId: string) {
+  if (!userId) throw new Error("User not logged in");
 
-export const addPaymentMethod = async (paymentMethodId: string): Promise<void> => {
+  const res = await api.get(`/billing/details`, {
+    params: { userId }, // 👈 passed as query param
+  });
+
+  return res.data;
+}
+
+export const addPaymentMethod = async (
+  paymentMethodId: string
+): Promise<void> => {
   await api.post("/billing/payment-methods", { paymentMethodId });
 };
 
-export const removePaymentMethod = async (paymentMethodId: string): Promise<void> => {
+export const removePaymentMethod = async (
+  paymentMethodId: string
+): Promise<void> => {
   await api.delete(`/billing/payment-methods/${paymentMethodId}`);
 };
 
-export const setDefaultPaymentMethod = async (paymentMethodId: string): Promise<void> => {
+export const setDefaultPaymentMethod = async (
+  paymentMethodId: string
+): Promise<void> => {
   await api.put(`/billing/payment-methods/${paymentMethodId}/default`);
 };

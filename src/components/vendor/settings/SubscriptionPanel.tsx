@@ -4,9 +4,16 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
-import { getBillingDetails, addPaymentMethod, removePaymentMethod, setDefaultPaymentMethod, type PaymentMethod } from "@/lib/api/billing/billing.api";
+import {
+  getBillingDetails,
+  addPaymentMethod,
+  removePaymentMethod,
+  setDefaultPaymentMethod,
+  type PaymentMethod,
+} from "@/lib/api/billing/billing.api";
+import api from "@/lib/api/axiosConfig";
 
-// Subscription tiers, based on Pricing.tsx
+// Subscription plans
 const plans = [
   {
     title: "SILVER",
@@ -24,6 +31,7 @@ const plans = [
       { name: "Business Features", included: false },
     ],
     planId: "silver",
+    priceId: "price_1RH8eXPuMpDKUxfQN4XUH99L",
   },
   {
     title: "GOLD",
@@ -42,6 +50,7 @@ const plans = [
       { name: "Meta Pixel Support", included: true },
     ],
     planId: "gold",
+    priceId: "price_1RH8eZPuMpDKUxfQAWOjGe19",
   },
   {
     title: "PLATINUM",
@@ -61,37 +70,93 @@ const plans = [
       { name: "Multiple Sub-Accounts", included: true },
     ],
     planId: "platinum",
+    priceId: "price_1RH8ecPuMpDKUxfQhtgExI7J",
   },
 ];
 
 const useSubscription = () => {
-  // You'd normally fetch this from server.
-  // Demo status—update with actual data source if available.
+  const { user } = useAuth();
   const [tier, setTier] = useState<string | null>(null);
   const [status, setStatus] = useState<"active" | "none" | "canceled">("none");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Simulate fetch on mount.
-    // Replace with real API for your project
-    setTimeout(() => {
-      setTier(null); // e.g. "gold"
-      setStatus("none");
-    }, 300);
-  }, []);
+  const fetchSubscription = async () => {
+    // console.log("user", user);
+    if (!user?.id) return;
 
-  // These would call your real Stripe/Supabase endpoints.
+    try {
+      // console.log("11");
+      const detail = await getBillingDetails(user.id);
+      const details = detail.data;
+      console.log("22");
+      console.log("details1 ", details);
+      if (details.subscription) {
+        setTier(details.subscription.plan.name.toLowerCase());
+        setStatus(details.subscription.status.toLowerCase());
+        // console.log(details.subscription.plan.id);
+        console.log(tier);
+      } else {
+        setTier(null);
+        setStatus("none");
+      }
+    } catch (error) {
+      // console.error("Failed to fetch subscription:", error);
+      toast({
+        variant: "destructive",
+        title: "Error loading subscription",
+        description: "Could not load subscription details.",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchSubscription();
+  }, [user?.id]);
+
   const subscribe = async (plan: string) => {
+    const token = localStorage.getItem("accessToken");
+    if (!token || !user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Login Required",
+        description: "Please log in to subscribe.",
+      });
+      return;
+    }
+
+    const selectedPlan = plans.find((p) => p.planId === plan);
+    if (!selectedPlan) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Plan",
+        description: "Selected plan not found.",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      // Call your subscription endpoint here
-      await new Promise((r) => setTimeout(r, 1000));
-      setTier(plan);
-      setStatus("active");
-      toast({ title: "Successfully subscribed!", description: `You are now on the ${plan} plan.`, });
-      // Optionally, redirect to Stripe checkout if necessary
+      const res = await api.post("/billing/create-checkout-session", {
+        userId: user.id,
+        priceId: selectedPlan.priceId,
+        success_url: `${window.location.origin}/subscription?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${window.location.origin}/subscription`,
+      });
+
+      const { url } = res.data;
+
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error("No checkout URL returned");
+      }
     } catch (err) {
-      toast({ variant: "destructive", title: "Subscription error", description: "Please try again." });
+      console.error("Checkout error:", err);
+      toast({
+        variant: "destructive",
+        title: "Subscription Error",
+        description: "Failed to initiate checkout. Try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -100,32 +165,51 @@ const useSubscription = () => {
   const manage = async () => {
     setLoading(true);
     try {
-      // Call endpoint to open Stripe portal here
-      window.open("https://dashboard.stripe.com", "_blank");
+      const res = await api.post("/billing/create-portal-session");
+      const { url } = res.data;
+
+      if (url) {
+        window.location.href = url;
+      } else {
+        throw new Error("No portal URL returned");
+      }
     } catch (err) {
-      toast({ variant: "destructive", title: "Unable to open portal", });
+      toast({
+        variant: "destructive",
+        title: "Portal Error",
+        description: "Unable to open billing portal.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  return { tier, status, loading, subscribe, manage };
+  return {
+    tier,
+    status,
+    loading,
+    subscribe,
+    manage,
+    refresh: fetchSubscription,
+  };
 };
 
 export function SubscriptionPanel() {
+  const { user } = useAuth();
   const [annual, setAnnual] = useState(true);
-  const { tier, status, loading, subscribe, manage } = useSubscription();
+  const { tier, status, loading, subscribe, manage, refresh } =
+    useSubscription();
   const [billing, setBilling] = useState<{
     paymentMethods: PaymentMethod[];
     defaultPaymentMethod?: PaymentMethod;
-  }>({
-    paymentMethods: [],
-  });
+  }>({ paymentMethods: [] });
 
   useEffect(() => {
     const loadBillingDetails = async () => {
+      if (!user?.id) return;
       try {
-        const details = await getBillingDetails();
+        const details = await getBillingDetails(user.id);
+        console.log("details2 ", details);
         setBilling({
           paymentMethods: details.paymentMethods,
           defaultPaymentMethod: details.defaultPaymentMethod,
@@ -142,89 +226,53 @@ export function SubscriptionPanel() {
 
     loadBillingDetails();
   }, []);
-
+  useEffect(() => {
+    refresh(); // Always refresh subscription status when this panel mounts
+  }, []);
   return (
     <TabsContent value="subscription" className="space-y-8">
       <div>
-        <h3 className="text-xl font-semibold mb-1 text-white">Subscription & Billing</h3>
+        <h3 className="text-xl font-semibold mb-1 text-white">
+          Subscription & Billing
+        </h3>
         <p className="text-white text-sm">
           Manage your subscription, payment methods, and billing information
         </p>
       </div>
 
-      {/* Payment Methods Section */}
-      <div className="bg-[#2e3a48] rounded-lg p-6 mb-8">
-        <h4 className="text-lg font-semibold text-white mb-4">Payment Methods</h4>
-        <div className="space-y-4">
-          {billing.paymentMethods.map((method) => (
-            <div key={method.id} className="flex items-center justify-between p-4 bg-gray-800 rounded-lg">
-              <div className="flex items-center gap-4">
-                <CreditCard className="h-6 w-6 text-gray-400" />
-                <div>
-                  <p className="text-white font-medium">
-                    {method.card?.brand.toUpperCase()} •••• {method.card?.last4}
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    Expires {method.card?.exp_month}/{method.card?.exp_year}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {billing.defaultPaymentMethod?.id !== method.id && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDefaultPaymentMethod(method.id)}
-                  >
-                    Set Default
-                  </Button>
-                )}
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => removePaymentMethod(method.id)}
-                >
-                  Remove
-                </Button>
-              </div>
-            </div>
-          ))}
-          <Button
-            variant="outline"
-            className="w-full mt-4"
-            onClick={() => {
-              // Implement Stripe Elements integration for adding new payment method
-              toast({
-                title: "Add Payment Method",
-                description: "Payment method addition will be implemented with Stripe Elements",
-              });
-            }}
-          >
-            <CreditCard className="mr-2 h-4 w-4" />
-            Add Payment Method
-          </Button>
-        </div>
-      </div>
-
       {/* Billing Switch */}
       <div className="flex items-center gap-4 mb-8">
-        <span className={!annual ? "text-orange-400 font-bold" : "text-white"}>Monthly</span>
+        <span className={!annual ? "text-orange-400 font-bold" : "text-white"}>
+          Monthly
+        </span>
         <button
           onClick={() => setAnnual((a) => !a)}
-          className={`w-14 h-7 rounded-full bg-gray-400 p-1 transition-all flex items-center ${annual ? 'justify-end bg-orange-500' : 'justify-start'}`}
+          className={`w-14 h-7 rounded-full bg-gray-400 p-1 transition-all flex items-center ${
+            annual ? "justify-end bg-orange-500" : "justify-start"
+          }`}
           aria-label="Toggle billing"
         >
           <span className="block w-6 h-6 bg-white rounded-full shadow" />
         </button>
-        <span className={annual ? "text-orange-400 font-bold" : "text-white"}>Annually</span>
-        <span className="ml-4 py-1 px-2 bg-orange-100 text-orange-600 rounded text-xs font-semibold">{annual ? "Save 20%" : "Cancel anytime"}</span>
+        <span className={annual ? "text-orange-400 font-bold" : "text-white"}>
+          Annually
+        </span>
+        <span className="ml-4 py-1 px-2 bg-orange-100 text-orange-600 rounded text-xs font-semibold">
+          {annual ? "Save 20%" : "Cancel anytime"}
+        </span>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {plans.map((plan, idx) => (
-          <div key={idx} className={`rounded-xl shadow-xl border border-gray-300 bg-[#2e3a48] flex flex-col p-7 relative`}>
+          <div
+            key={idx}
+            className="rounded-xl shadow-xl border border-gray-300 bg-[#2e3a48] flex flex-col p-7 relative"
+          >
+            {/* {console.log(tier === plan.planId, status)} */}
             {tier === plan.planId && status === "active" && (
-              <span className="absolute top-4 right-4 text-xs px-3 py-1 bg-green-500 text-white rounded-full font-bold shadow">Current</span>
+              <span className="absolute top-4 right-4 text-xs px-3 py-1 bg-green-500 text-white rounded-full font-bold shadow">
+                Current
+              </span>
             )}
             <div className="mb-2">
               <h4 className="text-2xl font-bold text-white">{plan.title}</h4>
@@ -241,16 +289,33 @@ export function SubscriptionPanel() {
             </div>
             <ul className="mb-8 mt-2 grid gap-2">
               {plan.features.map((f, i) => (
-                <li key={i} className="flex items-center gap-2 text-white text-md">
-                  <Check className={`w-5 h-5 ${f.included ? "text-green-400" : "text-gray-400 opacity-60"}`} />
-                  <span className={f.included ? "font-semibold" : "line-through opacity-70"}>{f.name}</span>
+                <li
+                  key={i}
+                  className="flex items-center gap-2 text-white text-md"
+                >
+                  <Check
+                    className={`w-5 h-5 ${
+                      f.included ? "text-green-400" : "text-gray-400 opacity-60"
+                    }`}
+                  />
+                  <span
+                    className={
+                      f.included ? "font-semibold" : "line-through opacity-70"
+                    }
+                  >
+                    {f.name}
+                  </span>
                 </li>
               ))}
             </ul>
-            {/* Actions */}
             <div className="mt-auto">
               {tier === plan.planId && status === "active" ? (
-                <Button disabled className="w-full bg-green-500 text-white cursor-default">Your Plan</Button>
+                <Button
+                  disabled
+                  className="w-full bg-green-500 text-white cursor-default"
+                >
+                  Your Plan
+                </Button>
               ) : (
                 <Button
                   onClick={() => subscribe(plan.planId)}
@@ -264,6 +329,7 @@ export function SubscriptionPanel() {
           </div>
         ))}
       </div>
+
       <div className="flex items-center gap-3 mt-3">
         <Button
           variant="outline"

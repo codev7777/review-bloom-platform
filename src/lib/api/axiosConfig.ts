@@ -5,6 +5,7 @@ import { API_URL } from "@/config/env";
 // Create an Axios instance with default settings
 const api = axios.create({
   baseURL: API_URL, // Using environment-based API URL
+
   headers: {
     "Content-Type": "application/json",
   },

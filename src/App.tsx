@@ -32,8 +32,10 @@ import ContactUsPage from "./pages/ContactUsPage";
 import FAQsPage from "./pages/FAQsPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
 import VerificationEmailSent from "./pages/VerificationEmailSent";
+import SuccessPage from "./pages/success";
 import { PrivateRoute } from "./components/auth/PrivateRoute";
 import ScrollToTop from "./lib/ScrollToTop";
+import SubscriptionPage from "./pages/subscription";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +56,8 @@ const App = () => {
               <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/success" element={<SuccessPage />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
                 <Route
                   path="/review/:campaignId"
                   element={<ReviewRedirect />}

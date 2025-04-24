@@ -83,6 +83,7 @@ export interface Company {
   Products?: Product[];
   createdAt: Date;
   updatedAt: Date;
+  stripeCustomerId?: string;
 }
 
 export interface User {
@@ -92,6 +93,7 @@ export interface User {
   role: string;
   companyId?: string | number;
   isEmailVerified?: boolean;
+  stripeCustomerId?: string;
 }
 
 export interface Product {

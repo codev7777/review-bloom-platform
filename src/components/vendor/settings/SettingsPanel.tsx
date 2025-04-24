@@ -25,7 +25,7 @@ import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
 import SubscriptionPanel from "./SubscriptionPanel";
-import PaymentSettings from "./PaymentSettings";
+// import PaymentSettings from "./PaymentSettings";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FILE_TYPES = [
@@ -408,8 +408,8 @@ const SettingsPanel = () => {
           </div>
         </TabsContent>
 
-        {/* <SubscriptionPanel /> */}
-        <PaymentSettings />
+        <SubscriptionPanel />
+        {/* <PaymentSettings /> */}
       </Tabs>
 
       <div className="flex justify-end">
