@@ -124,6 +124,11 @@ const PromotionForm = () => {
   const [hasImageChanged, setHasImageChanged] = useState(false);
   const [couponCodes, setCouponCodes] = useState<string[]>([]);
   const [newCouponCode, setNewCouponCode] = useState("");
+  const [error, setError] = useState<{
+    title: string;
+    message: string;
+    showUpgradeButton: boolean;
+  } | null>(null);
 
   // Get the current user's company ID from localStorage
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -272,27 +277,45 @@ const PromotionForm = () => {
         }),
       };
 
-      if (isEditMode && id) {
-        await updatePromotion(id, promotionData);
-        toast({
-          title: "Success",
-          description: "Promotion updated successfully",
+      await createPromotion(promotionData);
+      toast({
+        title: "Success",
+        description: "Promotion created successfully",
+      });
+      navigate("/vendor-dashboard/promotions");
+    } catch (err: any) {
+      console.error("Error creating promotion:", err);
+
+      // Check if this is a plan limit error
+      if (
+        err.response?.data?.message?.includes("maximum number of promotions")
+      ) {
+        const planMatch = err.response.data.message.match(/your (\w+) plan/);
+        const planType = planMatch ? planMatch[1] : "";
+
+        let upgradeMessage = "";
+        if (planType === "SILVER") {
+          upgradeMessage =
+            "Upgrade to GOLD plan for up to 10 promotions or PLATINUM plan for unlimited promotions.";
+        } else if (planType === "GOLD") {
+          upgradeMessage = "Upgrade to PLATINUM plan for unlimited promotions.";
+        }
+
+        setError({
+          title: "Plan Limit Reached",
+          message: `You have reached the maximum number of promotions allowed by your ${planType} plan. ${upgradeMessage}`,
+          showUpgradeButton: true,
         });
       } else {
-        await createPromotion(promotionData);
-        toast({
-          title: "Success",
-          description: "Promotion created successfully",
+        setError({
+          title: "Error",
+          message:
+            err.response?.data?.message ||
+            err.message ||
+            "Failed to create promotion",
+          showUpgradeButton: false,
         });
       }
-      navigate("/vendor-dashboard/promotions");
-    } catch (err) {
-      console.error("Error submitting promotion:", err);
-      toast({
-        title: "Error",
-        description: "Failed to save promotion",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }
@@ -636,6 +659,36 @@ const PromotionForm = () => {
             </Button>
           </div>
         </form>
+      )}
+
+      {error && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold text-red-600 mb-4">
+              {error.title}
+            </h3>
+            <p className="text-gray-700 mb-6">{error.message}</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setError(null)}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Close
+              </button>
+              {error.showUpgradeButton && (
+                <button
+                  onClick={() => {
+                    setError(null);
+                    navigate("/vendor-dashboard/settings");
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Upgrade Plan
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

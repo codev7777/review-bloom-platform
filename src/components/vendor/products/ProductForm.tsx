@@ -24,6 +24,14 @@ import { Product, Category } from "@/types";
 import { getImageUrl, getImageHeaders } from "@/utils/imageUrl";
 import { useQuery } from "@tanstack/react-query";
 import { API_URL } from "@/config/env";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 const MOCK_PRODUCTS = [
   {
@@ -71,6 +79,9 @@ const ProductForm = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const isEditMode = Boolean(productId);
+  const companyId = auth?.user?.companyId
+    ? parseInt(auth.user.companyId, 10)
+    : undefined;
 
   // Fetch categories using react-query
   const {
@@ -109,20 +120,19 @@ const ProductForm = () => {
     companyId: auth?.user?.companyId,
   });
 
-  const [formData, setFormData] = useState<{
-    title: string;
-    description: string;
-    categoryId: string;
-    companyId: string;
-    image: string | File | null;
-    asin?: string;
-  }>({
+  // Fetch product data in edit mode
+  const { data: productData } = useQuery<Product>({
+    queryKey: ["product", productId],
+    queryFn: () => (productId ? getProduct(productId) : null),
+    enabled: isEditMode,
+  });
+
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
-    categoryId: "",
-    companyId: auth?.user?.companyId?.toString() || "",
     image: null,
     asin: "",
+    categoryId: undefined,
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -130,6 +140,27 @@ const ProductForm = () => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [hasImageChanged, setHasImageChanged] = useState(false);
   const [isFetching, setIsFetching] = useState(isEditMode);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // Update form data when product data is loaded
+  useEffect(() => {
+    if (isEditMode && productData) {
+      setFormData({
+        title: productData.title || "",
+        description: productData.description || "",
+        image: productData.image || null,
+        asin: productData.asin || "",
+        categoryId: productData.categoryId,
+      });
+
+      if (productData.image) {
+        const imageUrl = getImageUrl(productData.image);
+        console.log("Setting image preview URL:", imageUrl);
+        setImagePreview(imageUrl);
+      }
+    }
+  }, [productData, isEditMode]);
 
   useEffect(() => {
     console.log("useEffect triggered:", {
@@ -212,7 +243,7 @@ const ProductForm = () => {
     console.log("imagePreview updated:", imagePreview);
   }, [imagePreview]);
 
-  const handleChange = (
+  const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
@@ -272,16 +303,26 @@ const ProductForm = () => {
     setIsLoading(true);
 
     try {
+      if (!formData.title || !formData.description || !formData.categoryId) {
+        setErrorMessage("Please fill in all required fields");
+        setErrorModalOpen(true);
+        return;
+      }
+
+      if (!companyId) {
+        setErrorMessage(
+          "You need to be associated with a company to create a product"
+        );
+        setErrorModalOpen(true);
+        return;
+      }
+
       const formDataToSubmit = new FormData();
       formDataToSubmit.append("title", formData.title);
       formDataToSubmit.append("description", formData.description);
-      formDataToSubmit.append("categoryId", formData.categoryId);
-      formDataToSubmit.append(
-        "companyId",
-        formData.companyId ? Number(formData.companyId).toString() : ""
-      );
-      formDataToSubmit.append("asin", formData.asin || "");
-
+      formDataToSubmit.append("categoryId", formData.categoryId.toString());
+      formDataToSubmit.append("companyId", companyId.toString());
+      if (formData.asin) formDataToSubmit.append("asin", formData.asin);
       if (formData.image instanceof File) {
         formDataToSubmit.append("image", formData.image);
       }
@@ -289,25 +330,46 @@ const ProductForm = () => {
       if (isEditMode && productId) {
         await updateProduct(productId, formDataToSubmit);
         toast({
-          title: "Product updated",
-          description: "Your product has been updated successfully.",
+          title: "Success",
+          description: "Product updated successfully",
         });
       } else {
         await createProduct(formDataToSubmit);
         toast({
-          title: "Product created",
-          description: "Your product has been created successfully.",
+          title: "Success",
+          description: "Product created successfully",
         });
       }
-
       navigate("/vendor-dashboard/products");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting product:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save product. Please try again.",
-      });
+
+      // Check if the error is related to plan limits
+      if (
+        error.response?.data?.message?.includes("maximum number of products")
+      ) {
+        const planType =
+          error.response.data.message.match(
+            /your (SILVER|GOLD|PLATINUM) plan/i
+          )?.[1] || "current";
+        let upgradeMessage = "";
+
+        if (planType === "SILVER") {
+          upgradeMessage =
+            "Upgrade to GOLD plan for up to 30 products or PLATINUM plan for unlimited products.";
+        } else if (planType === "GOLD") {
+          upgradeMessage = "Upgrade to PLATINUM plan for unlimited products.";
+        }
+
+        setErrorMessage(
+          `You have reached the maximum number of products allowed by your ${planType} plan. ${upgradeMessage}`
+        );
+      } else {
+        setErrorMessage(
+          error instanceof Error ? error.message : "Failed to save product"
+        );
+      }
+      setErrorModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -343,9 +405,7 @@ const ProductForm = () => {
                 id="title"
                 name="title"
                 value={formData.title}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, title: e.target.value }))
-                }
+                onChange={handleInputChange}
                 placeholder="Enter product title"
                 required
                 className="text-black"
@@ -358,12 +418,7 @@ const ProductForm = () => {
                 id="description"
                 name="description"
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData((prev) => ({
-                    ...prev,
-                    description: e.target.value,
-                  }))
-                }
+                onChange={handleInputChange}
                 placeholder="Enter product description"
                 rows={4}
                 required
@@ -377,9 +432,7 @@ const ProductForm = () => {
                 id="asin"
                 name="asin"
                 value={formData.asin}
-                onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, asin: e.target.value }))
-                }
+                onChange={handleInputChange}
                 placeholder="Enter product ASIN"
                 className="text-black"
               />
@@ -388,9 +441,12 @@ const ProductForm = () => {
             <div className="text-black">
               <Label className="text-white">Category</Label>
               <Select
-                value={formData.categoryId}
+                value={formData.categoryId?.toString()}
                 onValueChange={(value) =>
-                  setFormData((prev) => ({ ...prev, categoryId: value }))
+                  setFormData((prev) => ({
+                    ...prev,
+                    categoryId: parseInt(value),
+                  }))
                 }
                 disabled={isLoadingCategories}
               >
@@ -517,6 +573,40 @@ const ProductForm = () => {
           </Button>
         </div>
       </form>
+
+      <Dialog open={errorModalOpen} onOpenChange={setErrorModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-500">
+              Plan Limit Reached
+            </DialogTitle>
+            <DialogDescription className="text-gray-700">
+              {errorMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setErrorModalOpen(false)}
+            >
+              Close
+            </Button>
+            {errorMessage.includes("Upgrade to") && (
+              <Button
+                type="button"
+                onClick={() => {
+                  setErrorModalOpen(false);
+                  navigate("/vendor-dashboard/settings");
+                }}
+                className="bg-orange-500 hover:bg-orange-600"
+              >
+                Upgrade Plan
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

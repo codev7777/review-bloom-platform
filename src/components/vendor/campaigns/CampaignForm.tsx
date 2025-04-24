@@ -27,6 +27,14 @@ import {
 import { Campaign, CampaignStatus, Product, Promotion } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import GetDomain from "@/lib/GetDomain";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 // Marketplace constants
 const MARKETPLACE_COUNTRIES = [
@@ -139,6 +147,10 @@ const CampaignForm = () => {
   const [qrCode, setQrCode] = useState<string>("");
   const [campaignUrl, setCampaignUrl] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [errorModalOpen, setErrorModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [errorTitle, setErrorTitle] = useState("");
+  const [showUpgradeButton, setShowUpgradeButton] = useState(false);
 
   // Update form data when campaign data is loaded
   useEffect(() => {
@@ -235,21 +247,20 @@ const CampaignForm = () => {
         !formData.productIds?.length ||
         !formData.marketplaces?.length
       ) {
-        toast({
-          variant: "destructive",
-          title: "Validation Error",
-          description: "Please fill in all required fields",
-        });
+        setErrorTitle("Error");
+        setErrorMessage("Please fill in all required fields");
+        setShowUpgradeButton(false);
+        setErrorModalOpen(true);
         return;
       }
 
       if (!companyId) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description:
-            "You need to be associated with a company to create a campaign",
-        });
+        setErrorTitle("Error");
+        setErrorMessage(
+          "You need to be associated with a company to create a campaign"
+        );
+        setShowUpgradeButton(false);
+        setErrorModalOpen(true);
         return;
       }
 
@@ -278,13 +289,23 @@ const CampaignForm = () => {
         });
       }
       navigate("/vendor-dashboard/campaigns");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error submitting campaign:", error);
-      toast({
-        title: "Error",
-        description: "Failed to save campaign",
-        variant: "destructive",
-      });
+
+      // Check if this is a marketplace limit error
+      if (error.message?.includes("maximum number of marketplaces")) {
+        const planMatch = error.message.match(/your (\w+) plan/);
+        const planType = planMatch ? planMatch[1] : "";
+
+        setErrorTitle("Plan Limit Reached");
+        setErrorMessage(error.message);
+        setShowUpgradeButton(true);
+      } else {
+        setErrorTitle("Error");
+        setErrorMessage(error.message || "Failed to save campaign");
+        setShowUpgradeButton(false);
+      }
+      setErrorModalOpen(true);
     } finally {
       setIsLoading(false);
     }
@@ -425,42 +446,6 @@ const CampaignForm = () => {
                 <Label htmlFor="isActive">Active Campaign</Label>
               </div>
             </div>
-            // <div className="space-y-4">
-            //   <Card>
-            //     <CardContent className="p-6">
-            //       <div className="flex flex-col items-center space-y-4">
-            //         <img
-            //           src={qrCode}
-            //           alt="Campaign QR Code"
-            //           className="w-48 h-48"
-            //         />
-            //         <div className="text-center">
-            //           <p className="text-sm text-gray-500">
-            //             Scan to access campaign
-            //           </p>
-            //           <p className="text-xs text-gray-400 break-all">
-            //             {campaignUrl}
-            //           </p>
-            //         </div>
-            //         <Button
-            //           type="button"
-            //           variant="outline"
-            //           onClick={() => {
-            //             navigator.clipboard.writeText(campaignUrl);
-            //             toast({
-            //               title: "URL Copied",
-            //               description:
-            //                 "Campaign URL has been copied to clipboard",
-            //             });
-            //           }}
-            //         >
-            //           <Copy className="mr-2 h-4 w-4" />
-            //           Copy URL
-            //         </Button>
-            //       </div>
-            //     </CardContent>
-            //   </Card>
-            // </div>
           )}
         </div>
 
@@ -481,6 +466,32 @@ const CampaignForm = () => {
           </Button>
         </div>
       </form>
+
+      <Dialog open={errorModalOpen} onOpenChange={setErrorModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-red-600">{errorTitle}</DialogTitle>
+            <DialogDescription className="text-gray-700">
+              {errorMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setErrorModalOpen(false)}>
+              Close
+            </Button>
+            {showUpgradeButton && (
+              <Button
+                onClick={() => {
+                  setErrorModalOpen(false);
+                  navigate("/vendor-dashboard/settings");
+                }}
+              >
+                Upgrade Plan
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

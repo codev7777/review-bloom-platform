@@ -1,4 +1,3 @@
-
 import api from "../axiosConfig";
 import { Campaign, CampaignStatus } from "@/types";
 import { API_URL } from "@/config/env";
@@ -18,8 +17,15 @@ export const createCampaign = async (
       : [campaign.marketplaces],
   };
 
-  const response = await api.post("/campaigns", formData);
-  return response.data;
+  try {
+    const response = await api.post("/campaigns", formData);
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
+    throw error;
+  }
 };
 
 export interface GetCampaignsParams {
