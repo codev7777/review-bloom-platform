@@ -27,11 +27,13 @@ const plans = [
       { name: "1 Promotion", included: true },
       { name: "1 Product", included: true },
       { name: "1 Marketplace", included: true },
+      { name: "Collect Seller Feedback", included: false },
       { name: "Meta Pixel Support", included: false },
       { name: "Business Features", included: false },
     ],
     planId: "silver",
-    priceId: "price_1RH8eXPuMpDKUxfQN4XUH99L",
+    monthlyPriceId: "price_1RH8eXPuMpDKUxfQN4XUH99L",
+    annualPriceId: "price_1RHMYxPuMpDKUxfQxa4sycID",
   },
   {
     title: "GOLD",
@@ -50,7 +52,8 @@ const plans = [
       { name: "Meta Pixel Support", included: true },
     ],
     planId: "gold",
-    priceId: "price_1RH8eZPuMpDKUxfQAWOjGe19",
+    monthlyPriceId: "price_1RH8eZPuMpDKUxfQAWOjGe19",
+    annualPriceId: "price_1RHMYyPuMpDKUxfQFLGZqK9Y",
   },
   {
     title: "PLATINUM",
@@ -70,42 +73,31 @@ const plans = [
       { name: "Multiple Sub-Accounts", included: true },
     ],
     planId: "platinum",
-    priceId: "price_1RH8ecPuMpDKUxfQhtgExI7J",
+    monthlyPriceId: "price_1RH8ecPuMpDKUxfQhtgExI7J",
+    annualPriceId: "price_1RHMYzPuMpDKUxfQPupJxWdP",
   },
 ];
 
-const useSubscription = () => {
+export const useSubscription = () => {
   const { user } = useAuth();
   const [tier, setTier] = useState<string | null>(null);
   const [status, setStatus] = useState<"active" | "none" | "canceled">("none");
   const [loading, setLoading] = useState(false);
+  const [annual, setAnnual] = useState(true);
 
   const fetchSubscription = async () => {
-    // console.log("user", user);
-    if (!user?.id) return;
+    const token = localStorage.getItem("accessToken");
+    if (!token || !user?.id) return;
 
     try {
-      // console.log("11");
-      const detail = await getBillingDetails(user.id);
-      const details = detail.data;
-      console.log("22");
-      console.log("details1 ", details);
-      if (details.subscription) {
-        setTier(details.subscription.plan.name.toLowerCase());
-        setStatus(details.subscription.status.toLowerCase());
-        // console.log(details.subscription.plan.id);
-        console.log(tier);
-      } else {
-        setTier(null);
-        setStatus("none");
-      }
-    } catch (error) {
-      // console.error("Failed to fetch subscription:", error);
-      toast({
-        variant: "destructive",
-        title: "Error loading subscription",
-        description: "Could not load subscription details.",
+      const res = await api.get(`/billing/details`, {
+        params: { userId: user.id },
       });
+      const data = res.data.data;
+      setTier(data.subscription?.plan?.name?.toLowerCase() || null);
+      setStatus(data.subscription?.status?.toLowerCase() || "none");
+    } catch (error) {
+      console.error("Failed to fetch subscription", error);
     }
   };
 
@@ -113,7 +105,7 @@ const useSubscription = () => {
     fetchSubscription();
   }, [user?.id]);
 
-  const subscribe = async (plan: string) => {
+  const subscribe = async (planId: string, billingType: boolean) => {
     const token = localStorage.getItem("accessToken");
     if (!token || !user?.id) {
       toast({
@@ -124,7 +116,7 @@ const useSubscription = () => {
       return;
     }
 
-    const selectedPlan = plans.find((p) => p.planId === plan);
+    const selectedPlan = plans.find((p) => p.planId === planId);
     if (!selectedPlan) {
       toast({
         variant: "destructive",
@@ -134,17 +126,20 @@ const useSubscription = () => {
       return;
     }
 
+    const selectedPriceId = billingType
+      ? selectedPlan.annualPriceId
+      : selectedPlan.monthlyPriceId;
+
     setLoading(true);
     try {
       const res = await api.post("/billing/create-checkout-session", {
         userId: user.id,
-        priceId: selectedPlan.priceId,
+        priceId: selectedPriceId,
         success_url: `${window.location.origin}/subscription?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${window.location.origin}/subscription`,
       });
 
       const { url } = res.data;
-
       if (url) {
         window.location.href = url;
       } else {
@@ -163,24 +158,24 @@ const useSubscription = () => {
   };
 
   const manage = async () => {
-    setLoading(true);
-    try {
-      const res = await api.post("/billing/create-portal-session");
-      const { url } = res.data;
+    const token = localStorage.getItem("accessToken");
+    if (!token || !user?.id) return;
 
+    try {
+      const res = await api.post("/billing/manage-subscription", {
+        userId: user.id,
+      });
+      const { url } = res.data;
       if (url) {
         window.location.href = url;
-      } else {
-        throw new Error("No portal URL returned");
       }
     } catch (err) {
+      console.error("Manage subscription error:", err);
       toast({
         variant: "destructive",
-        title: "Portal Error",
-        description: "Unable to open billing portal.",
+        title: "Error",
+        description: "Could not redirect to billing portal.",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -191,6 +186,9 @@ const useSubscription = () => {
     subscribe,
     manage,
     refresh: fetchSubscription,
+    annual,
+    setAnnual,
+    plans,
   };
 };
 
@@ -318,7 +316,7 @@ export function SubscriptionPanel() {
                 </Button>
               ) : (
                 <Button
-                  onClick={() => subscribe(plan.planId)}
+                  onClick={() => subscribe(plan.planId, annual)}
                   className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                   disabled={loading}
                 >
