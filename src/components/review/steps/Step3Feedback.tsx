@@ -53,13 +53,6 @@ const Step3Feedback = ({
 
   // Get the selected product's image
   const selectedProduct = products.find((p) => p.id === formData.productId);
-  const productImage = isDemo
-    ? selectedProduct.title == "Desktop"
-      ? "/images/funnel/demo-campaign-product-1.webp"
-      : "/images/funnel/demo-campaign-product-2.webp"
-    : selectedProduct?.image
-    ? `${BACKEND_URL}/uploads/${selectedProduct.image}`
-    : "/images/products/default-product.jpg";
 
   // Validate feedback on component mount and when feedback changes
   useEffect(() => {
@@ -81,6 +74,16 @@ const Step3Feedback = ({
   const { campaignId } = useParams<{
     campaignId: string;
   }>();
+
+  const productImage =
+    campaignId === "demo-campaign"
+      ? selectedProduct.title == "Desktop"
+        ? "/images/funnel/demo-campaign-product-1.webp"
+        : "/images/funnel/demo-campaign-product-2.webp"
+      : selectedProduct?.image
+      ? `${BACKEND_URL}/uploads/${selectedProduct.image}`
+      : "/images/products/default-product.jpg";
+
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
 
@@ -166,7 +169,7 @@ const Step3Feedback = ({
         {promotion?.title}
       </h2>
       <div className="flex justify-center items-center mt-12 mb-3">
-        {isDemo ? (
+        {campaignId === "demo-campaign" ? (
           <img
             src={productImage}
             alt={selectedProduct?.title || "Product"}
