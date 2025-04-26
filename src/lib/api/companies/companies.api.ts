@@ -1,5 +1,5 @@
 import api from "../axiosConfig";
-import { Company } from "@/types";
+import { Company, User } from "@/types";
 
 // Company API endpoints
 export const createCompany = async (
@@ -56,4 +56,30 @@ export const updateCompany = async (
 
 export const deleteCompany = async (id: string | number): Promise<void> => {
   await api.delete(`/companies/${id}`);
+};
+
+export const getCompanyUsers = async (companyId: number): Promise<User[]> => {
+  const response = await api.get(`/companies/${companyId}/users`);
+  return response.data;
+};
+
+export const inviteUser = async (
+  companyId: number,
+  email: string
+): Promise<void> => {
+  try {
+    await api.post(`/companies/${companyId}/users`, { email });
+  } catch (error: any) {
+    if (error.response) {
+      throw error.response;
+    }
+    throw error;
+  }
+};
+
+export const removeUser = async (
+  companyId: number,
+  userId: number
+): Promise<void> => {
+  await api.delete(`/companies/${companyId}/users/${userId}`);
 };

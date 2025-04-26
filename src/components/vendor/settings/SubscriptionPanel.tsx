@@ -87,11 +87,11 @@ export const useSubscription = () => {
 
   const fetchSubscription = async () => {
     const token = localStorage.getItem("accessToken");
-    if (!token || !user?.id) return;
+    if (!token || !user?.companyId) return;
 
     try {
       const res = await api.get(`/billing/details`, {
-        params: { userId: user.id },
+        params: { companyId: user.companyId },
       });
       const data = res.data.data;
       setTier(data.subscription?.plan?.name?.toLowerCase() || null);
@@ -103,7 +103,7 @@ export const useSubscription = () => {
 
   useEffect(() => {
     fetchSubscription();
-  }, [user?.id]);
+  }, [user?.companyId]);
 
   const subscribe = async (planId: string, billingType: boolean) => {
     const token = localStorage.getItem("accessToken");
@@ -204,9 +204,9 @@ export function SubscriptionPanel() {
 
   useEffect(() => {
     const loadBillingDetails = async () => {
-      if (!user?.id) return;
+      if (!user?.companyId) return;
       try {
-        const details = await getBillingDetails(user.id);
+        const details = await getBillingDetails(undefined, user.companyId);
         console.log("details2 ", details);
         setBilling({
           paymentMethods: details.paymentMethods,

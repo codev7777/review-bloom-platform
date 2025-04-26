@@ -6,7 +6,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/use-auth";
-import { User, Bell, CreditCard, Mail, Shield, Upload, X } from "lucide-react";
+import {
+  User,
+  Bell,
+  CreditCard,
+  Mail,
+  Shield,
+  Upload,
+  X,
+  Users,
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import {
   Select,
@@ -25,6 +34,7 @@ import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
 import SubscriptionPanel from "./SubscriptionPanel";
+import UserManagementPanel from "./UserManagementPanel";
 // import PaymentSettings from "./PaymentSettings";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -187,7 +197,7 @@ const SettingsPanel = () => {
           websiteUrl: formData.websiteUrl,
           detail: formData.detail,
           ratio: 0,
-          reviews: 0,
+          reviews: [],
           metaPixelId: formData.metaPixelId,
         };
 
@@ -255,9 +265,17 @@ const SettingsPanel = () => {
             <Shield className="mr-2 h-4 w-4" />
             Company
           </TabsTrigger>
+          <TabsTrigger value="users">
+            <Users className="mr-2 h-4 w-4" />
+            Users
+          </TabsTrigger>
           <TabsTrigger value="subscription">
             <CreditCard className="mr-2 h-4 w-4" />
-            Subscription & Billing
+            Subscription
+          </TabsTrigger>
+          <TabsTrigger value="notifications">
+            <Bell className="mr-2 h-4 w-4" />
+            Notifications
           </TabsTrigger>
         </TabsList>
 
@@ -426,6 +444,8 @@ const SettingsPanel = () => {
             </div>
           </div>
         </TabsContent>
+
+        <UserManagementPanel />
 
         <SubscriptionPanel />
         {/* <PaymentSettings /> */}

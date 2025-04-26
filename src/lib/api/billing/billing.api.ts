@@ -18,11 +18,11 @@ export interface BillingDetails {
   defaultPaymentMethod?: PaymentMethod;
 }
 
-export async function getBillingDetails(userId: string) {
-  if (!userId) throw new Error("User not logged in");
+export async function getBillingDetails(userId?: string, companyId?: string) {
+  if (!userId && !companyId) throw new Error("User or company ID is required");
 
   const res = await api.get(`/billing/details`, {
-    params: { userId }, // 👈 passed as query param
+    params: { userId, companyId },
   });
 
   return res.data;
