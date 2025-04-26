@@ -272,55 +272,6 @@ const PromotionsList = () => {
       {/* Promotions grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedPromotions.map((promotion) => (
-          // <Card
-          //   key={promotion.id}
-          //   className="overflow-hidden hover:shadow-md transition-shadow duration-200 h-full"
-          // >
-          //   <div className="aspect-video w-full overflow-hidden bg-orange-50">
-          //     <img
-          //       src={getImageUrl(promotion.image)}
-          //       alt={promotion.title}
-          //       className="h-full w-full object-contain transition-transform duration-200 hover:scale-105"
-          //     />
-          //   </div>
-          //   <CardContent className="p-5">
-          //     <div className="flex items-start justify-between">
-          //       <div className="flex-1">
-          //         <h3 className="font-medium line-clamp-1 text-base">
-          //           {promotion.title}
-          //         </h3>
-          //         <div className="flex items-center mt-1 gap-1">
-          //           <PromotionTypeIcon type={promotion.promotionType} />
-          //           <span className="text-xs text-black line-clamp-1">
-          //             {promotion.promotionType}
-          //           </span>
-          //         </div>
-          //       </div>
-          //       <Badge
-          //         variant="outline"
-          //         className="text-xs whitespace-nowrap ml-2"
-          //       >
-          //         {formatDate(promotion.createdAt || "")}
-          //       </Badge>
-          //     </div>
-
-          //     <p className="text-sm text-black mt-3 line-clamp-2">
-          //       {promotion.description}
-          //     </p>
-
-          //     <Button
-          //       variant="outline"
-          //       size="sm"
-          //       className="mt-4 w-full"
-          //       onClick={() =>
-          //         navigate(`/vendor-dashboard/promotions/edit/${promotion.id}`)
-          //       }
-          //     >
-          //       <Edit className="mr-2 h-4 w-4" />
-          //       Edit Promotion
-          //     </Button>
-          //   </CardContent>
-          // </Card>
           <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
             <figure>
               <img
@@ -359,6 +310,18 @@ const PromotionsList = () => {
                     ? new Date(promotion.createdAt).toLocaleDateString("en-US")
                     : new Date().toLocaleDateString("en-US")}
                 </div>
+                <Button
+                  size="sm"
+                  className="bg-orange-500 hover:bg-orange-600 text-black"
+                  onClick={() =>
+                    navigate(
+                      `/vendor-dashboard/promotions/edit/${promotion.id}`
+                    )
+                  }
+                >
+                  <Edit className="mr-2 h-4 w-4 text-black" />
+                  Edit
+                </Button>
               </div>
             </div>
           </div>

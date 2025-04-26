@@ -11,6 +11,7 @@ import {
   Download,
   Plus,
   Trash2,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,6 +99,7 @@ const PROMOTION_TYPES = [
 ];
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
+const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5MB in bytes for PDFs
 const BACKEND_URL = API_URL.replace("/v1", "");
 
 type PromotionFormData = Omit<Promotion, "id" | "createdAt" | "updatedAt">;
@@ -234,88 +236,91 @@ const PromotionForm = () => {
     }
   };
 
+  const handlePdfUpload = (file: File) => {
+    setFileError(null);
+
+    // Validate file type
+    if (file.type !== "application/pdf") {
+      setFileError("Please upload a PDF file");
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_PDF_SIZE) {
+      setFileError("PDF file size exceeds 5MB limit");
+      return;
+    }
+
+    // Create a base64 string
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const base64String = e.target?.result as string;
+      setFormData((prev) => ({ ...prev, downloadableFileUrl: base64String }));
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setFileError("");
+    setError(null);
 
     try {
-      if (!formData.image) {
-        setFileError("Please upload an image");
-        return;
-      }
-
-      // Create the promotion data object with type-specific fields
-      const promotionData = {
+      // Prepare the data to be sent with only allowed fields
+      const dataToSend: any = {
         title: formData.title,
         description: formData.description,
         promotionType: formData.promotionType,
-        ...(hasImageChanged && { image: formData.image }),
-
-        // Gift Card specific fields
-        ...(formData.promotionType === "GIFT_CARD" && {
-          giftCardDeliveryMethod: formData.giftCardDeliveryMethod,
-        }),
-
-        // Discount Code specific fields
-        ...(formData.promotionType === "DISCOUNT_CODE" && {
-          approvalMethod: formData.approvalMethod,
-          codeType: formData.codeType,
-          couponCodes: couponCodes,
-        }),
-
-        // Free Product specific fields
-        ...(formData.promotionType === "FREE_PRODUCT" && {
-          freeProductDeliveryMethod: "SHIP" as const,
-          freeProductApprovalMethod: "MANUAL" as const,
-        }),
-
-        // Digital Download specific fields
-        ...(formData.promotionType === "DIGITAL_DOWNLOAD" && {
-          downloadableFileUrl: formData.downloadableFileUrl,
-          digitalApprovalMethod: formData.digitalApprovalMethod,
-        }),
       };
 
-      await createPromotion(promotionData);
-      toast({
-        title: "Success",
-        description: "Promotion created successfully",
-      });
-      navigate("/vendor-dashboard/promotions");
-    } catch (err: any) {
-      console.error("Error creating promotion:", err);
+      // Only include image if it has changed
+      if (isEditMode && hasImageChanged) {
+        dataToSend.image = formData.image;
+      } else if (!isEditMode) {
+        dataToSend.image = formData.image;
+      }
 
-      // Check if this is a plan limit error
-      if (
-        err.response?.data?.message?.includes("maximum number of promotions")
-      ) {
-        const planMatch = err.response.data.message.match(/your (\w+) plan/);
-        const planType = planMatch ? planMatch[1] : "";
+      // Add type-specific fields based on promotion type
+      switch (formData.promotionType) {
+        case "GIFT_CARD":
+          dataToSend.giftCardDeliveryMethod = formData.giftCardDeliveryMethod;
+          break;
+        case "DISCOUNT_CODE":
+          dataToSend.approvalMethod = formData.approvalMethod;
+          dataToSend.codeType = formData.codeType;
+          dataToSend.couponCodes = couponCodes;
+          break;
+        case "FREE_PRODUCT":
+          dataToSend.freeProductDeliveryMethod = "SHIP";
+          dataToSend.freeProductApprovalMethod = "MANUAL";
+          break;
+        case "DIGITAL_DOWNLOAD":
+          dataToSend.downloadableFileUrl = formData.downloadableFileUrl;
+          dataToSend.digitalApprovalMethod = formData.digitalApprovalMethod;
+          break;
+      }
 
-        let upgradeMessage = "";
-        if (planType === "SILVER") {
-          upgradeMessage =
-            "Upgrade to GOLD plan for up to 10 promotions or PLATINUM plan for unlimited promotions.";
-        } else if (planType === "GOLD") {
-          upgradeMessage = "Upgrade to PLATINUM plan for unlimited promotions.";
-        }
-
-        setError({
-          title: "Plan Limit Reached",
-          message: `You have reached the maximum number of promotions allowed by your ${planType} plan. ${upgradeMessage}`,
-          showUpgradeButton: true,
+      if (isEditMode && id) {
+        await updatePromotion(id, dataToSend);
+        toast({
+          title: "Success",
+          description: "Promotion updated successfully",
         });
       } else {
-        setError({
-          title: "Error",
-          message:
-            err.response?.data?.message ||
-            err.message ||
-            "Failed to create promotion",
-          showUpgradeButton: false,
+        await createPromotion(dataToSend);
+        toast({
+          title: "Success",
+          description: "Promotion created successfully",
         });
       }
+      navigate("/vendor-dashboard/promotions");
+    } catch (error: any) {
+      console.error("Error submitting promotion:", error);
+      setError({
+        title: "Error",
+        message: error.message || "Failed to submit promotion",
+        showUpgradeButton: false,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -519,18 +524,80 @@ const PromotionForm = () => {
               {formData.promotionType === "DIGITAL_DOWNLOAD" && (
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Downloadable File URL</Label>
-                    <Input
-                      value={formData.downloadableFileUrl}
-                      onChange={(e) =>
-                        handleSelectChange(
-                          "downloadableFileUrl",
-                          e.target.value
-                        )
-                      }
-                      placeholder="Enter file URL"
-                      className="text-black"
-                    />
+                    <Label>Downloadable File</Label>
+                    <div
+                      className={`border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center h-64 cursor-pointer transition-colors ${
+                        isDragging
+                          ? "border-orange-500 bg-orange-50"
+                          : "border-gray-300 hover:border-orange-300"
+                      }`}
+                      onDragEnter={handleDragEnter}
+                      onDragLeave={handleDragLeave}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDragging(false);
+                        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                          handlePdfUpload(e.dataTransfer.files[0]);
+                        }
+                      }}
+                      onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept = "application/pdf";
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement)
+                            .files?.[0];
+                          if (file) {
+                            handlePdfUpload(file);
+                          }
+                        };
+                        input.click();
+                      }}
+                    >
+                      {formData.downloadableFileUrl ? (
+                        <div className="relative w-full h-full">
+                          <div className="flex flex-col items-center justify-center h-full">
+                            <FileText className="h-10 w-10 text-blue-500 mb-2" />
+                            <p className="text-sm text-gray-500 text-center">
+                              PDF file uploaded successfully
+                            </p>
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="mt-2 text-black bg-[#f97216] hover:bg-[#ef600f]"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  downloadableFileUrl: "",
+                                }));
+                              }}
+                            >
+                              <X className="h-4 w-4 mr-2 text-black" />
+                              Remove PDF
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                          <p className="text-sm text-gray-500 text-center">
+                            Drag and drop a PDF file here, or click to select
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            PDF up to 5MB
+                          </p>
+                        </>
+                      )}
+                    </div>
+                    {fileError && (
+                      <div className="flex items-center text-red-500 text-sm mt-1">
+                        <AlertCircle className="h-4 w-4 mr-1" />
+                        {fileError}
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-2">
