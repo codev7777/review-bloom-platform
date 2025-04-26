@@ -8,6 +8,7 @@ import { ReviewFormData } from "../ReviewFunnel";
 import GetDomain from "@/lib/GetDomain";
 import { API_URL } from "@/config/env";
 import { useParams } from "react-router-dom";
+import { amazonOrderUrls } from "./Step1Marketplace";
 
 interface Step3FeedbackProps {
   formData: ReviewFormData;
@@ -76,13 +77,21 @@ const Step3Feedback = ({
   }>();
 
   const productImage =
-    campaignId === "demo-campaign"
+    formData.productType === "seller"
+      ? "/images/review/seller-icon.png"
+      : campaignId === "demo-campaign"
       ? selectedProduct.title == "Desktop"
         ? "/images/funnel/demo-campaign-product-1.webp"
         : "/images/funnel/demo-campaign-product-2.webp"
       : selectedProduct?.image
       ? `${BACKEND_URL}/uploads/${selectedProduct.image}`
       : "/images/products/default-product.jpg";
+
+  const amazonOrderUrl =
+    formData.productType === "seller"
+      ? `https://www.amazon.${formData.country}/your-account/order-history`
+      : amazonOrderUrls[formData.country.toUpperCase()] ||
+        "https://www.amazon.com/gp/css/order-history";
 
   const validateForm = () => {
     const newErrors: Partial<Record<keyof ReviewFormData, string>> = {};
@@ -136,7 +145,7 @@ const Step3Feedback = ({
 
         // Short delay before redirecting
         setTimeout(() => {
-          onGoToAmazon();
+          window.open(amazonOrderUrl, "_blank");
         }, 1000);
       })
       .catch(() => {
@@ -149,43 +158,35 @@ const Step3Feedback = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className=" animate-fade-in">
-      <div className="flex justify-center items-center mt-10 mb-3">
-        {campaignId === "demo-campaign" ? (
-          <img
-            src={promotion?.image}
-            alt={promotion?.title}
-            className=" h-[200px] object-contain rounded border border-gray-200"
-          />
-        ) : (
-          <img
-            src={`${BACKEND_URL}/uploads/${promotion?.image}`}
-            alt={promotion?.title}
-            className=" h-[200px] object-contain rounded border border-gray-200"
-          />
-        )}
+    <form onSubmit={handleSubmit} className="space-y-6 animate-fade-in">
+      {/* Product Preview */}
+      <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+        <div className="flex items-center space-x-4">
+          <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+            <img
+              src={productImage}
+              alt={
+                formData.productType === "seller"
+                  ? "Seller"
+                  : selectedProduct?.title || "Product"
+              }
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <h3 className="font-medium text-gray-900">
+              {formData.productType === "seller"
+                ? "Seller Feedback"
+                : selectedProduct?.title}
+            </h3>
+            <p className="text-sm text-gray-500">
+              {formData.productType === "seller"
+                ? "Please provide feedback about your experience with the seller"
+                : "Please provide feedback about this product"}
+            </p>
+          </div>
+        </div>
       </div>
-      <h2 className="text-2xl font-semibold text-center ">
-        {promotion?.title}
-      </h2>
-      <div className="flex justify-center items-center mt-12 mb-3">
-        {campaignId === "demo-campaign" ? (
-          <img
-            src={productImage}
-            alt={selectedProduct?.title || "Product"}
-            className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
-          />
-        ) : (
-          <img
-            src={productImage}
-            alt={selectedProduct?.title || "Product"}
-            className="w-[200px] h-[200px] object-contain rounded border border-gray-200"
-          />
-        )}
-      </div>
-      <p className="text-center text-muted-foreground text-2xl">
-        How do you like our <strong>{selectedProduct.title}</strong>?
-      </p>
 
       <div className="space-y-3 mt-8">
         <Label htmlFor="feedback">

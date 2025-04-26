@@ -38,6 +38,7 @@ interface ExtendedCampaign extends Campaign {
 }
 
 export interface ReviewFormData {
+  planId: number;
   orderId: string;
   rating: number;
   feedback: string;
@@ -86,6 +87,7 @@ const ReviewFunnel = ({
   const { step: urlStep } = useParams<{ step: string }>();
   const [isDemo, setIsDemo] = useState(false);
   const [formData, setFormData] = useState<ReviewFormData>({
+    planId: 1,
     orderId: "",
     rating: 0,
     feedback: "",
@@ -103,7 +105,7 @@ const ReviewFunnel = ({
   const [campaign, setCampaign] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [planId, setPlanId] = useState(1);
   useEffect(() => {
     const fetchData = async () => {
       if (campaignId === "demo-campaign") {
@@ -165,6 +167,8 @@ const ReviewFunnel = ({
 
           try {
             const productsData = await getProducts({ ids: numericProductIds });
+            setPlanId(productsData.data[0].company?.planId);
+            console.log("planId2  ", productsData.data[0].company?.planId);
             console.log("New products data available:", productsData.data);
           } catch (authError) {
             console.log("Auth products request failed, trying public endpoint");
@@ -240,7 +244,7 @@ const ReviewFunnel = ({
           });
           return;
         }
-
+        console.log("planId1  ", planId);
         const reviewData = {
           email: formData.email,
           name: formData.name,
@@ -405,6 +409,7 @@ const ReviewFunnel = ({
           <>
             <FunnelStep isActive={step === 1}>
               <Step1Marketplace
+                planId={planId}
                 productName={campaign?.product?.title || ""}
                 productImage={campaign?.product?.image || ""}
                 formData={formData}

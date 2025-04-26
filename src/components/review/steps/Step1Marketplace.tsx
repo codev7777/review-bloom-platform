@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import { API_URL } from "@/config/env";
 import { useParams } from "react-router-dom";
 
 interface Step1MarketplaceProps {
+  planId: number;
   productName: string;
   productImage: string;
   formData: ReviewFormData;
@@ -62,7 +63,7 @@ const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
   ZA: "South Africa (Amazon.co.za)",
 };
 
-const amazonOrderUrls: Record<string, string> = {
+export const amazonOrderUrls: Record<string, string> = {
   US: "https://www.amazon.com/gp/css/order-history",
   CA: "https://www.amazon.ca/gp/css/order-history",
   MX: "https://www.amazon.com.mx/gp/css/order-history",
@@ -89,6 +90,7 @@ const amazonOrderUrls: Record<string, string> = {
 const BACKEND_URL = API_URL.replace("/v1", "");
 
 const Step1Marketplace = ({
+  planId,
   productName,
   productImage,
   formData,
@@ -105,6 +107,19 @@ const Step1Marketplace = ({
   const { campaignId } = useParams<{
     campaignId: string;
   }>();
+  const [companyPlan, setCompanyPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    const CompanyPlan = () => {
+      console.log(campaignId, products);
+      // setCompanyPlan(data.planType);
+    };
+
+    if (campaignId && campaignId !== "demo-campaign") {
+      CompanyPlan();
+    }
+  }, [campaignId]);
+
   const handleRatingChange = (rating: number) => {
     updateFormData({ rating });
     if (errors.rating) {
@@ -133,6 +148,12 @@ const Step1Marketplace = ({
         productType: value,
         productId: selectedProduct.id,
         asin: selectedProduct.asin,
+      });
+    } else if (value === "seller") {
+      updateFormData({
+        productType: "seller",
+        productId: null,
+        asin: null,
       });
     }
     if (errors.productType) {
@@ -202,9 +223,13 @@ const Step1Marketplace = ({
       </p> */}
 
       {/* Product Selection */}
+
       <div className="space-y-3">
         <Label htmlFor="productType">
-          Select Product <span className="text-red-500">*</span>
+          {planId === 2 || planId === 3
+            ? "Select Product or Seller"
+            : "Select Product"}{" "}
+          <span className="text-red-500">*</span>
         </Label>
         <Select
           onValueChange={handleProductChange}
@@ -221,6 +246,9 @@ const Step1Marketplace = ({
                 {product.title}
               </SelectItem>
             ))}
+            {(planId === 2 || planId === 3) && (
+              <SelectItem value="seller">Seller</SelectItem>
+            )}
           </SelectContent>
         </Select>
         {errors.productType && (
