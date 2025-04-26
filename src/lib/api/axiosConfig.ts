@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import { API_URL } from "@/config/env";
+import * as userApi from "@/lib/api/users/users.api";
 
 // Create an Axios instance with default settings
 const api = axios.create({
@@ -11,6 +12,20 @@ const api = axios.create({
   },
   timeout: 10000, // 10 seconds timeout
 });
+
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
 
 // Request interceptor to attach the token dynamically
 api.interceptors.request.use(
@@ -33,14 +48,42 @@ api.interceptors.request.use(
 // Response interceptor to handle errors globally
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response) {
-      console.error("API Error:", error.response.data);
+  async (error) => {
+    const originalRequest = error.config;
 
-      // Handle specific error cases
-      if (error.response.status === 401) {
-        // Handle token expiration
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = `Bearer ${token}`;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (!refreshToken) {
+          throw new Error("No refresh token available");
+        }
+
+        const response = await userApi.refreshTokens(refreshToken);
+        const { access } = response.tokens;
+
+        localStorage.setItem("accessToken", access.token);
+        api.defaults.headers.common["Authorization"] = `Bearer ${access.token}`;
+
+        processQueue(null, access.token);
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError, null);
         localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
 
         // Don't redirect if already on login page or accessing public routes
@@ -56,7 +99,17 @@ api.interceptors.response.use(
             description: "Please log in again to continue.",
           });
         }
-      } else if (error.response.status === 403) {
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    if (error.response) {
+      console.error("API Error:", error.response.data);
+
+      // Handle specific error cases
+      if (error.response.status === 403) {
         toast({
           variant: "destructive",
           title: "Access denied",

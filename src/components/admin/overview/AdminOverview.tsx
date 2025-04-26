@@ -39,7 +39,7 @@ const RecentCompanies = ({ companies }: RecentCompaniesProps) => {
 
   console.log(mostRecent5);
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-4 h-96">
       <CardHeader>
         <CardTitle>Recent Companies</CardTitle>
       </CardHeader>
@@ -94,7 +94,7 @@ const AdminOverview = () => {
   console.log("companies ", companies);
   // Step 2: Count reviews per day
   const companiesChartData = last7Days.map(({ date, label }) => {
-    const count = companies?.data?.filter((company: Company) =>
+    const count = companies?.companies?.filter((company: Company) =>
       isSameDay(new Date(company.createdAt), date)
     ).length;
     console.log(count);
@@ -175,7 +175,8 @@ const AdminOverview = () => {
         </div>
 
         <div>
-          <RecentCompanies companies={companies?.data || []} />
+          {console.log(companies?.companies)}
+          <RecentCompanies companies={companies?.companies || []} />
         </div>
         {/* <PieChart
           withTooltip

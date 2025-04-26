@@ -45,7 +45,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "@/lib/api/companies/companies.api";
-import { Company } from "@/types";
+import VendorDetails from "./VendorDetails";
 
 interface PaginationProps {
   currentPage: number;
@@ -83,12 +83,53 @@ const Pagination = ({
   </div>
 );
 
+interface Campaign {
+  id: number;
+  title: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+}
+
+interface Plan {
+  id: number;
+  name: string;
+  planType: string;
+}
+
+interface Company {
+  id: number;
+  name: string;
+  detail?: string;
+  logo?: string;
+  websiteUrl?: string;
+  planId?: number;
+  ratio: number;
+  reviews: number;
+  metaPixelId?: string;
+  campaigns?: Campaign[];
+  Products?: Product[];
+  createdAt: Date;
+  updatedAt: Date;
+  stripeCustomerId?: string;
+  Plan?: Plan;
+  Users?: User[];
+}
+
+interface User {
+  id: number;
+  role: string;
+}
+
 const VendorsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [totalVendors, setTotalVendors] = useState(0);
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const itemsPerPage = 10;
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -97,6 +138,34 @@ const VendorsList = () => {
 
     return () => clearTimeout(delay);
   }, [searchQuery]);
+
+  const getSubscriptionType = (planId?: number) => {
+    switch (planId) {
+      case 1:
+        return "SILVER";
+      case 2:
+        return "GOLD";
+      case 3:
+        return "PLATINUM";
+      default:
+        return "BASIC";
+    }
+  };
+
+  const getSubscriptionColor = (subscription: string) => {
+    switch (subscription) {
+      case "PLATINUM":
+        return "bg-purple-100 text-purple-800";
+      case "GOLD":
+        return "bg-yellow-100 text-yellow-800";
+      case "SILVER":
+        return "bg-gray-100 text-gray-800";
+      case "BASIC":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const {
     data: companiesResponse,
@@ -112,8 +181,13 @@ const VendorsList = () => {
           search: debouncedSearchQuery,
         });
         console.log("Companies API response:", response);
-        setTotalVendors(response.totalCount);
-        return response;
+        // Filter out companies with admin role
+        const filteredCompanies = response.companies.filter(
+          (company: Company) =>
+            !company.Users?.some((user) => user.role === "ADMIN")
+        );
+        setTotalVendors(filteredCompanies.length);
+        return { ...response, companies: filteredCompanies };
       } catch (err) {
         console.error("Error fetching companies:", err);
         throw err;
@@ -123,7 +197,7 @@ const VendorsList = () => {
 
   console.log("Companies data:", companiesResponse);
 
-  const companies = companiesResponse?.data || [];
+  const companies = companiesResponse?.companies || [];
 
   const totalPages = companiesResponse
     ? Math.ceil(companiesResponse.totalCount / itemsPerPage)
@@ -150,17 +224,6 @@ const VendorsList = () => {
         return "bg-red-100 text-red-800";
       case "pending":
         return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getSubscriptionColor = (subscription: string) => {
-    switch (subscription) {
-      case "premium":
-        return "bg-purple-100 text-purple-800";
-      case "basic":
-        return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -254,13 +317,14 @@ const VendorsList = () => {
             </TableHeader>
             <TableBody>
               {companies.map((company: Company) => (
-                <TableRow key={company.id} className="group hover:bg-gray-50">
+                <TableRow
+                  key={company.id}
+                  className="group hover:bg-gray-50 cursor-pointer"
+                  onClick={() => setSelectedCompany(company)}
+                >
                   <TableCell>
                     <div className="flex flex-col">
                       <span className="font-medium">{company.name}</span>
-                      {/* <span className="text-sm text-gray-500">
-                        {company.detail}
-                      </span> */}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -274,9 +338,11 @@ const VendorsList = () => {
                   <TableCell>
                     <Badge
                       variant="outline"
-                      className="bg-blue-100 text-blue-800"
+                      className={getSubscriptionColor(
+                        getSubscriptionType(company.planId)
+                      )}
                     >
-                      {company.planId ? "Premium" : "Basic"}
+                      {getSubscriptionType(company.planId)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -384,6 +450,15 @@ const VendorsList = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Vendor Details Dialog */}
+      {selectedCompany && (
+        <VendorDetails
+          company={selectedCompany}
+          isOpen={!!selectedCompany}
+          onClose={() => setSelectedCompany(null)}
+        />
+      )}
     </div>
   );
 };
