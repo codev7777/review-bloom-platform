@@ -58,6 +58,19 @@ export const updatePromotion = async (
       | "FREE_PRODUCT"
       | "DIGITAL_DOWNLOAD";
     image?: string;
+    isActive?: "YES" | "NO";
+    // Gift Card specific fields
+    giftCardDeliveryMethod?: "SHIP" | "DIGITAL";
+    // Discount Code specific fields
+    approvalMethod?: "MANUAL" | "AUTOMATIC";
+    codeType?: "SAME_FOR_ALL" | "SINGLE_USE";
+    couponCodes?: string[];
+    // Free Product specific fields
+    freeProductDeliveryMethod?: "SHIP";
+    freeProductApprovalMethod?: "MANUAL";
+    // Digital Download specific fields
+    downloadableFileUrl?: string;
+    digitalApprovalMethod?: "MANUAL" | "AUTOMATIC";
   }
 ): Promise<Promotion> => {
   const response = await api.patch(`/promotions/${id}`, data);

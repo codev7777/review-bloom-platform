@@ -344,8 +344,9 @@ const ProductForm = () => {
     } catch (error: any) {
       console.error("Error submitting product:", error);
 
-      // Check if the error is related to plan limits
+      // Check if the error is a plan limit error (403 status and message about plan limits)
       if (
+        error.response?.status === 403 &&
         error.response?.data?.message?.includes("maximum number of products")
       ) {
         const planType =
@@ -364,12 +365,16 @@ const ProductForm = () => {
         setErrorMessage(
           `You have reached the maximum number of products allowed by your ${planType} plan. ${upgradeMessage}`
         );
+        setErrorModalOpen(true);
       } else {
-        setErrorMessage(
-          error instanceof Error ? error.message : "Failed to save product"
-        );
+        // For all other errors, show a toast
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description:
+            error.response?.data?.message || "Failed to save product",
+        });
       }
-      setErrorModalOpen(true);
     } finally {
       setIsLoading(false);
     }

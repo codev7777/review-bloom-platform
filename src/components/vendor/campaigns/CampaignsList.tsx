@@ -97,9 +97,9 @@ const CampaignsList: React.FC = () => {
         title: searchQuery || undefined,
         isActive:
           statusFilter === "active"
-            ? true
+            ? "YES"
             : statusFilter === "paused"
-            ? false
+            ? "NO"
             : undefined,
         sortBy: sortField,
         sortOrder,

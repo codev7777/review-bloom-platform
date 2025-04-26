@@ -29,11 +29,11 @@ export const createCampaign = async (
 };
 
 export interface GetCampaignsParams {
-  companyId?: number;
   title?: string;
-  isActive?: boolean;
+  isActive?: "YES" | "NO";
   sortBy?: string;
-  sortOrder?: string;
+  sortOrder?: "asc" | "desc";
+  companyId?: number;
 }
 
 export const getCampaigns = async (

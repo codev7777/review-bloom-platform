@@ -127,6 +127,7 @@ export interface Promotion {
     | "DIGITAL_DOWNLOAD";
   description: string;
   companyId: string | number;
+  isActive: "YES" | "NO";
   createdAt?: string;
   updatedAt?: string;
 

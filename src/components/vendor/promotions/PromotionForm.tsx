@@ -102,7 +102,9 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB in bytes
 const MAX_PDF_SIZE = 5 * 1024 * 1024; // 5MB in bytes for PDFs
 const BACKEND_URL = API_URL.replace("/v1", "");
 
-type PromotionFormData = Omit<Promotion, "id" | "createdAt" | "updatedAt">;
+type PromotionFormData = Omit<Promotion, "id" | "createdAt" | "updatedAt"> & {
+  isActive: "YES" | "NO";
+};
 
 const PromotionForm = () => {
   const navigate = useNavigate();
@@ -116,6 +118,7 @@ const PromotionForm = () => {
     description: "",
     image: "https://placehold.co/300x200/FFF5E8/FF9130?text=Promotion",
     companyId: 1,
+    isActive: "YES",
   });
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -271,6 +274,7 @@ const PromotionForm = () => {
         title: formData.title,
         description: formData.description,
         promotionType: formData.promotionType,
+        isActive: formData.isActive,
       };
 
       // Only include image if it has changed
@@ -410,6 +414,24 @@ const PromotionForm = () => {
                   required
                   className="text-black"
                 />
+              </div>
+
+              <div className="text-black">
+                <Label className="text-white">Status</Label>
+                <Select
+                  value={formData.isActive}
+                  onValueChange={(value) =>
+                    handleSelectChange("isActive", value)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="YES">Active</SelectItem>
+                    <SelectItem value="NO">Inactive</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Type-specific fields */}

@@ -13,6 +13,7 @@ import {
   ChevronUp,
   ChevronDown,
   Info,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,8 +27,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { toast } from "@/components/ui/use-toast";
 import { Promotion } from "@/types";
-import { getPromotions } from "@/lib/api/promotions/promotions.api";
+import {
+  getPromotions,
+  deletePromotion,
+} from "@/lib/api/promotions/promotions.api";
 import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import { getImageUrl } from "@/utils/imageUrl";
 
@@ -125,6 +138,30 @@ const PromotionsList = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const handleDeletePromotion = async () => {
+    if (!promotionToDelete) return;
+
+    try {
+      await deletePromotion(promotionToDelete);
+      // Refresh the promotions list
+      const updatedPromotions = await getPromotions({ companyId });
+      setPromotions(updatedPromotions.data);
+      toast({
+        title: "Success",
+        description: "Promotion deleted successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting promotion:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete promotion",
+      });
+    } finally {
+      setPromotionToDelete(null);
+    }
   };
 
   if (isLoading) {
@@ -272,7 +309,7 @@ const PromotionsList = () => {
       {/* Promotions grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedPromotions.map((promotion) => (
-          <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
+          <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white">
             <figure>
               <img
                 src={
@@ -283,14 +320,11 @@ const PromotionsList = () => {
                       )}`
                 }
                 className="w-full object-contain bg-gray-700 rounded-t-3xl aspect-[16/9]"
-                alt="Shoes"
+                alt="Promotion"
               />
             </figure>
-            <div className="card-body m-4">
-              <h2 className="card-title text-2xl">
-                {promotion.title}
-                {/* <div className="badge badge-secondary">NEW</div> */}
-              </h2>
+            <div className="card-body">
+              <h2 className="card-title text-2xl">{promotion.title}</h2>
               <div className="flex items-center mt-1 gap-1">
                 <PromotionTypeIcon type={promotion.promotionType} />
                 <span className="text-xs line-clamp-1">
@@ -302,14 +336,20 @@ const PromotionsList = () => {
               </p>
               <div className="card-actions justify-end">
                 <div className="badge badge-outline">
-                  {/* {promotion || 0} reviews */}
-                </div>
-                <div className="badge badge-outline">
                   Added:{" "}
                   {promotion.createdAt
                     ? new Date(promotion.createdAt).toLocaleDateString("en-US")
                     : new Date().toLocaleDateString("en-US")}
                 </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                  onClick={() => setPromotionToDelete(promotion.id.toString())}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
                 <Button
                   size="sm"
                   className="bg-orange-500 hover:bg-orange-600 text-black"
@@ -327,6 +367,33 @@ const PromotionsList = () => {
           </div>
         ))}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={!!promotionToDelete}
+        onOpenChange={() => setPromotionToDelete(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Promotion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this promotion? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setPromotionToDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeletePromotion}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {usingMockData && (
         <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">

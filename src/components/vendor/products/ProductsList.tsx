@@ -51,7 +51,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { getImageUrl } from "@/utils/imageUrl";
 import { useQuery } from "@tanstack/react-query";
 
-type SortField = "name" | "asin" | "category" | "dateAdded";
+type SortField = "name" | "asin" | "category" | "createdAt";
 type SortOrder = "asc" | "desc";
 
 const ProductsList = () => {
@@ -59,7 +59,7 @@ const ProductsList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<SortField>("dateAdded");
+  const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   // Get the current user's company ID from localStorage
@@ -132,9 +132,9 @@ const ProductsList = () => {
       const categoryB =
         typeof b.category === "string" ? b.category : b.category?.name || "";
       comparison = categoryA.localeCompare(categoryB);
-    } else if (sortField === "dateAdded") {
-      const dateA = a.dateAdded ? new Date(a.dateAdded).getTime() : 0;
-      const dateB = b.dateAdded ? new Date(b.dateAdded).getTime() : 0;
+    } else if (sortField === "createdAt") {
+      const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
       comparison = dateA - dateB;
     }
 
@@ -150,28 +150,27 @@ const ProductsList = () => {
     }
   };
 
-  const handleDeleteProduct = async () => {
-    if (productToDelete) {
-      try {
-        await deleteProduct(productToDelete);
-        setProducts((prevProducts) =>
-          prevProducts.filter((p) => p.id !== productToDelete)
-        );
-        toast({
-          title: "Product deleted",
-          description: "The product has been removed successfully",
-        });
-      } catch (error) {
-        console.error("Error deleting product:", error);
-        toast({
-          variant: "destructive",
-          title: "Failed to delete product",
-          description:
-            "There was an error deleting the product. Please try again.",
-        });
-      }
-      setProductToDelete(null);
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      // Fetch fresh data from the backend
+      const updatedProducts = await getProducts({ companyId });
+      // Update the products list with fresh data
+      setProducts(updatedProducts.data);
+      toast({
+        title: "Product deleted",
+        description: "The product has been removed successfully",
+      });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      toast({
+        variant: "destructive",
+        title: "Failed to delete product",
+        description:
+          "There was an error deleting the product. Please try again.",
+      });
     }
+    setProductToDelete(null);
   };
 
   if (isLoadingProducts || isLoadingCategories) {
@@ -297,12 +296,12 @@ const ProductsList = () => {
               </TableHead>
               <TableHead
                 className="cursor-pointer text-white"
-                onClick={() => handleSort("dateAdded")}
+                onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center">
                   Date Added
                   <ArrowUpDown className="ml-2 h-4 w-4" />
-                  {sortField === "dateAdded" &&
+                  {sortField === "createdAt" &&
                     (sortOrder === "asc" ? (
                       <ChevronUp className="ml-1 h-4 w-4" />
                     ) : (
@@ -381,7 +380,9 @@ const ProductsList = () => {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDeleteProduct()}
+                            onClick={() =>
+                              handleDeleteProduct(product.id.toString())
+                            }
                             className="bg-red-500 hover:bg-red-600"
                           >
                             Delete
