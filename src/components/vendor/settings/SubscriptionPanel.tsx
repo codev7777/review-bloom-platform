@@ -81,9 +81,15 @@ const plans = [
 export const useSubscription = () => {
   const { user } = useAuth();
   const [tier, setTier] = useState<string | null>(null);
-  const [status, setStatus] = useState<"active" | "none" | "canceled">("none");
+  const [status, setStatus] = useState<
+    "active" | "none" | "canceled" | "trialing"
+  >("none");
   const [loading, setLoading] = useState(false);
   const [annual, setAnnual] = useState(true);
+  const [trialEndDate, setTrialEndDate] = useState<Date | null>(null);
+  const [currentPeriodEnd, setCurrentPeriodEnd] = useState<Date | null>(null);
+  const [hasUsedTrial, setHasUsedTrial] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   const fetchSubscription = async () => {
     const token = localStorage.getItem("accessToken");
@@ -96,6 +102,13 @@ export const useSubscription = () => {
       const data = res.data.data;
       setTier(data.subscription?.plan?.name?.toLowerCase() || null);
       setStatus(data.subscription?.status?.toLowerCase() || "none");
+      if (data.subscription?.trialEnd) {
+        setTrialEndDate(new Date(data.subscription.trialEnd));
+      }
+      if (data.subscription?.currentPeriodEnd) {
+        setCurrentPeriodEnd(new Date(data.subscription.currentPeriodEnd));
+      }
+      setHasUsedTrial(data.hasUsedTrial || false);
     } catch (error) {
       console.error("Failed to fetch subscription", error);
     }
@@ -105,7 +118,11 @@ export const useSubscription = () => {
     fetchSubscription();
   }, [user?.companyId]);
 
-  const subscribe = async (planId: string, billingType: boolean) => {
+  const subscribe = async (
+    planId: string,
+    billingType: boolean,
+    isTrial: boolean = false
+  ) => {
     const token = localStorage.getItem("accessToken");
     if (!token || !user?.id) {
       toast({
@@ -137,6 +154,7 @@ export const useSubscription = () => {
         priceId: selectedPriceId,
         success_url: `${window.location.origin}/subscription?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${window.location.origin}/subscription`,
+        isTrial: isTrial,
       });
 
       const { url } = res.data;
@@ -179,6 +197,43 @@ export const useSubscription = () => {
     }
   };
 
+  const cancelSubscription = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token || !user?.id) {
+      toast({
+        variant: "destructive",
+        title: "Login Required",
+        description: "Please log in to cancel subscription.",
+      });
+      return;
+    }
+
+    setCancelLoading(true);
+    try {
+      await api.post("/billing/cancel-subscription", {
+        userId: user.id,
+      });
+
+      toast({
+        title: "Subscription Cancelled",
+        description:
+          "Your subscription will be cancelled at the end of the billing period.",
+      });
+
+      // Refresh subscription status
+      await fetchSubscription();
+    } catch (err) {
+      console.error("Cancel subscription error:", err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to cancel subscription. Please try again.",
+      });
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
   return {
     tier,
     status,
@@ -189,14 +244,30 @@ export const useSubscription = () => {
     annual,
     setAnnual,
     plans,
+    trialEndDate,
+    currentPeriodEnd,
+    hasUsedTrial,
+    cancelSubscription,
+    cancelLoading,
   };
 };
 
 export function SubscriptionPanel() {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(true);
-  const { tier, status, loading, subscribe, manage, refresh } =
-    useSubscription();
+  const {
+    tier,
+    status,
+    loading,
+    subscribe,
+    manage,
+    refresh,
+    trialEndDate,
+    currentPeriodEnd,
+    hasUsedTrial,
+    cancelSubscription,
+    cancelLoading,
+  } = useSubscription();
   const [billing, setBilling] = useState<{
     paymentMethods: PaymentMethod[];
     defaultPaymentMethod?: PaymentMethod;
@@ -264,71 +335,132 @@ export function SubscriptionPanel() {
         {plans.map((plan, idx) => (
           <div
             key={idx}
-            className="rounded-xl shadow-xl border border-gray-300 bg-[#2e3a48] flex flex-col p-7 relative"
+            className="rounded-xl shadow-xl border border-gray-300 bg-[#2e3a48] flex flex-col p-7 relative h-full"
           >
-            {/* {console.log(tier === plan.planId, status)} */}
             {tier === plan.planId && status === "active" && (
               <span className="absolute top-4 right-4 text-xs px-3 py-1 bg-green-500 text-white rounded-full font-bold shadow">
                 Current
               </span>
             )}
-            <div className="mb-2">
-              <h4 className="text-2xl font-bold text-white">{plan.title}</h4>
-              <p className="text-orange-400 font-semibold mb-2">{plan.desc}</p>
-              <div className="flex items-end gap-2 mb-3">
-                <div className="text-3xl font-bold text-white">
-                  ${annual ? plan.annually : plan.monthly}
-                  <span className="text-base font-normal">/mo</span>
-                </div>
-                <div className="text-sm text-gray-200 opacity-70">
-                  {annual ? "billed yearly" : "billed monthly"}
+            {tier === plan.planId && status === "trialing" && (
+              <span className="absolute top-4 right-4 text-xs px-3 py-1 bg-blue-500 text-white rounded-full font-bold shadow">
+                Trial
+              </span>
+            )}
+            <div className="flex-grow">
+              <div className="mb-2">
+                <h4 className="text-2xl font-bold text-white">{plan.title}</h4>
+                <p className="text-orange-400 font-semibold mb-2">
+                  {plan.desc}
+                </p>
+                <div className="flex items-end gap-2 mb-3">
+                  <div className="text-3xl font-bold text-white">
+                    ${annual ? plan.annually : plan.monthly}
+                    <span className="text-base font-normal">/mo</span>
+                  </div>
+                  <div className="text-sm text-gray-200 opacity-70">
+                    {annual ? "billed yearly" : "billed monthly"}
+                  </div>
                 </div>
               </div>
-            </div>
-            <ul className="mb-8 mt-2 grid gap-2">
-              {plan.features.map((f, i) => (
-                <li
-                  key={i}
-                  className="flex items-center gap-2 text-white text-md"
-                >
-                  <Check
-                    className={`w-5 h-5 ${
-                      f.included ? "text-green-400" : "text-gray-400 opacity-60"
-                    }`}
-                  />
-                  <span
-                    className={
-                      f.included ? "font-semibold" : "line-through opacity-70"
-                    }
+              <ul className="mb-8 mt-2 grid gap-2">
+                {plan.features.map((f, i) => (
+                  <li
+                    key={i}
+                    className="flex items-center gap-2 text-white text-md"
                   >
-                    {f.name}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                    <Check
+                      className={`w-5 h-5 ${
+                        f.included
+                          ? "text-green-400"
+                          : "text-gray-400 opacity-60"
+                      }`}
+                    />
+                    <span
+                      className={
+                        f.included ? "font-semibold" : "line-through opacity-70"
+                      }
+                    >
+                      {f.name}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
             <div className="mt-auto">
               {tier === plan.planId && status === "active" ? (
-                <Button
-                  disabled
-                  className="w-full bg-green-500 text-white cursor-default"
-                >
-                  Your Plan
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    disabled
+                    className="w-full bg-green-500 text-white cursor-default"
+                  >
+                    {" "}
+                    {currentPeriodEnd &&
+                      `Renews in ${Math.ceil(
+                        (currentPeriodEnd.getTime() - new Date().getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      )} days`}
+                  </Button>
+                  <Button
+                    onClick={cancelSubscription}
+                    className="w-full bg-red-500 hover:bg-red-600 text-white"
+                    disabled={cancelLoading}
+                  >
+                    {cancelLoading ? "Processing..." : "Stop Plan"}
+                  </Button>
+                </div>
+              ) : tier === plan.planId && status === "trialing" ? (
+                <div className="space-y-2">
+                  <Button
+                    disabled
+                    className="w-full bg-green-500 text-white cursor-default"
+                  >
+                    {" "}
+                    {trialEndDate &&
+                      `Trial ends in ${Math.ceil(
+                        (trialEndDate.getTime() - new Date().getTime()) /
+                          (1000 * 60 * 60 * 24)
+                      )} days`}
+                  </Button>
+
+                  <Button
+                    onClick={cancelSubscription}
+                    className="w-full bg-red-500 hover:bg-red-600 text-white"
+                    disabled={cancelLoading}
+                  >
+                    {cancelLoading ? "Processing..." : "Stop Trial"}
+                  </Button>
+                </div>
               ) : (
-                <Button
-                  onClick={() => subscribe(plan.planId, annual)}
-                  className="w-full bg-orange-500 hover:bg-orange-600 text-white"
-                  disabled={loading}
-                >
-                  {loading ? "Processing..." : "Choose Plan"}
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => subscribe(plan.planId, annual)}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                    disabled={loading}
+                  >
+                    {loading ? "Processing..." : "Choose Plan"}
+                  </Button>
+                  <Button
+                    onClick={() => subscribe(plan.planId, annual, true)}
+                    className={`w-full bg-blue-500 hover:bg-blue-600 text-white ${
+                      hasUsedTrial ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={loading || hasUsedTrial}
+                  >
+                    {loading
+                      ? "Processing..."
+                      : hasUsedTrial
+                      ? "Trial Already Used"
+                      : "Start Free Trial"}
+                  </Button>
+                </div>
               )}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="flex items-center gap-3 mt-3">
+      {/* <div className="flex items-center gap-3 mt-3">
         <Button
           variant="outline"
           className="bg-white text-orange-500 border-orange-500 border font-semibold"
@@ -336,7 +468,7 @@ export function SubscriptionPanel() {
         >
           Manage Subscription
         </Button>
-      </div>
+      </div> */}
     </TabsContent>
   );
 }

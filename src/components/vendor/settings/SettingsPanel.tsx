@@ -28,12 +28,13 @@ import {
   createCompany,
   updateCompany,
   getCompany,
+  type CompanyCreateInput,
 } from "@/lib/api/companies/companies.api";
 import { updateUser, getUser } from "@/lib/api/users/users.api";
 import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
-import SubscriptionPanel from "./SubscriptionPanel";
+import SubscriptionPanel, { useSubscription } from "./SubscriptionPanel";
 import UserManagementPanel from "./UserManagementPanel";
 // import PaymentSettings from "./PaymentSettings";
 
@@ -71,8 +72,11 @@ interface SettingsFormData {
 
 const SettingsPanel = () => {
   const auth = useAuth();
+  const { tier } = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
+  const [originalCompanyData, setOriginalCompanyData] =
+    useState<Partial<Company> | null>(null);
   const [formData, setFormData] = useState<SettingsFormData>({
     name: auth.user?.name || "",
     email: auth.user?.email || "",
@@ -100,6 +104,7 @@ const SettingsPanel = () => {
 
           if (auth.user.companyId) {
             const company = await getCompany(String(auth.user.companyId));
+            setOriginalCompanyData(company);
             setFormData((prev) => ({
               ...prev,
               companyName: company.name || "",
@@ -183,46 +188,87 @@ const SettingsPanel = () => {
           window.location.reload();
         }
       } else if (activeTab === "company") {
-        if (!formData.companyName || !formData.websiteUrl || !formData.detail) {
-          toast({
-            variant: "destructive",
-            title: "Missing Fields",
-            description: "Please fill in all required fields",
-          });
-          return;
+        // Only validate required fields when creating a new company
+        if (!auth.user?.companyId) {
+          if (
+            !formData.companyName ||
+            !formData.websiteUrl ||
+            !formData.detail
+          ) {
+            toast({
+              variant: "destructive",
+              title: "Missing Fields",
+              description: "Please fill in all required fields",
+            });
+            return;
+          }
         }
 
-        const companyData = {
-          name: formData.companyName,
-          websiteUrl: formData.websiteUrl,
-          detail: formData.detail,
-          ratio: 0,
-          reviews: [],
-          metaPixelId: formData.metaPixelId,
-        };
+        // Create an object with only the changed fields
+        const companyData: Partial<Company> = {};
 
+        if (formData.companyName !== originalCompanyData?.name) {
+          companyData.name = formData.companyName;
+        }
+        if (formData.websiteUrl !== originalCompanyData?.websiteUrl) {
+          companyData.websiteUrl = formData.websiteUrl;
+        }
+        if (formData.detail !== originalCompanyData?.detail) {
+          companyData.detail = formData.detail;
+        }
+        // Always include metaPixelId if it's different, even if empty
+        if (formData.metaPixelId !== originalCompanyData?.metaPixelId) {
+          companyData.metaPixelId = formData.metaPixelId || null;
+        }
+
+        // Handle logo changes
         if (formData.logo !== null) {
           if (typeof formData.logo === "string") {
             if (formData.logo.startsWith("data:image")) {
-              (companyData as any).logo = formData.logo;
-            } else if (formData.logo.startsWith("http")) {
+              companyData.logo = formData.logo;
             }
-          } else {
-            (companyData as any).logo = "";
+          } else if (formData.logo === "") {
+            companyData.logo = null;
           }
         }
 
-        if (!auth.user?.companyId) {
-          const newCompany = await createCompany(companyData);
-          if (auth.user?.id) {
-            const updatedUser = await updateUser(String(auth.user.id), {
-              companyId: String(newCompany.id),
-            });
-            localStorage.setItem("user", JSON.stringify(updatedUser));
-            window.location.reload();
+        // Only proceed with update if there are changes
+        if (Object.keys(companyData).length > 0) {
+          if (!auth.user?.companyId) {
+            // For new company creation, we need all required fields
+            const newCompanyData: CompanyCreateInput = {
+              name: formData.companyName,
+              websiteUrl: formData.websiteUrl,
+              detail: formData.detail,
+              logo: formData.logo || undefined,
+            };
+            const newCompany = await createCompany(newCompanyData);
+
+            // If there's a metaPixelId, update it after company creation
+            if (formData.metaPixelId) {
+              await updateCompany(String(newCompany.id), {
+                metaPixelId: formData.metaPixelId,
+              });
+            }
+
+            if (auth.user?.id) {
+              const updatedUser = await updateUser(String(auth.user.id), {
+                companyId: String(newCompany.id),
+              });
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+              window.location.reload();
+            }
+          } else {
+            await updateCompany(String(auth.user.companyId), companyData);
+            // Update the original data after successful update
+            setOriginalCompanyData((prev) => ({ ...prev, ...companyData }));
           }
         } else {
-          await updateCompany(String(auth.user.companyId), companyData);
+          toast({
+            title: "No Changes",
+            description: "No changes were made to the company information",
+          });
+          return;
         }
       }
 
@@ -256,7 +302,7 @@ const SettingsPanel = () => {
         className="space-y-6"
         onValueChange={setActiveTab}
       >
-        <TabsList>
+        <TabsList className="">
           <TabsTrigger value="profile">
             <User className="mr-2 h-4 w-4" />
             Profile
@@ -265,18 +311,16 @@ const SettingsPanel = () => {
             <Shield className="mr-2 h-4 w-4" />
             Company
           </TabsTrigger>
-          <TabsTrigger value="users">
-            <Users className="mr-2 h-4 w-4" />
-            Users
-          </TabsTrigger>
           <TabsTrigger value="subscription">
             <CreditCard className="mr-2 h-4 w-4" />
             Subscription
           </TabsTrigger>
-          <TabsTrigger value="notifications">
-            <Bell className="mr-2 h-4 w-4" />
-            Notifications
-          </TabsTrigger>
+          {tier === "platinum" && (
+            <TabsTrigger value="users">
+              <Users className="mr-2 h-4 w-4" />
+              Users
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
@@ -313,7 +357,7 @@ const SettingsPanel = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="phone">Phone Number</Label>
               <Input
                 id="phone"
@@ -323,7 +367,7 @@ const SettingsPanel = () => {
                 onChange={handleChange}
                 className="text-black"
               />
-            </div>
+            </div> */}
           </div>
         </TabsContent>
 

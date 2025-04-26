@@ -34,8 +34,10 @@ const VendorNavbar = () => {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <div className="flex flex-col space-y-1 p-2">
-              <p className="text-sm font-medium leading-none">{user?.name}</p>
-              <p className="text-xs leading-none text-white">{user?.email}</p>
+              <p className="text-sm font-medium leading-none text-black">
+                {user?.name}
+              </p>
+              <p className="text-xs leading-none text-black">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

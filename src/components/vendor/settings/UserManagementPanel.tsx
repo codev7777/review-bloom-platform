@@ -107,22 +107,25 @@ const UserManagementPanel = () => {
   };
 
   const confirmRemoveUser = async () => {
-    if (!userToDelete) return;
+    if (!userToDelete || !companyId) return;
 
     setIsLoading(true);
     try {
       await deleteUser(userToDelete.id);
       toast({
         title: "Success",
-        description: "User deleted successfully",
+        description: "User removed from company successfully",
       });
       fetchUsers();
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error removing user:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete user",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove user from company",
       });
     } finally {
       setIsLoading(false);
