@@ -56,6 +56,7 @@ interface SettingsFormData {
   websiteUrl: string;
   detail: string;
   logo: string | null;
+  metaPixelId: string;
 }
 
 const SettingsPanel = () => {
@@ -70,6 +71,7 @@ const SettingsPanel = () => {
     websiteUrl: "",
     detail: "",
     logo: null,
+    metaPixelId: "",
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
@@ -94,6 +96,7 @@ const SettingsPanel = () => {
               websiteUrl: company.websiteUrl || "",
               detail: company.detail || "",
               logo: company.logo || null,
+              metaPixelId: company.metaPixelId || "",
             }));
             if (company.logo) {
               setPreviewImage(getImageUrl(company.logo));
@@ -185,6 +188,7 @@ const SettingsPanel = () => {
           detail: formData.detail,
           ratio: 0,
           reviews: 0,
+          metaPixelId: formData.metaPixelId,
         };
 
         if (formData.logo !== null) {
@@ -350,6 +354,21 @@ const SettingsPanel = () => {
                 rows={4}
                 className="text-black"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
+              <Input
+                id="metaPixelId"
+                name="metaPixelId"
+                placeholder="Enter your Meta Pixel ID"
+                value={formData.metaPixelId}
+                onChange={handleChange}
+                className="text-black"
+              />
+              <p className="text-xs text-gray-500">
+                Available for GOLD and PLATINUM plans only
+              </p>
             </div>
 
             <div className="space-y-2">

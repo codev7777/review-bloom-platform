@@ -13,7 +13,7 @@ import { getProducts } from "@/lib/api/products/products.api";
 import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { createPublicReview } from "@/lib/api/public/publicReview";
-import { Campaign, Product, Promotion } from "@/types";
+import { Campaign, Product, Promotion, Company } from "@/types";
 
 interface ReviewFunnelProps {
   campaignId: any;
@@ -35,6 +35,12 @@ interface ReviewFunnelProps {
 interface ExtendedCampaign extends Campaign {
   product?: Product;
   promotion?: Promotion;
+  company?: Company & {
+    metaPixelId?: string;
+    Plan?: {
+      planType: "SILVER" | "GOLD" | "PLATINUM";
+    };
+  };
 }
 
 export interface ReviewFormData {
@@ -102,35 +108,90 @@ const ReviewFunnel = ({
   });
 
   const [step, setStep] = useState(1);
-  const [campaign, setCampaign] = useState<any | null>(null);
+  const [campaign, setCampaign] = useState<ExtendedCampaign | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [planId, setPlanId] = useState(1);
+
+  // Add Meta Pixel initialization
+  useEffect(() => {
+    if (campaign?.company?.metaPixelId) {
+      // Initialize Meta Pixel
+      const initMetaPixel = () => {
+        if (!(window as any).fbq) {
+          (window as any).fbq = function () {
+            (window as any).fbq.queue.push(arguments);
+          };
+          (window as any).fbq.queue = [];
+        }
+
+        // Initialize Meta Pixel with the company's pixel ID
+        (window as any).fbq("init", campaign.company.metaPixelId);
+        (window as any).fbq("track", "PageView");
+
+        // Update noscript tag
+        const noscriptElement = document.getElementById("meta-pixel-noscript");
+        if (noscriptElement) {
+          noscriptElement.innerHTML = `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${campaign.company.metaPixelId}&ev=PageView&noscript=1" />`;
+        }
+      };
+
+      // Load Meta Pixel script
+      const script = document.createElement("script");
+      script.src = "https://connect.facebook.net/en_US/fbevents.js";
+      script.async = true;
+      document.head.appendChild(script);
+
+      script.onload = initMetaPixel;
+
+      return () => {
+        document.head.removeChild(script);
+        // Clear noscript tag
+        const noscriptElement = document.getElementById("meta-pixel-noscript");
+        if (noscriptElement) {
+          noscriptElement.innerHTML = "";
+        }
+      };
+    }
+  }, [campaign?.company?.metaPixelId]);
+
+  // Track step changes with Meta Pixel
+  useEffect(() => {
+    if (campaign?.company?.metaPixelId && (window as any).fbq) {
+      (window as any).fbq("track", "ReviewFunnelStep", {
+        step: step,
+        campaignId: campaignId,
+      });
+    }
+  }, [step, campaign?.company?.metaPixelId]);
+
   useEffect(() => {
     const fetchData = async () => {
       if (campaignId === "demo-campaign") {
         // Set up static demo data
         setIsDemo(true);
         setCampaign({
-          productName: "Demo Product",
-          productImage: "https://via.placeholder.com/150",
-          vendor: "Amazon",
-          productId: 1,
-          asin: "DEMOASIN123",
+          id: "demo",
+          title: "Demo Campaign",
+          isActive: "YES",
           promotionId: 999,
-          marketPlaces: ["US", "UK"],
+          productIds: [1, 2],
+          marketplaces: ["US", "UK"],
+          claims: 0,
           products: [
             {
               id: 1,
               title: "Desktop",
               image: "/images/funnel/demo-campaign-product-1.webp",
               asin: "B012345678",
+              companyId: 1,
             },
             {
               id: 2,
               title: "Laptop",
               image: "/images/funnel/demo-campaign-product-2.webp",
               asin: "B087654321",
+              companyId: 1,
             },
           ],
           promotion: {
@@ -141,7 +202,16 @@ const ReviewFunnel = ({
             promotionType: "GIFT_CARD",
             companyId: 1,
           },
-        });
+          company: {
+            id: 1,
+            name: "Demo Company",
+            ratio: 0,
+            reviews: 0,
+            Plan: {
+              planType: "GOLD",
+            },
+          },
+        } as ExtendedCampaign);
         setIsLoading(false);
         return;
       }
@@ -158,7 +228,7 @@ const ReviewFunnel = ({
           campaignData = await getPublicCampaign(campaignId);
         }
 
-        setCampaign(campaignData);
+        setCampaign(campaignData as ExtendedCampaign);
 
         if (campaignData.productIds?.length) {
           const numericProductIds = campaignData.productIds
@@ -167,9 +237,10 @@ const ReviewFunnel = ({
 
           try {
             const productsData = await getProducts({ ids: numericProductIds });
-            setPlanId(productsData.data[0].company?.planId);
-            console.log("planId2  ", productsData.data[0].company?.planId);
-            console.log("New products data available:", productsData.data);
+            const product = productsData.data[0];
+            if (product) {
+              setPlanId(product.companyId ? Number(product.companyId) : 1);
+            }
           } catch (authError) {
             console.log("Auth products request failed, trying public endpoint");
             const publicProductsData = await getPublicProducts(
@@ -218,6 +289,14 @@ const ReviewFunnel = ({
   };
 
   const handleNextStep = async () => {
+    // Track step completion with Meta Pixel
+    if (campaign?.company?.metaPixelId && (window as any).fbq) {
+      (window as any).fbq("track", "ReviewFunnelStepComplete", {
+        step: step,
+        campaignId: campaignId,
+      });
+    }
+
     // If we're on step 3 and moving to step 4, submit the review
     if (step === 3 && campaignId !== "demo-campaign") {
       if (!productId) {
@@ -244,7 +323,7 @@ const ReviewFunnel = ({
           });
           return;
         }
-        console.log("planId1  ", planId);
+
         const reviewData = {
           email: formData.email,
           name: formData.name,
@@ -264,6 +343,14 @@ const ReviewFunnel = ({
           console.log("Auth review submission failed, trying public endpoint");
           // If authenticated request fails, try public endpoint
           await createPublicReview(reviewData);
+        }
+
+        // Track review submission with Meta Pixel
+        if (campaign?.company?.metaPixelId && (window as any).fbq) {
+          (window as any).fbq("track", "ReviewSubmitted", {
+            campaignId: campaignId,
+            rating: formData.rating,
+          });
         }
 
         // Move to step 4 after successful submission

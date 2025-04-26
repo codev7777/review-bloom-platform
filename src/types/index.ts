@@ -79,11 +79,13 @@ export interface Company {
   planId?: number;
   ratio: number;
   reviews: number;
+  metaPixelId?: string;
   campaigns?: Campaign[];
   Products?: Product[];
   createdAt: Date;
   updatedAt: Date;
   stripeCustomerId?: string;
+  Plan?: Plan;
 }
 
 export interface User {
