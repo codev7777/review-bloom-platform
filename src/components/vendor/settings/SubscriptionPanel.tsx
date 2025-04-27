@@ -12,6 +12,7 @@ import {
   type PaymentMethod,
 } from "@/lib/api/billing/billing.api";
 import api from "@/lib/api/axiosConfig";
+import { DowngradeConfirmationModal } from "./DowngradeConfirmationModal";
 
 // Subscription plans
 const plans = [
@@ -255,6 +256,12 @@ export const useSubscription = () => {
 export function SubscriptionPanel() {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(true);
+  const [showDowngradeModal, setShowDowngradeModal] = useState(false);
+  const [downgradeData, setDowngradeData] = useState<{
+    limits: any;
+    targetPlanType: string;
+    targetPlanId: string;
+  } | null>(null);
   const {
     tier,
     status,
@@ -298,6 +305,57 @@ export function SubscriptionPanel() {
   useEffect(() => {
     refresh(); // Always refresh subscription status when this panel mounts
   }, []);
+
+  const handlePlanSelect = async (planId: string) => {
+    if (!user?.companyId) return;
+
+    // If downgrading, check limits first
+    if (tier && plans.findIndex(p => p.planId === tier) > plans.findIndex(p => p.planId === planId)) {
+      try {
+        // Map plan ID to numeric ID
+        const planIdMap: Record<string, number> = {
+          'silver': 1,
+          'gold': 2,
+          'platinum': 3
+        };
+
+        const response = await api.post("/billing/check-downgrade-limits", {
+          companyId: user.companyId,
+          targetPlanId: planIdMap[planId]
+        });
+
+        if (response.data.success) {
+          setDowngradeData({
+            limits: response.data.data.limits,
+            targetPlanType: response.data.data.targetPlanType,
+            targetPlanId: planId
+          });
+          setShowDowngradeModal(true);
+          return;
+        }
+      } catch (error) {
+        console.error("Error checking downgrade limits:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to check plan limits. Please try again.",
+        });
+        return;
+      }
+    }
+
+    // If upgrading or no limits exceeded, proceed with subscription
+    subscribe(planId, annual);
+  };
+
+  const handleDowngradeConfirm = () => {
+    if (downgradeData) {
+      subscribe(downgradeData.targetPlanId, annual);
+      setShowDowngradeModal(false);
+      setDowngradeData(null);
+    }
+  };
+
   return (
     <TabsContent value="subscription" className="space-y-8">
       <div>
@@ -434,7 +492,7 @@ export function SubscriptionPanel() {
               ) : (
                 <div className="space-y-2">
                   <Button
-                    onClick={() => subscribe(plan.planId, annual)}
+                    onClick={() => handlePlanSelect(plan.planId)}
                     className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                     disabled={loading}
                   >
@@ -469,6 +527,19 @@ export function SubscriptionPanel() {
           Manage Subscription
         </Button>
       </div> */}
+
+      {downgradeData && (
+        <DowngradeConfirmationModal
+          isOpen={showDowngradeModal}
+          onClose={() => {
+            setShowDowngradeModal(false);
+            setDowngradeData(null);
+          }}
+          onConfirm={handleDowngradeConfirm}
+          limits={downgradeData.limits}
+          targetPlanType={downgradeData.targetPlanType}
+        />
+      )}
     </TabsContent>
   );
 }

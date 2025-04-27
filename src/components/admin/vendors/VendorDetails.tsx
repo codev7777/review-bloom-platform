@@ -85,16 +85,16 @@ const VendorDetails = ({ company, isOpen, onClose }: VendorDetailsProps) => {
   const { data: subscriptionData } = useQuery({
     queryKey: ["subscription", company.id],
     queryFn: async () => {
-      const response = await api.get(`/subscription/company/${company.id}`);
+      const response = await api.get(`/billing/company/${company.id}`);
       return response.data;
     },
     enabled: isOpen && !!company.id,
   });
 
-  const subscriptionEndDate = subscriptionData?.currentPeriodEnd
-    ? format(new Date(subscriptionData.currentPeriodEnd), "MMMM d, yyyy")
+  const subscriptionEndDate = subscriptionData?.data?.subscription.currentPeriodEnd
+    ? format(new Date(subscriptionData?.data?.subscription.currentPeriodEnd), "MMMM d, yyyy")
     : null;
-
+console.log(subscriptionData?.data?.subscription)
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">

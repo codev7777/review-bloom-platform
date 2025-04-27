@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,7 +13,7 @@ import {
   ArrowUpDown,
   ChevronUp,
   ChevronDown,
-  Info,
+  Package,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -174,37 +175,39 @@ const PromotionsList = () => {
 
   if (promotions.length === 0) {
     return (
-      <div className="text-center py-10 border rounded-lg text-white">
-        <Info className="mx-auto h-10 w-10 text-white opacity-50" />
-        <h3 className="mt-4 text-lg font-medium">No promotions found</h3>
-        <p className="mt-1 text-sm text-white">
-          Add a promotion to get started
-        </p>
-        <Button
-          variant="default"
-          className="mt-4 bg-orange-500 hover:bg-orange-600"
-          onClick={() => navigate("/vendor-dashboard/promotions/new")}
-        >
-          <span className="mr-1 h-7 w-7">
-            <img src="/images/vendor/Add.gif" alt="Cool GIF" />
-          </span>
-          Add your first promotion
-        </Button>
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center max-w-md">
+          <div className="mx-auto w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6">
+            <Package className="h-12 w-12 text-orange-500" />
+          </div>
+          <h3 className="text-2xl font-medium mb-2">No promotions yet</h3>
+          <p className="text-muted-foreground mb-6">
+            Create your first promotion to start offering incentives to your customers for leaving reviews.
+          </p>
+          <Button
+            size="lg"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
+            onClick={() => navigate("/vendor-dashboard/promotions/new")}
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Create your first promotion
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Promotions</h1>
-          <p className="text-white">
+          <p className="text-muted-foreground">
             Manage your promotional offers for review campaigns
           </p>
         </div>
         <Button
-          className="bg-orange-500 hover:bg-orange-600 transition-all duration-200"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white"
           onClick={() => navigate("/vendor-dashboard/promotions/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -214,7 +217,7 @@ const PromotionsList = () => {
 
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search promotions..."
             className="pl-10 text-black"
@@ -227,7 +230,7 @@ const PromotionsList = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="gap-2 text-black">
-                <SlidersHorizontal className="h-4 w-4" />
+                <SlidersHorizontal className="h-4 w-4 text-black" />
                 {typeFilter
                   ? `Type: ${typeFilter.split(" ")[0]}`
                   : "Filter by Type"}
@@ -244,6 +247,7 @@ const PromotionsList = () => {
                   key={type}
                   onClick={() => setTypeFilter(type)}
                 >
+                  <PromotionTypeIcon type={type} />
                   {type}
                 </DropdownMenuItem>
               ))}
@@ -260,16 +264,13 @@ const PromotionsList = () => {
                   : sortField === "promotionType"
                   ? " by Type"
                   : " by Date"}
-                {sortOrder === "asc" ? " (A-Z)" : " (Z-A)"}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="text-black">
-              <DropdownMenuLabel className="text-black">
-                Sort by
-              </DropdownMenuLabel>
+              <DropdownMenuLabel><span className="text-black">Sort by</span></DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => handleSort("title")}>
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full text-black">
                   <span>Name</span>
                   {sortField === "title" &&
                     (sortOrder === "asc" ? (
@@ -309,62 +310,67 @@ const PromotionsList = () => {
       {/* Promotions grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {sortedPromotions.map((promotion) => (
-          <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white">
-            <figure>
+          <Card key={promotion.id} className="overflow-hidden transition-all duration-200 hover:shadow-md border-opacity-40 flex flex-col h-full">
+            <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900">
               <img
                 src={
                   promotion?.image
                     ? getImageUrl(promotion.image)
-                    : `https://placehold.co/200x200/FFF5E8/FF9130?text=${encodeURIComponent(
+                    : `https://placehold.co/600x400/FFF5E8/FF9130?text=${encodeURIComponent(
                         promotion.title
                       )}`
                 }
-                className="w-full object-contain bg-gray-700 rounded-t-3xl aspect-[16/9]"
-                alt="Promotion"
+                alt={promotion.title}
+                className="h-full w-full object-contain transition-transform duration-200 hover:scale-105 bg-gray-400"
               />
-            </figure>
-            <div className="card-body">
-              <h2 className="card-title text-2xl">{promotion.title}</h2>
-              <div className="flex items-center mt-1 gap-1">
-                <PromotionTypeIcon type={promotion.promotionType} />
-                <span className="text-xs line-clamp-1">
-                  {promotion.promotionType}
-                </span>
-              </div>
-              <p className="text-sm mt-3 line-clamp-2">
+              <Badge
+                variant="secondary"
+                className="absolute top-3 right-3 font-medium bg-white/90 dark:bg-gray-800/90 shadow-sm"
+              >
+                <div className="flex items-center gap-1.5 text-black">
+                  <PromotionTypeIcon type={promotion.promotionType} />
+                  <span>{promotion.promotionType}</span>
+                </div>
+              </Badge>
+            </div>
+            
+            <CardContent className="flex flex-col flex-grow p-5">
+              <h3 className="text-lg font-medium mb-2 line-clamp-1">
+                {promotion.title}
+              </h3>
+              <p className="text-muted-foreground text-sm line-clamp-2 mb-4 flex-grow">
                 {promotion.description}
               </p>
-              <div className="card-actions justify-end">
-                <div className="badge badge-outline">
-                  Added:{" "}
-                  {promotion.createdAt
-                    ? new Date(promotion.createdAt).toLocaleDateString("en-US")
-                    : new Date().toLocaleDateString("en-US")}
+              
+              <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                <span className="text-xs text-muted-foreground">
+                  Added: {formatDate(promotion.createdAt)}
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                    onClick={() => setPromotionToDelete(promotion.id.toString())}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600"
+                    onClick={() =>
+                      navigate(
+                        `/vendor-dashboard/promotions/edit/${promotion.id}`
+                      )
+                    }
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit
+                  </Button>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                  onClick={() => setPromotionToDelete(promotion.id.toString())}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </Button>
-                <Button
-                  size="sm"
-                  className="bg-orange-500 hover:bg-orange-600 text-black"
-                  onClick={() =>
-                    navigate(
-                      `/vendor-dashboard/promotions/edit/${promotion.id}`
-                    )
-                  }
-                >
-                  <Edit className="mr-2 h-4 w-4 text-black" />
-                  Edit
-                </Button>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
