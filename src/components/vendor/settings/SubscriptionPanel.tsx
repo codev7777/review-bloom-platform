@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, CreditCard } from "lucide-react";
+import { Check, CreditCard, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { TabsContent } from "@/components/ui/tabs";
@@ -13,6 +13,8 @@ import {
 } from "@/lib/api/billing/billing.api";
 import api from "@/lib/api/axiosConfig";
 import { DowngradeConfirmationModal } from "./DowngradeConfirmationModal";
+import { validateDiscountCode } from "@/services/discountCode.service";
+import { Input } from "@/components/ui/input";
 
 // Subscription plans
 const plans = [
@@ -91,6 +93,12 @@ export const useSubscription = () => {
   const [currentPeriodEnd, setCurrentPeriodEnd] = useState<Date | null>(null);
   const [hasUsedTrial, setHasUsedTrial] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [discountCode, setDiscountCode] = useState<string>("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{
+    code: string;
+    discount: number;
+    type: string;
+  } | null>(null);
 
   const fetchSubscription = async () => {
     const token = localStorage.getItem("accessToken");
@@ -118,6 +126,37 @@ export const useSubscription = () => {
   useEffect(() => {
     fetchSubscription();
   }, [user?.companyId]);
+
+  const applyDiscountCode = async () => {
+    if (!discountCode.trim()) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Code",
+        description: "Please enter a discount code",
+      });
+      return;
+    }
+
+    try {
+      const validatedCode = await validateDiscountCode(discountCode);
+      setAppliedDiscount({
+        code: validatedCode.code,
+        discount: validatedCode.discount,
+        type: validatedCode.type,
+      });
+      toast({
+        title: "Discount Applied",
+        description: `Successfully applied ${validatedCode.code}`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Invalid Code",
+        description: "The discount code is invalid or expired",
+      });
+      setAppliedDiscount(null);
+    }
+  };
 
   const subscribe = async (
     planId: string,
@@ -156,6 +195,7 @@ export const useSubscription = () => {
         success_url: `${window.location.origin}/subscription?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${window.location.origin}/subscription`,
         isTrial: isTrial,
+        discountCode: appliedDiscount?.code,
       });
 
       const { url } = res.data;
@@ -250,6 +290,10 @@ export const useSubscription = () => {
     hasUsedTrial,
     cancelSubscription,
     cancelLoading,
+    discountCode,
+    setDiscountCode,
+    appliedDiscount,
+    applyDiscountCode,
   };
 };
 
@@ -274,6 +318,10 @@ export function SubscriptionPanel() {
     hasUsedTrial,
     cancelSubscription,
     cancelLoading,
+    discountCode,
+    setDiscountCode,
+    appliedDiscount,
+    applyDiscountCode,
   } = useSubscription();
   const [billing, setBilling] = useState<{
     paymentMethods: PaymentMethod[];
@@ -387,6 +435,38 @@ export function SubscriptionPanel() {
         <span className="ml-4 py-1 px-2 bg-orange-100 text-orange-600 rounded text-xs font-semibold">
           {annual ? "Save 20%" : "Cancel anytime"}
         </span>
+      </div>
+
+      {/* Add Discount Code Section */}
+      <div className="bg-gray-800 p-4 rounded-lg">
+        <div className="flex items-center gap-2 mb-2">
+          <Tag className="h-5 w-5 text-orange-400" />
+          <h4 className="text-white font-medium">Have a discount code?</h4>
+        </div>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            placeholder="Enter discount code"
+            value={discountCode}
+            onChange={(e) => setDiscountCode(e.target.value)}
+            className="flex-1 text-black"
+          />
+          <Button
+            onClick={applyDiscountCode}
+            disabled={!discountCode.trim()}
+            className="bg-orange-500 hover:bg-orange-600"
+          >
+            Apply
+          </Button>
+        </div>
+        {appliedDiscount && (
+          <div className="mt-2 text-green-400 text-sm">
+            {appliedDiscount.type === "PERCENTAGE"
+              ? `${appliedDiscount.discount}% off`
+              : `$${appliedDiscount.discount} off`}{" "}
+            applied
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
