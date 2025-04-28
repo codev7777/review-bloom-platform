@@ -230,50 +230,61 @@ export default function DiscountCodes() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {discountCodes.map((code) => (
-            <TableRow key={code.id}>
-              <TableCell>{code.code}</TableCell>
-              <TableCell>{code.description}</TableCell>
-              <TableCell>{code.discount}%</TableCell>
-              <TableCell>
-                {format(new Date(code.validFrom), 'MMM d, yyyy HH:mm')}
-              </TableCell>
-              <TableCell>
-                {code.validUntil
-                  ? format(new Date(code.validUntil), 'MMM d, yyyy HH:mm')
-                  : 'No expiry'}
-              </TableCell>
-              <TableCell>
-                <span
-                  className={`px-2 py-1 rounded-full text-xs ${
-                    code.isActive
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {code.isActive ? 'Active' : 'Inactive'}
-                </span>
-              </TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(code)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(code.id)}
-                  >
-                    Delete
-                  </Button>
+          {discountCodes.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={7} className="text-center py-8">
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <p className="text-gray-500 text-lg">No discount codes found</p>
+                  <p className="text-gray-400 text-sm">Click "Add Discount Code" to create your first discount code</p>
                 </div>
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            discountCodes.map((code) => (
+              <TableRow key={code.id}>
+                <TableCell>{code.code}</TableCell>
+                <TableCell>{code.description}</TableCell>
+                <TableCell>{code.discount}%</TableCell>
+                <TableCell>
+                  {format(new Date(code.validFrom), 'MMM d, yyyy HH:mm')}
+                </TableCell>
+                <TableCell>
+                  {code.validUntil
+                    ? format(new Date(code.validUntil), 'MMM d, yyyy HH:mm')
+                    : 'No expiry'}
+                </TableCell>
+                <TableCell>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      code.isActive
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {code.isActive ? 'Active' : 'Inactive'}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(code)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDelete(code.id)}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

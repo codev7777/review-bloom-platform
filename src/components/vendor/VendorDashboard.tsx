@@ -223,7 +223,7 @@ const Dashboard = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <Button
-          className="bg-orange-500 hover:bg-orange-600"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/campaigns/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -342,8 +342,8 @@ const Dashboard = () => {
               No campaigns found. Create your first campaign to get started!
             </p>
             <Button
-              className="mt-4 bg-orange-500 hover:bg-orange-600"
-              onClick={() => navigate("/vendor-dashboard/campaigns/new")}
+             className="mt-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+             onClick={() => navigate("/vendor-dashboard/campaigns/new")}
             >
               <Plus className="mr-2 h-4 w-4" />
               Create Campaign

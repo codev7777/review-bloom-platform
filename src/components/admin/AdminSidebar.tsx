@@ -86,7 +86,7 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
                 open ? "justify-start" : "justify-center",
                 isActive(item.path)
                   ? "bg-[#FF9900] text-[#232F3E] hover:bg-[#FF9900]/90"
-                  : "text-white/80 hover:text-white"
+                  : "text-white/80 hover:text-[#232F3E] hover:bg-white"
               )}
             >
               {item.icon}

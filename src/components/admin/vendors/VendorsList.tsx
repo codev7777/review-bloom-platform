@@ -46,6 +46,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "@/lib/api/companies/companies.api";
 import VendorDetails from "./VendorDetails";
+import { format } from "date-fns";
 
 interface PaginationProps {
   currentPage: number;
@@ -208,12 +209,60 @@ const VendorsList = () => {
   };
 
   const handleExport = () => {
-    // In a real app, this would generate and download a CSV or similar
-    toast({
-      title: "Export complete",
-      description: "Vendor data has been exported successfully",
-    });
-    setShowExportDialog(false);
+    try {
+      // Create CSV content
+      const headers = [
+        'Vendor Name',
+        'Status',
+        'Subscription',
+        'Campaigns',
+        'Products',
+        'Reviews',
+        'Website URL',
+        'Created At'
+      ];
+
+      const rows = companies.map(company => [
+        company.name,
+        'Active',
+        getSubscriptionType(company.planId),
+        company.campaigns?.length || 0,
+        company.Products?.length || 0,
+        company.reviews || 0,
+        company.websiteUrl || 'N/A',
+        format(new Date(company.createdAt), 'MMM d, yyyy')
+      ]);
+
+      // Combine headers and rows
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.join(','))
+      ].join('\n');
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `vendors_export_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export successful",
+        description: "Vendor data has been exported to CSV",
+      });
+      setShowExportDialog(false);
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast({
+        variant: "destructive",
+        title: "Export failed",
+        description: "Failed to export vendor data. Please try again.",
+      });
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -372,13 +421,15 @@ const VendorsList = () => {
             </TableBody>
           </Table>
 
-          <div className="px-4">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={handlePageChange}
-            />
-          </div>
+          {totalVendors > itemsPerPage && (
+            <div className="px-4">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(totalVendors / itemsPerPage)}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

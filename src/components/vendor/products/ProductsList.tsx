@@ -186,9 +186,9 @@ const ProductsList = () => {
       <div className="text-center py-10 border rounded-lg">
         <Info className="mx-auto h-10 w-10 text-white opacity-50" />
         <h3 className="mt-4 text-lg font-medium">No products found</h3>
-        <p className="mt-1 text-sm text-white">Add a product to get started</p>
+        <p className="mt-1 text-sm text-white mb-3">Add a product to get started</p>
         <Button
-          className="mt-4 bg-orange-500 hover:bg-orange-600"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -206,7 +206,7 @@ const ProductsList = () => {
           <p className="text-white">Manage your product catalog</p>
         </div>
         <Button
-          className="bg-orange-500 hover:bg-orange-600"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />

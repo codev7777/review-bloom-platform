@@ -18,6 +18,23 @@ const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
   const { toast } = useToast();
 
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobileNow = window.innerWidth < 768; // md breakpoint
+      setSidebarOpen(!isMobileNow);
+    };
+
+    // Initial check
+    handleResize();
+
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Check connectivity to backend on component mount
   useEffect(() => {
     const checkBackendConnection = async () => {
@@ -51,9 +68,12 @@ const AdminDashboard = () => {
         sidebarOpen={sidebarOpen}
         onSidebarOpenChange={setSidebarOpen}
       />
-      <div className="flex h-screen pt-16">
-        <AdminSidebar open={sidebarOpen} onOpenChange={setSidebarOpen} />
-        <LayoutContent className="w-full p-6">
+      <div className="flex h-[calc(100vh-4rem)] mt-16">
+        <AdminSidebar
+          open={sidebarOpen}
+          onOpenChange={setSidebarOpen}
+        />
+        <LayoutContent className="flex-1 overflow-auto p-6">
           <Routes>
             <Route path="/" element={<AdminOverview />} />
             <Route path="/vendors" element={<VendorsList />} />

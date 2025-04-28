@@ -22,7 +22,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Review } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReviews, updateReviewStatus } from "@/lib/api/reviews/reviews.api";
-import { StarIcon, MoreHorizontal } from "lucide-react";
+import { StarIcon, MoreHorizontal, DownloadIcon } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
   Dialog,
@@ -31,6 +31,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
+import { format } from "date-fns";
 
 const mockReviews = [
   {
@@ -264,6 +265,64 @@ const ReviewsPage = () => {
     }
   };
 
+  const handleExport = () => {
+    try {
+      // Create CSV content
+      const headers = [
+        'Customer Name',
+        'Email',
+        'Date',
+        'Product',
+        'Promotion',
+        'Campaign',
+        'Rating',
+        'Status',
+        'Feedback'
+      ];
+
+      const rows = reviews.map(review => [
+        review.Customer?.name || review.name || 'N/A',
+        review.Customer?.email || review.email || 'N/A',
+        new Date(review.feedbackDate).toLocaleDateString(),
+        review.Product?.title || 'N/A',
+        review.Promotion?.title || 'N/A',
+        review.Campaign?.title || 'N/A',
+        review.ratio || 'N/A',
+        review.status,
+        review.feedback
+      ]);
+
+      // Combine headers and rows
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ].join('\n');
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `reviews_export_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "Export successful",
+        description: "Reviews have been exported to CSV",
+      });
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast({
+        variant: "destructive",
+        title: "Export failed",
+        description: "Failed to export reviews. Please try again.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
@@ -275,6 +334,13 @@ const ReviewsPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-64 text-black border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
           />
+          <Button
+            className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+            onClick={handleExport}
+          >
+            <DownloadIcon className="h-4 w-4" />
+            Export
+          </Button>
         </div>
       </div>
 

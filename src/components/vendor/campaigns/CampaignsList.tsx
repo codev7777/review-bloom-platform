@@ -184,7 +184,7 @@ const CampaignsList: React.FC = () => {
           <p className="text-white">Manage your review collection campaigns</p>
         </div>
         <Button
-          className="bg-orange-500 hover:bg-orange-600 transition-all duration-200"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/campaigns/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -324,7 +324,7 @@ const CampaignsList: React.FC = () => {
               <TableRow>
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
-                    <QrCode className="h-10 w-10 text-black opacity-80" />
+                    <QrCode className="h-10 w-10 text-gray-300 opacity-80" />
                     <h3 className="mt-4 text-lg font-medium">
                       No campaigns found
                     </h3>
@@ -335,8 +335,8 @@ const CampaignsList: React.FC = () => {
                     </p>
                     {!searchQuery && !statusFilter && (
                       <Button
-                        className="mt-4 bg-orange-500 hover:bg-orange-600"
-                        onClick={() =>
+                      className="mt-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+              onClick={() =>
                           navigate("/vendor-dashboard/campaigns/new")
                         }
                       >

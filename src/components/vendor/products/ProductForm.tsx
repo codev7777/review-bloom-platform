@@ -543,7 +543,7 @@ const ProductForm = () => {
           </Button>
           <Button
             type="submit"
-            className="bg-orange-500 hover:bg-orange-600 transition-all duration-200 transform hover:scale-105"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
             disabled={isLoading}
           >
             {isLoading ? (

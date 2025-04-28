@@ -91,9 +91,9 @@ const VendorDetails = ({ company, isOpen, onClose }: VendorDetailsProps) => {
     enabled: isOpen && !!company.id,
   });
 
-  const subscriptionEndDate = subscriptionData?.data?.subscription.currentPeriodEnd
-    ? format(new Date(subscriptionData?.data?.subscription.currentPeriodEnd), "MMMM d, yyyy")
-    : null;
+  const subscriptionEndDate = subscriptionData?.data?.subscription?.currentPeriodEnd
+    ? format(new Date(subscriptionData.data.subscription.currentPeriodEnd), "MMMM d, yyyy")
+    : "No active subscription";
 console.log(subscriptionData?.data?.subscription)
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -193,7 +193,7 @@ console.log(subscriptionData?.data?.subscription)
                 <div>
                   <p className="text-sm text-muted-foreground">Plan Ends</p>
                   <p className="font-medium">
-                    {subscriptionEndDate || "No end date set"}
+                    {subscriptionEndDate}
                   </p>
                 </div>
                 {subscriptionData?.cancelAtPeriodEnd && (

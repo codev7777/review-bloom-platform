@@ -73,7 +73,7 @@ interface SettingsFormData {
 
 const SettingsPanel = () => {
   const auth = useAuth();
-  const { tier } = useSubscription();
+  const { tier, loading: isSubscriptionLoading } = useSubscription();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("profile");
   const [originalCompanyData, setOriginalCompanyData] =
@@ -298,212 +298,227 @@ const SettingsPanel = () => {
         </p>
       </div>
 
-      <Tabs
-        defaultValue="profile"
-        className="space-y-6"
-        onValueChange={setActiveTab}
-      >
-        <TabsList className="">
-          <TabsTrigger value="profile">
-            <User className="mr-2 h-4 w-4" />
-            Profile
-          </TabsTrigger>
-          <TabsTrigger value="company">
-            <Shield className="mr-2 h-4 w-4" />
-            Company
-          </TabsTrigger>
-          <TabsTrigger value="subscription">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Subscription
-          </TabsTrigger>
-          {tier === "platinum" && (
-            <TabsTrigger value="users">
-              <Users className="mr-2 h-4 w-4" />
-              Users
+      <div className="relative">
+        {isSubscriptionLoading && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent" />
+              <p className="text-white">Loading subscription data...</p>
+            </div>
+          </div>
+        )}
+
+        <Tabs
+          defaultValue="profile"
+          className="space-y-6"
+          onValueChange={setActiveTab}
+        >
+          <TabsList className="relative">
+            <TabsTrigger value="profile">
+              <User className="mr-2 h-4 w-4" />
+              Profile
             </TabsTrigger>
-          )}
-        </TabsList>
+            <TabsTrigger value="company">
+              <Shield className="mr-2 h-4 w-4" />
+              Company
+            </TabsTrigger>
+            <TabsTrigger value="subscription">
+              <CreditCard className="mr-2 h-4 w-4" />
+              Subscription
+            </TabsTrigger>
+            {isSubscriptionLoading ? (
+              <div className="absolute right-0 top-0 h-full w-24 flex items-center justify-center">
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white" />
+              </div>
+            ) : tier === "platinum" && (
+              <TabsTrigger value="users">
+                <Users className="mr-2 h-4 w-4" />
+                Users
+              </TabsTrigger>
+            )}
+          </TabsList>
 
-        <TabsContent value="profile" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Personal Information</h3>
-            <p className="text-sm text-white">
-              Update your personal information and how others see you on the
-              platform
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="text-black"
-              />
+          <TabsContent value="profile" className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium">Personal Information</h3>
+              <p className="text-sm text-white">
+                Update your personal information and how others see you on the
+                platform
+              </p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled
-                className="text-black"
-              />
-            </div>
-
-            {/* <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                name="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={handleChange}
-                className="text-black"
-              />
-            </div> */}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="company" className="space-y-6">
-          <div>
-            <h3 className="text-lg font-medium">Company Information</h3>
-            <p className="text-sm text-white">
-              Update your company details and business information
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="companyName">Company Name</Label>
-              <Input
-                id="companyName"
-                name="companyName"
-                value={formData.companyName}
-                onChange={handleChange}
-                required
-                className="text-black"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="websiteUrl">Website</Label>
-              <Input
-                id="websiteUrl"
-                name="websiteUrl"
-                type="url"
-                placeholder="https://www.example.com"
-                value={formData.websiteUrl}
-                onChange={handleChange}
-                className="text-black"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="detail">Company Description</Label>
-              <Textarea
-                id="detail"
-                name="detail"
-                placeholder="Tell us about your company..."
-                value={formData.detail}
-                onChange={handleChange}
-                rows={4}
-                className="text-black"
-              />
-            </div>
-
-            {(tier === "gold" || tier === "platinum") && (
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
+                <Label htmlFor="name">Name</Label>
                 <Input
-                  id="metaPixelId"
-                  name="metaPixelId"
-                  placeholder="Enter your Meta Pixel ID"
-                  value={formData.metaPixelId}
+                  id="name"
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
                   className="text-black"
                 />
-                <p className="text-xs text-gray-500">
-                  Available for GOLD and PLATINUM plans only
-                </p>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label>Company Logo</Label>
-              <div className="flex items-center gap-4">
-                <div className="relative h-24 w-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-                  {previewImage ? (
-                    <img
-                      src={getImageUrl(previewImage)}
-                      alt="Company logo preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <div className="text-center text-black">
-                      <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                      <span className="mt-1 block text-xs text-gray-500">
-                        Upload logo
-                      </span>
-                    </div>
-                  )}
-                  {previewImage && (
-                    <button
-                      type="button"
-                      onClick={handleRemoveLogo}
-                      className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
-                    >
-                      <X className="h-4 w-4 text-gray-500" />
-                    </button>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept={ALLOWED_FILE_TYPES.join(",")}
-                    className="hidden"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => fileInputRef.current?.click()}
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled
+                  className="text-black"
+                />
+              </div>
+
+              {/* <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="text-black"
+                />
+              </div> */}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="company" className="space-y-6">
+            <div>
+              <h3 className="text-lg font-medium">Company Information</h3>
+              <p className="text-sm text-white">
+                Update your company details and business information
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <Input
+                  id="companyName"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                  required
+                  className="text-black"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="websiteUrl">Website</Label>
+                <Input
+                  id="websiteUrl"
+                  name="websiteUrl"
+                  type="url"
+                  placeholder="https://www.example.com"
+                  value={formData.websiteUrl}
+                  onChange={handleChange}
+                  className="text-black"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="detail">Company Description</Label>
+                <Textarea
+                  id="detail"
+                  name="detail"
+                  placeholder="Tell us about your company..."
+                  value={formData.detail}
+                  onChange={handleChange}
+                  rows={4}
+                  className="text-black"
+                />
+              </div>
+
+              {(tier === "gold" || tier === "platinum") && (
+                <div className="space-y-2">
+                  <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
+                  <Input
+                    id="metaPixelId"
+                    name="metaPixelId"
+                    placeholder="Enter your Meta Pixel ID"
+                    value={formData.metaPixelId}
+                    onChange={handleChange}
                     className="text-black"
-                  >
-                    {previewImage ? "Change Logo" : "Upload Logo"}
-                  </Button>
-                  {fileError && (
-                    <p className="mt-1 text-sm text-red-500">{fileError}</p>
-                  )}
-                  <p className="mt-1 text-xs text-gray-500">
-                    Recommended size: 200x200px, PNG or JPG
+                  />
+                  <p className="text-xs text-gray-500">
+                    Available for GOLD and PLATINUM plans only
                   </p>
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <Label>Company Logo</Label>
+                <div className="flex items-center gap-4">
+                  <div className="relative h-24 w-24 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
+                    {previewImage ? (
+                      <img
+                        src={getImageUrl(previewImage)}
+                        alt="Company logo preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-center text-black">
+                        <Upload className="mx-auto h-8 w-8 text-gray-400" />
+                        <span className="mt-1 block text-xs text-gray-500">
+                          Upload logo
+                        </span>
+                      </div>
+                    )}
+                    {previewImage && (
+                      <button
+                        type="button"
+                        onClick={handleRemoveLogo}
+                        className="absolute top-1 right-1 p-1 bg-white rounded-full shadow-sm hover:bg-gray-100"
+                      >
+                        <X className="h-4 w-4 text-gray-500" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      accept={ALLOWED_FILE_TYPES.join(",")}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-black"
+                    >
+                      {previewImage ? "Change Logo" : "Upload Logo"}
+                    </Button>
+                    {fileError && (
+                      <p className="mt-1 text-sm text-red-500">{fileError}</p>
+                    )}
+                    <p className="mt-1 text-xs text-gray-500">
+                      Recommended size: 200x200px, PNG or JPG
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="subscription">
-          <SubscriptionPanel />
-        </TabsContent>
-
-        {tier === "platinum" && (
-          <TabsContent value="users">
-            <UserManagementPanel />
           </TabsContent>
-        )}
 
-        {/* <PaymentSettings /> */}
-      </Tabs>
+          <TabsContent value="subscription">
+            <SubscriptionPanel />
+          </TabsContent>
+
+          {!isSubscriptionLoading && tier === "platinum" && (
+            <TabsContent value="users">
+              <UserManagementPanel />
+            </TabsContent>
+          )}
+
+          {/* <PaymentSettings /> */}
+        </Tabs>
+      </div>
 
       {(activeTab === "profile" || activeTab === "company") && (
         <div className="flex justify-end">
