@@ -1,234 +1,143 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { TabsContent } from "@/components/ui/tabs";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
+import { Mail } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { UserPlus, Trash2, Mail } from "lucide-react";
+import { getCompanyUsers, inviteUser, removeUser } from "@/lib/api/companies/companies.api";
 import { User } from "@/types";
-import { getCompanyUsers, inviteUser } from "@/lib/api/companies/companies.api";
-import { deleteUser } from "@/lib/api/users/users.api";
-import { UpgradePlanModal } from "@/components/company/UpgradePlanModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const UserManagementPanel = () => {
-  const [users, setUsers] = useState<User[]>([]);
+interface CompanyUser extends User {
+  createdAt?: string;
+}
+
+export const UserManagementPanel = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [users, setUsers] = useState<CompanyUser[]>([]);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
-  const auth = useAuth();
-  const companyId = auth.user?.companyId
-    ? Number(auth.user.companyId)
-    : undefined;
-
-  useEffect(() => {
-    if (companyId) {
-      fetchUsers();
-    }
-  }, [companyId]);
 
   const fetchUsers = async () => {
     try {
-      const companyUsers = await getCompanyUsers(companyId!);
+      const companyUsers = await getCompanyUsers(Number(user?.companyId));
       setUsers(companyUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description: "Failed to load company users",
+        description: "Failed to fetch users",
+        variant: "destructive",
       });
     }
   };
 
-  const handleInviteUser = async () => {
-    if (!email) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Please enter an email address",
-      });
-      return;
+  useEffect(() => {
+    if (user?.companyId) {
+      fetchUsers();
     }
+  }, [user?.companyId]);
+
+  const handleInviteUser = async () => {
+    if (!email) return;
 
     setIsLoading(true);
     try {
-      await inviteUser(companyId!, email);
+      await inviteUser(Number(user?.companyId), email);
       toast({
         title: "Success",
         description: "User invited successfully",
       });
       setEmail("");
       fetchUsers();
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error inviting user:", error);
-      if (
-        error.response?.status === 403 ||
-        error.response?.data?.code === 403
-      ) {
-        setShowUpgradeModal(true);
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: error.response?.data?.message || "Failed to invite user",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to invite user",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRemoveUser = async (userId: number) => {
-    if (userId === Number(auth.user?.id)) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "You cannot remove yourself from the company",
-      });
-      return;
-    }
-
-    const user = users.find((u) => u.id === userId);
-    if (user) {
-      setUserToDelete(user);
-      setShowDeleteModal(true);
-    }
-  };
-
-  const confirmRemoveUser = async () => {
-    if (!userToDelete || !companyId) return;
-
-    setIsLoading(true);
+  const handleRemoveUser = async (userId: string | number) => {
     try {
-      await deleteUser(userToDelete.id);
+      await removeUser(Number(user?.companyId), Number(userId));
       toast({
         title: "Success",
-        description: "User removed from company successfully",
+        description: "User removed successfully",
       });
       fetchUsers();
     } catch (error) {
       console.error("Error removing user:", error);
       toast({
-        variant: "destructive",
         title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to remove user from company",
+        description: "Failed to remove user",
+        variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
-      setShowDeleteModal(false);
-      setUserToDelete(null);
     }
   };
 
+  const isFirstMember = users.length > 0 && 
+    users.sort((a, b) => new Date(a.createdAt || "").getTime() - new Date(b.createdAt || "").getTime())[0].id === user?.id;
+
   return (
-    <TabsContent value="users" className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">User Management</h3>
-        <p className="text-sm text-white">
-          Invite and manage users for your company
-        </p>
+    <div className="space-y-6">
+      <div className="flex gap-4">
+        <Input
+          type="email"
+          placeholder="Enter email to invite"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="flex-1"
+        />
+        <Button onClick={handleInviteUser} disabled={isLoading || !isFirstMember}>
+          {isLoading ? "Inviting..." : "Invite User"}
+        </Button>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <Label htmlFor="email">Email Address</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Enter email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="text-black"
-            />
-          </div>
-          <Button
-            onClick={handleInviteUser}
-            disabled={isLoading}
-            className="mt-6 bg-orange-500 hover:bg-orange-600"
-          >
-            <UserPlus className="mr-2 h-4 w-4" />
-            Invite User
-          </Button>
-        </div>
-
-        <div>
-          <h4 className="font-medium">Company Users</h4>
-          <div className="space-y-2">
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className="flex items-center justify-between p-3 bg-gray-800 rounded-lg"
-              >
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="font-medium">{user.name || user.email}</p>
-                    <p className="text-sm text-gray-400">{user.email}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveUser(user.id)}
-                  disabled={isLoading}
-                  className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+        {users.map((u) => (
+          <div key={u.id} className="flex items-center justify-between p-4 border rounded-lg">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                <Mail className="h-5 w-5 text-gray-500" />
               </div>
-            ))}
-            {users.length === 0 && (
-              <p className="text-sm text-gray-400">No users found</p>
-            )}
+              <div>
+                <p className="font-medium">{u.name}</p>
+                <p className="text-sm text-gray-500">{u.email}</p>
+              </div>
+            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => handleRemoveUser(u.id)}
+                    disabled={u.id === user?.id || !isFirstMember}
+                    className={`px-3 py-1 rounded ${
+                      u.id === user?.id || !isFirstMember
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-red-500 text-white hover:bg-red-600'
+                    }`}
+                  >
+                    Remove
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {u.id === user?.id 
+                    ? "You cannot delete your own account"
+                    : !isFirstMember
+                    ? "Only the first member can manage users"
+                    : "Remove user from company"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-        </div>
+        ))}
       </div>
-
-      <UpgradePlanModal
-        isOpen={showUpgradeModal}
-        onClose={() => setShowUpgradeModal(false)}
-      />
-
-      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Remove User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to remove{" "}
-              {userToDelete?.name || userToDelete?.email} from your company?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={confirmRemoveUser}
-              disabled={isLoading}
-            >
-              Remove User
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </TabsContent>
+    </div>
   );
 };
-
-export default UserManagementPanel;

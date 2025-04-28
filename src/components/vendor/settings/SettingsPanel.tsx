@@ -35,7 +35,8 @@ import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
 import SubscriptionPanel, { useSubscription } from "./SubscriptionPanel";
-import UserManagementPanel from "./UserManagementPanel";
+import { UserManagementPanel } from "./UserManagementPanel";
+
 // import PaymentSettings from "./PaymentSettings";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -418,20 +419,22 @@ const SettingsPanel = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
-              <Input
-                id="metaPixelId"
-                name="metaPixelId"
-                placeholder="Enter your Meta Pixel ID"
-                value={formData.metaPixelId}
-                onChange={handleChange}
-                className="text-black"
-              />
-              <p className="text-xs text-gray-500">
-                Available for GOLD and PLATINUM plans only
-              </p>
-            </div>
+            {(tier === "gold" || tier === "platinum") && (
+              <div className="space-y-2">
+                <Label htmlFor="metaPixelId">Meta Pixel ID</Label>
+                <Input
+                  id="metaPixelId"
+                  name="metaPixelId"
+                  placeholder="Enter your Meta Pixel ID"
+                  value={formData.metaPixelId}
+                  onChange={handleChange}
+                  className="text-black"
+                />
+                <p className="text-xs text-gray-500">
+                  Available for GOLD and PLATINUM plans only
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label>Company Logo</Label>
@@ -489,28 +492,37 @@ const SettingsPanel = () => {
           </div>
         </TabsContent>
 
-        <UserManagementPanel />
+        <TabsContent value="subscription">
+          <SubscriptionPanel />
+        </TabsContent>
 
-        <SubscriptionPanel />
+        {tier === "platinum" && (
+          <TabsContent value="users">
+            <UserManagementPanel />
+          </TabsContent>
+        )}
+
         {/* <PaymentSettings /> */}
       </Tabs>
 
-      <div className="flex justify-end">
-        <Button
-          onClick={handleSave}
-          disabled={isLoading}
-          className="bg-orange-500 hover:bg-orange-600"
-        >
-          {isLoading ? (
-            <>
-              <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white mr-2" />
-              Saving...
-            </>
-          ) : (
-            "Save Changes"
-          )}
-        </Button>
-      </div>
+      {(activeTab === "profile" || activeTab === "company") && (
+        <div className="flex justify-end">
+          <Button
+            onClick={handleSave}
+            disabled={isLoading}
+            className="bg-orange-500 hover:bg-orange-600"
+          >
+            {isLoading ? (
+              <>
+                <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white mr-2" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
