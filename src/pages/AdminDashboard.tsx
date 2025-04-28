@@ -7,6 +7,7 @@ import VendorsList from "@/components/admin/vendors/VendorsList";
 import DiscountCodesList from "@/components/admin/discounts/DiscountCodesList";
 import WhiteLabelSettings from "@/components/admin/white-label/WhiteLabelSettings";
 import AdminSettings from "@/components/admin/settings/AdminSettings";
+import Categories from "@/pages/admin/Categories";
 import { Layout, LayoutContent } from "@/components/ui/layout";
 import { useToast } from "@/components/ui/use-toast";
 import { API_URL } from "@/config/env";
@@ -77,6 +78,7 @@ const AdminDashboard = () => {
           <Routes>
             <Route path="/" element={<AdminOverview />} />
             <Route path="/vendors" element={<VendorsList />} />
+            <Route path="/categories" element={<Categories />} />
             <Route path="/discounts" element={<DiscountCodesList />} />
             <Route path="/white-label" element={<WhiteLabelSettings />} />
             <Route path="/settings" element={<AdminSettings />} />

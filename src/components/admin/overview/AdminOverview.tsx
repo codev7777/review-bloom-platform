@@ -121,8 +121,8 @@ const AdminOverview = () => {
   }
 
   return (
-    <div className="space-y-6 p-0 lg:p-6 pb-16 text-black ">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-10 p-0 lg:p-6 pb-16 text-black ">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-10">
         <StatsCard
           title="Total Vendors"
           value={statistics?.totalVendors.toString() || "0"}
@@ -160,9 +160,9 @@ const AdminOverview = () => {
           bgColor="bg-[#3acbe8]"
         />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:gap-8 gap-0">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 lg:gap-8 gap-0 ">
         {/* <ReviewsChart data={reviewsChartData} />*/}
-        <div className="p-4">
+        <div className="p-4 mt-10">
           <h1 className="text-2xl font-semibold mb-8 ">
             Companies from the past 7 days
           </h1>
@@ -174,8 +174,7 @@ const AdminOverview = () => {
           />
         </div>
 
-        <div>
-          {console.log(companies?.companies)}
+        <div className="mt-10">
           <RecentCompanies companies={companies?.companies || []} />
         </div>
         {/* <PieChart

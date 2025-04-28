@@ -68,14 +68,14 @@ const Sidebar = ({
       path: "/vendor-dashboard/products",
     },
     {
-      icon: <QrCode size={20} />,
-      label: "Campaigns",
-      path: "/vendor-dashboard/campaigns",
-    },
-    {
       icon: <Gift size={20} />,
       label: "Promotions",
       path: "/vendor-dashboard/promotions",
+    },
+    {
+      icon: <QrCode size={20} />,
+      label: "Campaigns",
+      path: "/vendor-dashboard/campaigns",
     },
     {
       icon: <MessageSquare size={20} />,

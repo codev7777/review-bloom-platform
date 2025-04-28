@@ -7,6 +7,7 @@ import {
   Settings,
   Menu,
   X,
+  List,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,11 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
       name: "Vendor Accounts",
       path: "/admin-dashboard/vendors",
       icon: <Users className="h-5 w-5" />,
+    },
+    {
+      name: "Categories",
+      path: "/admin-dashboard/categories",
+      icon: <List className="h-5 w-5" />,
     },
     {
       name: "Discount Codes",

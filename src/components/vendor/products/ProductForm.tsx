@@ -96,6 +96,8 @@ const ProductForm = () => {
     queryKey: ["categories"],
     queryFn: () => getCategories(1, 1000), // Fetch up to 1000 categories
     retry: false,
+    staleTime: 0, // Always consider the data stale
+    gcTime: 0, // Don't cache the data
   });
 
   // Handle categories error
