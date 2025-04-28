@@ -78,7 +78,7 @@ const AdminDashboard = () => {
           <Routes>
             <Route path="/" element={<AdminOverview />} />
             <Route path="/vendors" element={<VendorsList />} />
-            <Route path="/categories" element={<Categories />} />
+            {/* <Route path="/categories" element={<Categories />} /> */}
             <Route path="/discounts" element={<DiscountCodesList />} />
             <Route path="/white-label" element={<WhiteLabelSettings />} />
             <Route path="/settings" element={<AdminSettings />} />

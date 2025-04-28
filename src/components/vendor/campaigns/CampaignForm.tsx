@@ -38,6 +38,7 @@ import {
 
 // Marketplace constants
 const MARKETPLACE_COUNTRIES = [
+  "BE",
   "US",
   "CA",
   "MX",
@@ -62,6 +63,7 @@ const MARKETPLACE_COUNTRIES = [
 ];
 
 const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
+  BE: "Belgium",
   US: "United States",
   CA: "Canada",
   MX: "Mexico",

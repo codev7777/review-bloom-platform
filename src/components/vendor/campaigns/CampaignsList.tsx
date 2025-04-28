@@ -119,7 +119,7 @@ const CampaignsList: React.FC = () => {
     return {
       ...mappedCampaign,
       products: mappedCampaign.productIds || [],
-      promotionName: mappedCampaign.promotionId || "",
+      promotionName: mappedCampaign.promotion?.title || "",
       marketplaces: mappedCampaign.marketplaces || [],
       lastUpdated: mappedCampaign.updatedAt || new Date().toISOString(),
       reviews: mappedCampaign.claims || 0,

@@ -42,6 +42,7 @@ interface Step1MarketplaceProps {
 const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
   US: "United States (Amazon.com)",
   CA: "Canada (Amazon.ca)",
+  BE: "Belgium (Amazon.com.be)",
   MX: "Mexico (Amazon.com.mx)",
   GB: "United Kingdom (Amazon.co.uk)",
   FR: "France (Amazon.fr)",

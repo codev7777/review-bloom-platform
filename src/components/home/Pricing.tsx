@@ -50,7 +50,7 @@ const PricingTier = ({
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`w-full max-w-[500px] lg:w-[320px] xl:w-[400px] relative flex flex-col rounded-xl shadow-xl transition-all duration-300 hover:shadow-custom border-2 bg-white mb-10 pb-8`}
       >
-        <RandomStars count={50} />
+        {/* <RandomStars count={50} /> */}
         {isPopular && (
           <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -252,7 +252,7 @@ const Pricing = () => {
             >
               <motion.div
                 className="w-5 sm:w-7 h-5 sm:h-7 bg-white rounded-full shadow-md"
-                animate={{ x: isAnnual ? 16 : 0, y: 0 }}
+                animate={{ x: isAnnual ? 30 : 0, y: 0 }}
               />
             </button>
             <span

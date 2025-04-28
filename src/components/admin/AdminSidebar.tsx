@@ -33,7 +33,7 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
 
   const navItems = [
     {
-      name: "Overview",
+      name: "Dashboard",
       path: "/admin-dashboard",
       icon: <LayoutDashboard className="h-5 w-5" />,
     },
@@ -42,11 +42,11 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
       path: "/admin-dashboard/vendors",
       icon: <Users className="h-5 w-5" />,
     },
-    {
-      name: "Categories",
-      path: "/admin-dashboard/categories",
-      icon: <List className="h-5 w-5" />,
-    },
+    // {
+    //   name: "Categories",
+    //   path: "/admin-dashboard/categories",
+    //   icon: <List className="h-5 w-5" />,
+    // },
     {
       name: "Discount Codes",
       path: "/admin-dashboard/discounts",
@@ -57,11 +57,11 @@ const AdminSidebar = ({ open, onOpenChange }: AdminSidebarProps) => {
     //   path: "/admin-dashboard/white-label",
     //   icon: <Palette className="h-5 w-5" />,
     // },
-    // {
-    //   name: "Settings",
-    //   path: "/admin-dashboard/settings",
-    //   icon: <Settings className="h-5 w-5" />,
-    // },
+    {
+      name: "Settings",
+      path: "/admin-dashboard/settings",
+      icon: <Settings className="h-5 w-5" />,
+    },
   ];
 
   return (

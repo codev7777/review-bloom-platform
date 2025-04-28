@@ -92,6 +92,7 @@ export const CompanyUsers: React.FC<CompanyUsersProps> = ({ companyId }) => {
           placeholder="Enter email to invite"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          className="text-black"
         />
         <Button onClick={handleInvite} disabled={isLoading}>
           Invite User

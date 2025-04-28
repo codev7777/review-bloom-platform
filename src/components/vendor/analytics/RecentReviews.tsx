@@ -73,7 +73,7 @@ const RecentReviews = ({ reviews }: RecentReviewsProps) => {
           </Table>
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground h-full">
-            <MessageSquare className="w-16 h-16 mb-4 mt-16" />
+            <MessageSquare className="w-16 h-16 mb-4 mt-12" />
             <p className="text-2xl font-medium">No reviews yet</p>
             <p className="text-lg">Your recent reviews will appear here</p>
           </div>

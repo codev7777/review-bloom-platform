@@ -8,12 +8,13 @@ import { Review } from "@/types";
 export const createPublicReview = async (reviewData: {
   email: string;
   name: string;
-  productId: number;
+  asin: string;
   rating: number;
   feedback: string;
   country: string;
   orderNo?: string;
   promotionId?: number;
+  campaignId?: number;
 }): Promise<Review> => {
   try {
     const response = await publicApi.post("/public/reviews", reviewData);

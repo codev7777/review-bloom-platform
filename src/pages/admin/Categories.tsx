@@ -24,6 +24,16 @@ import { Edit, Trash2, Plus } from "lucide-react";
 import { Category } from "@/types";
 import { getCategories } from "@/lib/api/categories/categories.api";
 import api from "@/lib/api/axiosConfig";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const Categories = () => {
   const queryClient = useQueryClient();
@@ -33,6 +43,7 @@ const Categories = () => {
     name: "",
     description: "",
   });
+  const [categoryToDelete, setCategoryToDelete] = useState<number | null>(null);
 
   // Fetch categories
   const { data: categoriesResponse = { data: [] } } = useQuery({
@@ -105,8 +116,13 @@ const Categories = () => {
   };
 
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      deleteMutation.mutate(id);
+    setCategoryToDelete(id);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (categoryToDelete) {
+      deleteMutation.mutate(categoryToDelete);
+      setCategoryToDelete(null);
     }
   };
 
@@ -206,6 +222,26 @@ const Categories = () => {
           </form>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!categoryToDelete} onOpenChange={() => setCategoryToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Category</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this category? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

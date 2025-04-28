@@ -30,12 +30,19 @@ import {
   getCompany,
   type CompanyCreateInput,
 } from "@/lib/api/companies/companies.api";
-import { updateUser, getUser } from "@/lib/api/users/users.api";
+import { updateUser, getUser, updateCurrentUserPassword } from "@/lib/api/users/users.api";
 import { Company, User as UserType } from "@/types";
 import { getImageUrl } from "@/utils/imageUrl";
 import { API_URL } from "@/config/env";
 import SubscriptionPanel, { useSubscription } from "./SubscriptionPanel";
 import { UserManagementPanel } from "./UserManagementPanel";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 // import PaymentSettings from "./PaymentSettings";
 
@@ -88,6 +95,13 @@ const SettingsPanel = () => {
     logo: null,
     metaPixelId: "",
   });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -289,6 +303,43 @@ const SettingsPanel = () => {
     }
   };
 
+  const handlePasswordChange = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await updateCurrentUserPassword(passwordData.newPassword);
+      toast({
+        title: "Success",
+        description: "Password updated successfully",
+      });
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      setPasswordError(null);
+      setIsPasswordModalOpen(false);
+    } catch (error) {
+      console.error("Error updating password:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to update password",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 text-white">
       <div>
@@ -372,17 +423,13 @@ const SettingsPanel = () => {
                 />
               </div>
 
-              {/* <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="text-black"
-                />
-              </div> */}
+              <Button
+                onClick={() => setIsPasswordModalOpen(true)}
+                variant="outline"
+                className="mt-4 text-black"
+              >
+                Change Password
+              </Button>
             </div>
           </TabsContent>
 
@@ -538,6 +585,93 @@ const SettingsPanel = () => {
           </Button>
         </div>
       )}
+
+      <Dialog open={isPasswordModalOpen} onOpenChange={setIsPasswordModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+            <DialogDescription>
+              Update your account password. Make sure to use a strong password.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="currentPassword">Current Password</Label>
+              <Input
+                id="currentPassword"
+                type="password"
+                value={passwordData.currentPassword}
+                onChange={(e) =>
+                  setPasswordData((prev) => ({
+                    ...prev,
+                    currentPassword: e.target.value,
+                  }))
+                }
+                className="text-black"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                type="password"
+                value={passwordData.newPassword}
+                onChange={(e) =>
+                  setPasswordData((prev) => ({
+                    ...prev,
+                    newPassword: e.target.value,
+                  }))
+                }
+                className="text-black"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={(e) =>
+                  setPasswordData((prev) => ({
+                    ...prev,
+                    confirmPassword: e.target.value,
+                  }))
+                }
+                className="text-black"
+              />
+            </div>
+
+            {passwordError && (
+              <p className="text-sm text-red-500">{passwordError}</p>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsPasswordModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handlePasswordChange}
+                disabled={isLoading}
+                className="bg-orange-500 hover:bg-orange-600"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-b-2 border-white mr-2" />
+                    Updating...
+                  </>
+                ) : (
+                  "Update Password"
+                )}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

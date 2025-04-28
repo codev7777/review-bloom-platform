@@ -9,7 +9,7 @@ import {
 import { subDays, format, isSameDay } from "date-fns";
 import { BarChart, PieChart } from "@mantine/charts";
 import StatsCard from "@/components/vendor/StatsCard";
-import { Users, Star as StarIcon, ShoppingCart, Activity } from "lucide-react";
+import { Users, Star as StarIcon, ShoppingCart, Activity, Building2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getAdminStatistics } from "@/lib/api/admin/admin.api";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,45 +30,48 @@ interface RecentCompaniesProps {
   companies: Company[];
 }
 const RecentCompanies = ({ companies }: RecentCompaniesProps) => {
-  console.log(companies);
   const sorted = companies.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   const mostRecent5 = sorted.slice(0, 5);
 
-  console.log(mostRecent5);
   return (
     <Card className="col-span-4 h-96">
       <CardHeader>
         <CardTitle>Recent Companies</CardTitle>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Company</TableHead>
-              <TableHead>Products</TableHead>
-              <TableHead>Campaings</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mostRecent5.slice(0, 10).map((company) => (
-              <TableRow key={company.id}>
-                <TableCell>{company.name}</TableCell>
-                <TableCell>{company.Products?.length}</TableCell>
-                <TableCell>{company.campaigns?.length}</TableCell>
-                {/* <TableCell>
-                  <RatingStars rating={company.ratio} />
-                </TableCell> */}
-                <TableCell>
-                  {new Date(company.createdAt).toLocaleDateString()}
-                </TableCell>
+        {mostRecent5.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Company</TableHead>
+                <TableHead>Products</TableHead>
+                <TableHead>Campaings</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {mostRecent5.map((company) => (
+                <TableRow key={company.id}>
+                  <TableCell>{company.name}</TableCell>
+                  <TableCell>{company.Products?.length}</TableCell>
+                  <TableCell>{company.campaigns?.length}</TableCell>
+                  <TableCell>
+                    {new Date(company.createdAt).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground mt-12">
+            <Building2 className="w-16 h-16 mb-4" />
+            <p className="text-2xl font-medium">No recent companies</p>
+            <p className="text-lg">New companies will appear here</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

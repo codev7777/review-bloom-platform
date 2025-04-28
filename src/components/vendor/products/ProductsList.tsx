@@ -226,7 +226,7 @@ const ProductsList = () => {
           />
         </div>
 
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
@@ -256,7 +256,7 @@ const ProductsList = () => {
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
 
       <div className="rounded-md border">
@@ -279,7 +279,7 @@ const ProductsList = () => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead
+              {/* <TableHead
                 className="cursor-pointer text-white"
                 onClick={() => handleSort("category")}
               >
@@ -293,7 +293,7 @@ const ProductsList = () => {
                       <ChevronDown className="ml-1 h-4 w-4" />
                     ))}
                 </div>
-              </TableHead>
+              </TableHead> */}
               <TableHead
                 className="cursor-pointer text-white"
                 onClick={() => handleSort("createdAt")}
@@ -335,13 +335,13 @@ const ProductsList = () => {
                 <TableCell className="hidden md:table-cell">
                   {product.asin}
                 </TableCell>
-                <TableCell>
+                {/* <TableCell>
                   <Badge variant="outline" className="font-normal text-white">
                     {typeof product.category === "object"
                       ? product.category.name
                       : product.category}
                   </Badge>
-                </TableCell>
+                </TableCell> */}
                 <TableCell>
                   {new Date(product.createdAt).toLocaleDateString("en-US", {
                     year: "numeric",

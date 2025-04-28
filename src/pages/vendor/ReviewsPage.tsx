@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,10 +19,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/hooks/use-auth";
-import { Review } from "@/types";
+import { Review, Campaign, Product } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getReviews, updateReviewStatus } from "@/lib/api/reviews/reviews.api";
-import { StarIcon, MoreHorizontal, DownloadIcon } from "lucide-react";
+import { StarIcon, MoreHorizontal, DownloadIcon, MessageSquare } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
   Dialog,
@@ -32,6 +32,17 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
+import ReactSelect from "react-select";
 
 const mockReviews = [
   {
@@ -178,19 +189,26 @@ const ReviewsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [selectedCampaigns, setSelectedCampaigns] = useState<number[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<number[]>([]);
+  const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
   const [sortField, setSortField] = useState<string>("feedbackDate");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState<number>(1);
-  const [limit, setLimit] = useState<number>(5);
+  const [limit, setLimit] = useState<number>(10);
   const companyId = user?.companyId
     ? parseInt(user.companyId.toString(), 10)
     : undefined;
+  const [allCampaigns, setAllCampaigns] = useState<Campaign[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   const { data: reviewsResponse, isLoading } = useQuery({
     queryKey: [
       "reviews",
       companyId,
       statusFilter,
+      selectedCampaigns,
+      selectedProducts,
       sortField,
       sortOrder,
       page,
@@ -200,6 +218,8 @@ const ReviewsPage = () => {
       getReviews({
         companyId,
         status: statusFilter || undefined,
+        campaignIds: selectedCampaigns.length > 0 ? selectedCampaigns : undefined,
+        productIds: selectedProducts.length > 0 ? selectedProducts : undefined,
         sortBy: sortField,
         sortOrder,
         page,
@@ -207,6 +227,45 @@ const ReviewsPage = () => {
       }),
     enabled: !!companyId,
   });
+
+  useEffect(() => {
+    if (companyId) {
+      getCampaigns({ companyId }).then(({ data }) => {
+        setAllCampaigns(data);
+        // Collect all products from all campaigns
+        const products: Product[] = [];
+        data.forEach((campaign) => {
+          if (campaign.products && Array.isArray(campaign.products)) {
+            campaign.products.forEach((product) => {
+              if (!products.find((p) => p.id === product.id)) {
+                products.push(product);
+              }
+            });
+          }
+        });
+        setAllProducts(products);
+      });
+    }
+  }, [companyId]);
+
+  useEffect(() => {
+    if (selectedCampaigns.length > 0) {
+      // Find products from selected campaigns
+      const products: Product[] = [];
+      allCampaigns.forEach((campaign) => {
+        if (selectedCampaigns.includes(Number(campaign.id)) && campaign.products) {
+          campaign.products.forEach((product) => {
+            if (!products.find((p) => p.id === product.id)) {
+              products.push(product);
+            }
+          });
+        }
+      });
+      setAvailableProducts(products);
+    } else {
+      setAvailableProducts(allProducts);
+    }
+  }, [selectedCampaigns, allCampaigns, allProducts]);
 
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -234,9 +293,19 @@ const ReviewsPage = () => {
 
   const reviews = reviewsResponse?.reviews || [];
 
-  const filteredReviews = reviews.filter((review: Review) =>
-    review.feedback.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter reviews by search, campaign, and product
+  const filteredReviews = reviews
+    .filter((review: Review) =>
+      review.feedback.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((review: Review) =>
+      selectedCampaigns.length === 0 ||
+      (review.Campaign && selectedCampaigns.includes(Number(review.Campaign.id)))
+    )
+    .filter((review: Review) =>
+      selectedProducts.length === 0 ||
+      (review.Product && selectedProducts.includes(Number(review.Product.id)))
+    );
 
   const handleStatusChange = (
     reviewId: number,
@@ -323,6 +392,24 @@ const ReviewsPage = () => {
     }
   };
 
+  const handleCampaignChange = (campaignId: number) => {
+    setSelectedCampaigns(prev => {
+      const newSelected = prev.includes(campaignId)
+        ? prev.filter(id => id !== campaignId)
+        : [...prev, campaignId];
+      return newSelected;
+    });
+  };
+
+  const handleProductChange = (productId: number) => {
+    setSelectedProducts(prev => {
+      const newSelected = prev.includes(productId)
+        ? prev.filter(id => id !== productId)
+        : [...prev, productId];
+      return newSelected;
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
@@ -345,6 +432,50 @@ const ReviewsPage = () => {
       </div>
 
       <div className="flex gap-4 mb-4">
+        {/* {!isLoading && (
+          <>
+            <div className="flex flex-col gap-2 min-w-[220px]">
+              <Label>Filter by Campaign</Label>
+              <ReactSelect
+                isMulti
+                options={allCampaigns.map(campaign => ({
+                  value: Number(campaign.id),
+                  label: campaign.title
+                }))}
+                value={allCampaigns
+                  .filter(campaign => selectedCampaigns.includes(Number(campaign.id)))
+                  .map(campaign => ({ value: Number(campaign.id), label: campaign.title }))}
+                onChange={selectedOptions => {
+                  setSelectedCampaigns(selectedOptions ? selectedOptions.map(option => option.value) : []);
+                }}
+                placeholder="Select campaigns..."
+                className="text-black"
+                classNamePrefix="react-select"
+              />
+            </div>
+
+            <div className="flex flex-col gap-2 min-w-[220px]">
+              <Label>Filter by Product</Label>
+              <ReactSelect
+                isMulti
+                options={availableProducts.map(product => ({
+                  value: Number(product.id),
+                  label: product.title
+                }))}
+                value={availableProducts
+                  .filter(product => selectedProducts.includes(Number(product.id)))
+                  .map(product => ({ value: Number(product.id), label: product.title }))}
+                onChange={selectedOptions => {
+                  setSelectedProducts(selectedOptions ? selectedOptions.map(option => option.value) : []);
+                }}
+                placeholder="Select products..."
+                className="text-black"
+                classNamePrefix="react-select"
+              />
+            </div>
+          </>
+        )} */}
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="gap-2 text-black">
@@ -396,8 +527,33 @@ const ReviewsPage = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
       ) : filteredReviews.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-white">No reviews found.</p>
+        <div className="border rounded-lg text-white">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Promotion</TableHead>
+                <TableHead>Campaign</TableHead>
+                <TableHead>Rating</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={9} className="text-center py-8">
+                  <div className="flex flex-col items-center justify-center">
+                    <MessageSquare className="w-16 h-16 mb-4 text-muted-foreground" />
+                    <p className="text-xl font-medium mb-2">No reviews found</p>
+                    <p className="text-muted-foreground">Your reviews will appear here once they are submitted</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
         </div>
       ) : (
         <div className="border rounded-lg text-white">
@@ -487,6 +643,31 @@ const ReviewsPage = () => {
               ))}
             </TableBody>
           </Table>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {reviewsResponse && reviewsResponse.totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <Button
+            variant="outline"
+            onClick={() => setPage(page - 1)}
+            disabled={!reviewsResponse.hasPrevPage}
+            className="text-black"
+          >
+            Previous
+          </Button>
+          <span className="text-white">
+            Page {reviewsResponse.currentPage} of {reviewsResponse.totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={() => setPage(page + 1)}
+            disabled={!reviewsResponse.hasNextPage}
+            className="text-black"
+          >
+            Next
+          </Button>
         </div>
       )}
 

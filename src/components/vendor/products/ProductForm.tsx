@@ -131,10 +131,10 @@ const ProductForm = () => {
 
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    description: "",
+    description: "description",
     image: null,
     asin: "",
-    categoryId: undefined,
+    categoryId: "1",
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -419,7 +419,7 @@ const ProductForm = () => {
               />
             </div>
 
-            <div>
+            <div className="hidden">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
@@ -433,7 +433,7 @@ const ProductForm = () => {
               />
             </div>
 
-            <div>
+            <div >
               <Label htmlFor="asin">ASIN</Label>
               <Input
                 id="asin"
@@ -445,7 +445,7 @@ const ProductForm = () => {
               />
             </div>
 
-            <div className="text-black">
+            <div className="text-black hidden">
               <Label className="text-white">Category</Label>
               <Select
                 value={formData.categoryId?.toString()}

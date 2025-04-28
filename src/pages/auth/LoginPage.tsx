@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { Eye, EyeOff } from "lucide-react";
+import { AxiosError } from "axios";
 
 const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
 
@@ -32,7 +33,8 @@ const LoginPage = () => {
     try {
       await login(email, password);
     } catch (error) {
-      setLoginError("Login failed! Email or Password wrong.");
+      const axiosError = error as AxiosError<{ message?: string }>;
+      setLoginError(axiosError?.response?.data?.message || "Invalid email or password");
     }
     // await login(email, password, recaptchaToken);
     // recaptchaRef.current?.reset(); // Reset reCAPTCHA after login attempt
@@ -81,11 +83,13 @@ const LoginPage = () => {
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
-                    if (loginError) setLoginError(null); // Clear error
+                    if (loginError) setLoginError(null); // Clear error when user types
                   }}
                   placeholder="Password"
                   required
-                  className="w-full pr-10 p-2 border border-gray-300 rounded"
+                  className={`w-full pr-10 p-2 border rounded ${
+                    loginError ? "border-red-500" : "border-gray-300"
+                  }`}
                 />
                 <button
                   type="button"
@@ -96,9 +100,7 @@ const LoginPage = () => {
                 </button>
               </div>
               {loginError && (
-                <p className="text-sm text-red-500 text-left mt-2">
-                  {loginError}
-                </p>
+                <p className="text-sm text-red-500 mt-2">{loginError}</p>
               )}
             </div>
             <div className="flex items-center justify-start">

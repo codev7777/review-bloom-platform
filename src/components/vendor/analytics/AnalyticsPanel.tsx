@@ -515,7 +515,7 @@ const AnalyticsPanel = () => {
               value="overview"
               className="data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-all duration-200"
             >
-              Overview
+              Dashboard
             </TabsTrigger>
             <TabsTrigger
               value="products"

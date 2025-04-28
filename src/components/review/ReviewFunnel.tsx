@@ -299,10 +299,14 @@ const ReviewFunnel = ({
 
     // If we're on step 3 and moving to step 4, submit the review
     if (step === 3 && campaignId !== "demo-campaign") {
-      if (!productId) {
+      // Check if this is a seller review based on productType
+      const isSeller = formData.productType === 'seller';
+      const reviewAsin = isSeller ? 'B000SELLER' : formData.asin;
+
+      if (!reviewAsin) {
         toast({
           title: "Error",
-          description: "Product ID is required to submit a review.",
+          description: "Product ASIN is required to submit a review.",
           variant: "destructive",
         });
         return;
@@ -327,13 +331,14 @@ const ReviewFunnel = ({
         const reviewData = {
           email: formData.email,
           name: formData.name,
-          productId,
+          asin: reviewAsin,
           rating: formData.rating,
           feedback: formData.feedback,
           country: formData.country,
           orderNo: formData.orderId,
           promotionId,
           campaignId: campaignId,
+          isSeller: isSeller
         };
 
         try {

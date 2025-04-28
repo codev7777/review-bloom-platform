@@ -23,6 +23,7 @@ const countries = [
   { name: "Poland", code: "pl" },
   { name: "Egypt", code: "eg" },
   { name: "South Africa", code: "za" },
+  { name: "Belgium", code: "be" },
 ];
 
 const AnimatedCard = ({ children, delay = 0 }) => {

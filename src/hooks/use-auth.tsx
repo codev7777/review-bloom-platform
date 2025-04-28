@@ -87,9 +87,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (errorMessage?.includes("verify your email")) {
         navigate("/auth/verify-email");
+        return;
       }
 
-      throw new Error(errorMessage || "Invalid email or password");
+      // Show error toast instead of throwing
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: errorMessage || "Invalid email or password",
+      });
     } finally {
       setIsLoading(false);
     }

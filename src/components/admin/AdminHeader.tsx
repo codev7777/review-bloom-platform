@@ -28,11 +28,11 @@ const AdminHeader = ({
   useEffect(() => {
     const path = location.pathname;
     if (path === "/admin-dashboard") {
-      setTitle("Overview");
+      setTitle("Dashboard");
     } else if (path.includes("/vendors")) {
       setTitle("Vendor Accounts");
-    } else if (path.includes("/categories")) {
-      setTitle("Categories");
+    // } else if (path.includes("/categories")) {
+    //   setTitle("Categories");
     } else if (path.includes("/discounts")) {
       setTitle("Discount Codes");
     } else if (path.includes("/white-label")) {

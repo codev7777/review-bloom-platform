@@ -72,8 +72,8 @@ const ContactUsPage = () => {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Call Us</h3>
                 <p className="text-gray-600 mb-2">Mon-Fri, 9am-5pm (PST)</p>
-                <a href="tel:+15551234567" className="text-orange-500 hover:underline">
-                  +1 (555) 123-4567
+                <a href="tel:+31644060394" className="text-orange-500 hover:underline">
+                  +31 6 44 06 03 94
                 </a>
               </div>
               
@@ -83,8 +83,8 @@ const ContactUsPage = () => {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Email Us</h3>
                 <p className="text-gray-600 mb-2">We'll respond within 24hrs</p>
-                <a href="mailto:support@reviewbrothers.com" className="text-orange-500 hover:underline">
-                  support@reviewbrothers.com
+                <a href="mailto:info@reviewbrothers.com" className="text-orange-500 hover:underline">
+                  info@reviewbrothers.com
                 </a>
               </div>
               

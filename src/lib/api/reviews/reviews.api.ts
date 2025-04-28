@@ -6,13 +6,14 @@ import { API_URL } from "@/config/env";
 export const createReview = async (reviewData: {
   email: string;
   name: string;
-  productId: number;
+  asin: string;
   rating: number;
   feedback: string;
   country: string;
   orderNo?: string;
   promotionId?: number;
   campaignId?: number;
+  isSeller?: boolean;
 }): Promise<Review> => {
   const response = await api.post("/reviews", reviewData);
   return response.data;
@@ -49,6 +50,8 @@ export interface GetReviewsParams {
   limit?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  campaignIds?: number[];
+  productIds?: number[];
 }
 
 export const getReviews = async (params?: GetReviewsParams) => {
@@ -70,6 +73,12 @@ export const getReviews = async (params?: GetReviewsParams) => {
   if (params?.limit) queryParams.append("limit", params.limit.toString());
   if (params?.sortBy) queryParams.append("sortBy", params.sortBy);
   if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
+  if (params?.campaignIds) {
+    params.campaignIds.forEach(id => queryParams.append("campaignIds", id.toString()));
+  }
+  if (params?.productIds) {
+    params.productIds.forEach(id => queryParams.append("productIds", id.toString()));
+  }
 
   const response = await api.get(`/reviews?${queryParams.toString()}`);
   return response.data;
