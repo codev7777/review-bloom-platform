@@ -94,13 +94,11 @@ const AdminOverview = () => {
       label: format(date, "M/dd"), // or "yyyy-MM-dd" if you want ISO format
     };
   });
-  console.log("companies ", companies);
   // Step 2: Count reviews per day
   const companiesChartData = last7Days.map(({ date, label }) => {
     const count = companies?.companies?.filter((company: Company) =>
       isSameDay(new Date(company.createdAt), date)
     ).length;
-    console.log(count);
     return {
       name: label,
       value: count,
@@ -187,7 +185,6 @@ const AdminOverview = () => {
             content: ({ payload }: any) => {
               if (!payload || payload.length === 0) return null;
               const data = payload[0].payload;
-              console.log(payload);
               return (
                 <div
                   style={{

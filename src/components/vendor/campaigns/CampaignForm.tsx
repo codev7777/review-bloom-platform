@@ -27,6 +27,7 @@ import {
 import { Campaign, CampaignStatus, Product, Promotion } from "@/types";
 import { useAuth } from "@/hooks/use-auth";
 import GetDomain from "@/lib/GetDomain";
+import { getImageUrl } from "@/utils/imageUrl";
 import {
   Dialog,
   DialogContent,
@@ -87,20 +88,35 @@ const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
   ZA: "South Africa",
 };
 
-// Sample campaign for edit mode
-const SAMPLE_CAMPAIGN: Partial<Campaign> = {
-  id: "1",
-  title: "Summer Kitchen Sale",
-  promotionId: "1",
-  productIds: ["1", "4"],
-  marketplaces: ["US", "CA", "GB"],
-  isActive: "YES",
-};
+const PROMOTION_TYPES = [
+  {
+    value: "GIFT_CARD" as const,
+    label: "Gift Card or eGift Card",
+  },
+  {
+    value: "DISCOUNT_CODE" as const,
+    label: "Discount Code, Promo Code",
+  },
+  {
+    value: "FREE_PRODUCT" as const,
+    label: "Free Product",
+  },
+  {
+    value: "DIGITAL_DOWNLOAD" as const,
+    label: "Digital Download",
+  },
+];
 
 // Update the Campaign interface to include qrCode
 interface CampaignWithQR extends Campaign {
   qrCode?: string;
 }
+
+// Add a helper function to get the label from PROMOTION_TYPES
+const getPromotionTypeLabel = (promotionType: string) => {
+  const promotion = PROMOTION_TYPES.find((p) => p.value === promotionType);
+  return promotion ? promotion.label : promotionType;
+};
 
 const CampaignForm = () => {
   const navigate = useNavigate();
@@ -317,7 +333,10 @@ const CampaignForm = () => {
   const promotions = promotionsResponse.data;
 
   return (
-    <div className="container mx-auto px-4 py-8 text-white">
+    <div className="container mx-auto px-4 py-8 text-black">
+      <p className="text-base text-gray-500 mb-4">
+        Choose your campaign strategy. Promotion will provide an offer to your customers while collecting reviews
+      </p>
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -334,7 +353,7 @@ const CampaignForm = () => {
             </div>
 
             <div className="text-black">
-              <Label htmlFor="promotionId" className="text-white">
+              <Label htmlFor="promotionId">
                 Promotion
               </Label>
               <Select
@@ -352,7 +371,7 @@ const CampaignForm = () => {
                       key={promotion.id}
                       value={promotion.id.toString()}
                     >
-                      {promotion.title}
+                      {promotion.title} - {getPromotionTypeLabel(promotion.promotionType)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -378,6 +397,11 @@ const CampaignForm = () => {
                       }
                       className="h-4 w-4"
                     />
+                    <img
+                      src={getImageUrl(product.image)}
+                      alt={product.name}
+                      className="h-10 w-10 rounded object-contain mr-3"
+                    />
                     <label
                       htmlFor={`product-${product.id}`}
                       className="flex-1 cursor-pointer"
@@ -385,7 +409,7 @@ const CampaignForm = () => {
                       <div className="flex flex-col">
                         <span className="font-medium">{product.title}</span>
                         {product.asin && (
-                          <span className="text-sm text-white">
+                          <span className="text-sm">
                             ASIN: {product.asin}
                           </span>
                         )}
@@ -405,7 +429,14 @@ const CampaignForm = () => {
           {1 && (
             <div>
               <div>
-                <Label>Marketplaces</Label>
+                <div className="flex items-center gap-1 my-1">
+                  <img
+                      src="/images/amazon-logo-white.png"
+                      alt="Amazon"
+                      className="h-5 inline-block align-middle"
+                    />
+                  <Label className="text-white">Marketplaces</Label>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {MARKETPLACE_COUNTRIES.map((country) => (
                     <div
@@ -459,7 +490,7 @@ const CampaignForm = () => {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105">
+          <Button type="submit" disabled={isLoading} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105">
             {isLoading
               ? "Saving..."
               : isEditMode

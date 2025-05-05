@@ -341,10 +341,10 @@ const SettingsPanel = () => {
   };
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-black">
       <div>
         <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-white">
+        <p>
           Manage your account settings and preferences
         </p>
       </div>
@@ -354,7 +354,7 @@ const SettingsPanel = () => {
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="flex flex-col items-center gap-2">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-white border-t-transparent" />
-              <p className="text-white">Loading subscription data...</p>
+              <p >Loading subscription data...</p>
             </div>
           </div>
         )}
@@ -392,7 +392,7 @@ const SettingsPanel = () => {
           <TabsContent value="profile" className="space-y-6">
             <div>
               <h3 className="text-lg font-medium">Personal Information</h3>
-              <p className="text-sm text-white">
+              <p className="text-sm">
                 Update your personal information and how others see you on the
                 platform
               </p>
@@ -436,7 +436,7 @@ const SettingsPanel = () => {
           <TabsContent value="company" className="space-y-6">
             <div>
               <h3 className="text-lg font-medium">Company Information</h3>
-              <p className="text-sm text-white">
+              <p className="text-sm">
                 Update your company details and business information
               </p>
             </div>

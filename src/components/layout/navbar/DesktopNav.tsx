@@ -47,7 +47,7 @@ const DesktopNav = () => {
           Features
         </Link>
         <Link
-          to="/#howitworks"
+          to="/#how-it-works"
           className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
         >
           How it works

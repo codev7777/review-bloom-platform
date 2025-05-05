@@ -342,12 +342,12 @@ const PromotionForm = () => {
   };
 
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-black">
       <div>
         <h1 className="text-2xl font-semibold">
           {isEditMode ? "Edit Promotion" : "Create Promotion"}
         </h1>
-        <p className="text-white">
+        <p>
           {isEditMode
             ? "Update your promotion details"
             : "Create a new promotion for your review campaigns"}
@@ -376,7 +376,7 @@ const PromotionForm = () => {
               </div>
 
               <div className="text-black">
-                <Label className="text-white">Promotion Type</Label>
+                <Label >Promotion Type</Label>
                 <Select
                   value={formData.promotionType}
                   onValueChange={(value) =>
@@ -417,7 +417,7 @@ const PromotionForm = () => {
               </div>
 
               <div className="text-black">
-                <Label className="text-white">Status</Label>
+                <Label >Status</Label>
                 <Select
                   value={formData.isActive}
                   onValueChange={(value) =>
@@ -732,7 +732,7 @@ const PromotionForm = () => {
             </Button>
             <Button
               type="submit"
-              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -770,7 +770,7 @@ const PromotionForm = () => {
                     setError(null);
                     navigate("/vendor-dashboard/settings");
                   }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700"
                 >
                   Upgrade Plan
                 </button>

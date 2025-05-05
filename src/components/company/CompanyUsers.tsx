@@ -54,15 +54,10 @@ export const CompanyUsers: React.FC<CompanyUsersProps> = ({ companyId }) => {
       setEmail("");
       loadUsers();
     } catch (error: any) {
-      console.log("Error object:", error);
-      console.log("Error response:", error.response);
-      console.log("Error data:", error.response?.data);
-
       if (
         error.response?.status === 403 ||
         error.response?.data?.code === 403
       ) {
-        console.log("Setting showUpgradeModal to true");
         setShowUpgradeModal(true);
       } else {
         toast.error(

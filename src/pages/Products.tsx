@@ -72,16 +72,6 @@ export default function Products() {
     }
   }, [fetchedProducts]);
 
-  useEffect(() => {
-    console.log("Products component state:", {
-      productsCount: products.length,
-      isLoading,
-      error,
-      usingMockData,
-      pagination,
-    });
-  }, [products, isLoading, error, usingMockData, pagination]);
-
   const handleEdit = (id: string) => {
     navigate(`/vendor-dashboard/products/edit/${id}`);
   };

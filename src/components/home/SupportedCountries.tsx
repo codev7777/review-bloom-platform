@@ -89,7 +89,7 @@ const SupportedCountries = () => {
               — Across Every Marketplace
             </h2>
             <p className="max-w-2xl mx-auto font-bold text-2xl">
-              One platform. 21 countries. Unlimited insights.
+              One platform. 22 countries. Unlimited insights.
             </p>
           </div>
         </AnimatedCard>

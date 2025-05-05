@@ -94,7 +94,7 @@ const VendorDetails = ({ company, isOpen, onClose }: VendorDetailsProps) => {
   const subscriptionEndDate = subscriptionData?.data?.subscription?.currentPeriodEnd
     ? format(new Date(subscriptionData.data.subscription.currentPeriodEnd), "MMMM d, yyyy")
     : "No active subscription";
-console.log(subscriptionData?.data?.subscription)
+    
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">

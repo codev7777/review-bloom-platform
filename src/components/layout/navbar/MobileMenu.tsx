@@ -124,7 +124,7 @@ const MobileMenu = ({
                 <Button
                   variant="default"
                   asChild
-                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
+                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] rounded-full"
                 >
                   <Link to="/auth/login" onClick={toggleMenu}>
                     Login
@@ -133,7 +133,7 @@ const MobileMenu = ({
                 <Button
                   variant="default"
                   asChild
-                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]"
+                  className="w-full bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] rounded-full"
                 >
                   <Link to="/auth/signup" onClick={toggleMenu}>
                     Sign Up

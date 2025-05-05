@@ -188,7 +188,7 @@ const ProductsList = () => {
         <h3 className="mt-4 text-lg font-medium">No products found</h3>
         <p className="mt-1 text-sm text-white mb-3">Add a product to get started</p>
         <Button
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700  transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -199,14 +199,14 @@ const ProductsList = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-black">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Products</h1>
-          <p className="text-white">Manage your product catalog</p>
+          <p>Manage your product catalog</p>
         </div>
         <Button
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700  transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/products/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -259,13 +259,13 @@ const ProductsList = () => {
         </DropdownMenu> */}
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border border-gray-600">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead className=" text-white">Product</TableHead>
+            <TableRow className="border-b border-gray-600">
+              <TableHead>Product</TableHead>
               <TableHead
-                className="cursor-pointer text-white"
+                className="cursor-pointer"
                 onClick={() => handleSort("asin")}
               >
                 <div className="flex items-center">
@@ -295,7 +295,7 @@ const ProductsList = () => {
                 </div>
               </TableHead> */}
               <TableHead
-                className="cursor-pointer text-white"
+                className="cursor-pointer"
                 onClick={() => handleSort("createdAt")}
               >
                 <div className="flex items-center">
@@ -309,14 +309,14 @@ const ProductsList = () => {
                     ))}
                 </div>
               </TableHead>
-              <TableHead className="text-right text-white pr-10">
+              <TableHead className="text-right pr-10">
                 Actions
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedProducts.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow key={product.id} className="border-b border-gray-600">
                 <TableCell className="font-medium">
                   <div className="flex items-center">
                     <img
@@ -326,7 +326,7 @@ const ProductsList = () => {
                     />
                     <div>
                       <div className="font-medium">{product.name}</div>
-                      <div className="text-xs text-white hidden sm:block">
+                      <div className="text-xs hidden sm:block">
                         {product.title}
                       </div>
                     </div>

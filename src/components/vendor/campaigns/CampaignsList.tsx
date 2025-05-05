@@ -74,11 +74,7 @@ const CampaignsList: React.FC = () => {
 
   // Check authentication status
   useEffect(() => {
-    console.log("Auth status:", { user, isAuthenticated });
-    console.log("Access token:", localStorage.getItem("accessToken"));
-
     if (!isAuthenticated) {
-      console.log("User is not authenticated, redirecting to login");
       navigate("/auth/login");
     }
   }, [isAuthenticated, user, navigate]);
@@ -108,12 +104,9 @@ const CampaignsList: React.FC = () => {
     enabled: isAuthenticated && !!user?.companyId,
   });
 
-  console.log("Campaigns Response:", campaignsResponse);
   const campaigns = campaignsResponse?.data || [];
-  console.log("Campaigns:", campaigns);
 
   const extendedCampaigns = campaigns.map((campaign) => {
-    console.log("Processing campaign:", campaign);
     const mappedCampaign = mapCampaignForDisplay(campaign);
     const isActive = mappedCampaign.isActive === "YES";
     return {
@@ -139,8 +132,6 @@ const CampaignsList: React.FC = () => {
 
     return matchesSearch && matchesStatus;
   });
-
-  console.log("Filtered Campaigns:", filteredCampaigns);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -175,16 +166,16 @@ const CampaignsList: React.FC = () => {
       day: "numeric",
     });
   };
-
+  
   return (
-    <div className="space-y-6 text-white">
+    <div className="space-y-6 text-black">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Campaigns</h1>
-          <p className="text-white">Manage your review collection campaigns</p>
+          <p>Manage your review collection campaigns</p>
         </div>
         <Button
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/campaigns/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -285,32 +276,32 @@ const CampaignsList: React.FC = () => {
         </div>
       </div>
 
-      <div className="rounded-md border overflow-x-auto">
+      <div className="rounded-md border border-gray-600 overflow-x-auto">
         <Table>
           <TableHeader>
-            <TableRow className="text-white">
-              <TableHead className="min-w-[200px] text-white">
+            <TableRow className="border-b border-gray-600">
+              <TableHead className="min-w-[200px] ">
                 Campaign
               </TableHead>
-              <TableHead className="text-white">Status</TableHead>
-              <TableHead className="hidden md:table-cell text-white">
+              <TableHead >Status</TableHead>
+              <TableHead className="hidden md:table-cell ">
                 Products
               </TableHead>
-              <TableHead className="hidden lg:table-cell text-white">
+              <TableHead className="hidden lg:table-cell ">
                 Promotion
               </TableHead>
-              <TableHead className="hidden lg:table-cell text-white">
+              <TableHead className="hidden lg:table-cell ">
                 Reviews
               </TableHead>
-              <TableHead className="hidden sm:table-cell text-white">
+              <TableHead className="hidden sm:table-cell ">
                 Last Updated
               </TableHead>
-              <TableHead className="text-right text-white">Actions</TableHead>
+              <TableHead className="text-right ">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
+              <TableRow className="border-b border-gray-600">
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
                     <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-orange-500" />
@@ -321,21 +312,21 @@ const CampaignsList: React.FC = () => {
                 </TableCell>
               </TableRow>
             ) : filteredCampaigns.length === 0 ? (
-              <TableRow>
+              <TableRow className="border-b border-gray-600">
                 <TableCell colSpan={7} className="h-32 text-center">
                   <div className="flex flex-col items-center justify-center text-center">
                     <QrCode className="h-10 w-10 text-gray-300 opacity-80" />
                     <h3 className="mt-4 text-lg font-medium">
                       No campaigns found
                     </h3>
-                    <p className="text-white max-w-md mx-auto">
+                    <p className="max-w-md mx-auto">
                       {searchQuery || statusFilter
                         ? "Try adjusting your search or filter criteria"
                         : "Get started by creating your first campaign"}
                     </p>
                     {!searchQuery && !statusFilter && (
                       <Button
-                      className="mt-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+                      className="mt-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
               onClick={() =>
                           navigate("/vendor-dashboard/campaigns/new")
                         }
@@ -349,13 +340,13 @@ const CampaignsList: React.FC = () => {
               </TableRow>
             ) : (
               filteredCampaigns.map((campaign) => (
-                <TableRow key={campaign.id}>
+                <TableRow key={campaign.id} className="border-b border-gray-600">
                   <TableCell className="font-medium">
                     <div>
                       <div className="font-medium">
                         {campaign.name || campaign.title}
                       </div>
-                      <div className="text-xs text-white">
+                      <div className="text-xs ">
                         Code: {campaign.code || "N/A"}
                       </div>
                     </div>
@@ -380,7 +371,7 @@ const CampaignsList: React.FC = () => {
                       {campaign.products && campaign.products.length > 0 ? (
                         campaign.products.length
                       ) : (
-                        <span className="text-white text-sm">No products</span>
+                        <span className="text-sm">No products</span>
                       )}
                     </div>
                   </TableCell>
@@ -390,32 +381,35 @@ const CampaignsList: React.FC = () => {
                   <TableCell className="hidden lg:table-cell">
                     {campaign.reviews || 0}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-white text-sm">
+                  <TableCell className="hidden sm:table-cell text-sm">
                     {formatDate(campaign.lastUpdated)}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() => showQrCode(campaign)}
-                            >
-                              <QrCode className="h-4 w-4 text-black" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>View QR Code</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {campaign.isActive !== 'NO' && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8"
+                                onClick={() => showQrCode(campaign)}
+                              >
+                                <QrCode className="h-4 w-4 text-black" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>View QR Code</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
 
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
+                      {campaign.isActive !== "NO" && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
                             <Button
                               variant="outline"
                               size="icon"
@@ -429,9 +423,11 @@ const CampaignsList: React.FC = () => {
                             <p>Copy URL</p>
                           </TooltipContent>
                         </Tooltip>
-                      </TooltipProvider>
+                        </TooltipProvider>
+                      )}
 
-                      <TooltipProvider>
+                      {campaign.isActive !== 'NO' && (
+                        <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -449,28 +445,29 @@ const CampaignsList: React.FC = () => {
                             <p>Open URL</p>
                           </TooltipContent>
                         </Tooltip>
-                      </TooltipProvider>
+                        </TooltipProvider>
+                      )}
 
                       <TooltipProvider>
                         <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8"
-                              onClick={() =>
-                                navigate(
-                                  `/vendor-dashboard/campaigns/edit/${campaign.id}`
-                                )
-                              }
-                            >
-                              <Edit className="h-4 w-4 text-black" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Edit Campaign</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() =>
+                              navigate(
+                                `/vendor-dashboard/campaigns/edit/${campaign.id}`
+                              )
+                            }
+                          >
+                            <Edit className="h-4 w-4 text-black" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Edit Campaign</p>
+                        </TooltipContent>
+                      </Tooltip>
                       </TooltipProvider>
                     </div>
                   </TableCell>

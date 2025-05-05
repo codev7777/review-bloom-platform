@@ -42,10 +42,10 @@ const AdminDashboard = () => {
       try {
         const isHealthy = await checkApiHealth();
         if (isHealthy) {
-          toast({
-            title: "Backend connection successful",
-            description: `Connected to ${API_URL} backend API`,
-          });
+          // toast({
+          //   title: "Backend connection successful",
+          //   description: `Connected to ${API_URL} backend API`,
+          // });
         } else {
           throw new Error("Failed to connect to backend");
         }

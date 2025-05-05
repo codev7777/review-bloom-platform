@@ -411,7 +411,7 @@ const ReviewsPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-black">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-semibold">Reviews</h1>
         <div className="flex gap-4">
@@ -422,7 +422,7 @@ const ReviewsPage = () => {
             className="w-64 text-black border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50"
           />
           <Button
-            className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+            className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
             onClick={handleExport}
           >
             <DownloadIcon className="h-4 w-4" />
@@ -527,10 +527,10 @@ const ReviewsPage = () => {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
       ) : filteredReviews.length === 0 ? (
-        <div className="border rounded-lg text-white">
+        <div className="border border-gray-600 rounded-lg">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-b border-gray-600">
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Date</TableHead>
@@ -543,7 +543,7 @@ const ReviewsPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
+              <TableRow className="border-b border-gray-600">
                 <TableCell colSpan={9} className="text-center py-8">
                   <div className="flex flex-col items-center justify-center">
                     <MessageSquare className="w-16 h-16 mb-4 text-muted-foreground" />
@@ -556,10 +556,10 @@ const ReviewsPage = () => {
           </Table>
         </div>
       ) : (
-        <div className="border rounded-lg text-white">
+        <div className="border border-gray-600 rounded-lg">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-b border-gray-600">
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Date</TableHead>
@@ -575,7 +575,7 @@ const ReviewsPage = () => {
               {filteredReviews.map((review: Review) => (
                 <TableRow
                   key={review.id}
-                  className="cursor-pointer hover:bg-gray-400"
+                  className="cursor-pointer border-b border-gray-600 hover:bg-gray-400"
                   onClick={() => setSelectedReview(review)}
                 >
                   <TableCell className="font-medium">
@@ -657,7 +657,7 @@ const ReviewsPage = () => {
           >
             Previous
           </Button>
-          <span className="text-white">
+          <span className="">
             Page {reviewsResponse.currentPage} of {reviewsResponse.totalPages}
           </span>
           <Button

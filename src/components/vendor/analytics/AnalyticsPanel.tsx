@@ -231,11 +231,11 @@ const AnalyticsPanel = () => {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in-50 duration-500">
+    <div className="space-y-6 animate-in fade-in-50 duration-500 text-black">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-semibold mb-1">Analytics Dashboard</h1>
-          <p className="text-white">
+          <p>
             Get insights into your reviews and campaign performance
           </p>
         </div>
@@ -435,7 +435,7 @@ const AnalyticsPanel = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-white">
+            <CardTitle className="text-sm font-medium">
               Total Reviews
             </CardTitle>
             <CardDescription className="text-3xl font-bold text-foreground">
@@ -452,7 +452,7 @@ const AnalyticsPanel = () => {
 
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-white">
+            <CardTitle className="text-sm font-medium">
               Average Rating
             </CardTitle>
             <CardDescription className="text-3xl font-bold text-foreground">
@@ -469,7 +469,7 @@ const AnalyticsPanel = () => {
 
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-white">
+            <CardTitle className="text-sm font-medium">
               Active Campaigns
             </CardTitle>
             <CardDescription className="text-3xl font-bold text-foreground">
@@ -486,7 +486,7 @@ const AnalyticsPanel = () => {
 
         <Card className="hover:shadow-md transition-shadow duration-300">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-white">
+            <CardTitle className="text-sm font-medium">
               Conversion Rate
             </CardTitle>
             <CardDescription className="text-3xl font-bold text-foreground">
@@ -634,7 +634,7 @@ const AnalyticsPanel = () => {
 
                   {chartType === "line" && (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-center text-white">
+                      <p className="text-center">
                         Rating distribution data is better visualized with a bar
                         or pie chart
                       </p>
@@ -695,7 +695,7 @@ const AnalyticsPanel = () => {
 
                   {chartType === "pie" && (
                     <div className="flex items-center justify-center h-full">
-                      <p className="text-center text-white">
+                      <p className="text-center">
                         Time series data is better visualized with a line or bar
                         chart
                       </p>
@@ -878,7 +878,7 @@ const AnalyticsPanel = () => {
                               ))}
                             </div>
                           </div>
-                          <p className="text-sm text-white mt-1">
+                          <p className="text-sm mt-1">
                             156 reviews · Most positive mentions: "sharp",
                             "durable", "premium"
                           </p>
@@ -922,7 +922,7 @@ const AnalyticsPanel = () => {
                               </svg>
                             </div>
                           </div>
-                          <p className="text-sm text-white mt-1">
+                          <p className="text-sm mt-1">
                             134 reviews · Common complaints: "leaks", "difficult
                             to clean", "loud"
                           </p>
@@ -1002,7 +1002,7 @@ const AnalyticsPanel = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <h3 className="font-medium">{review.customerName}</h3>
-                        <p className="text-sm text-white">
+                        <p className="text-sm">
                           {review.productName} • {review.date}
                         </p>
                       </div>
@@ -1149,7 +1149,7 @@ const AnalyticsPanel = () => {
                       </div>
                     </div>
                   </div>
-                  <p className="text-sm text-center text-white">
+                  <p className="text-sm text-center">
                     156 reviews · 4.8 average rating
                   </p>
                   <div className="text-center mt-4">
@@ -1182,7 +1182,7 @@ const AnalyticsPanel = () => {
                       5.8% Conversion
                     </span>
                   </div>
-                  <p className="text-sm text-center text-white">
+                  <p className="text-sm text-center">
                     212 reviews · 3,658 QR code scans
                   </p>
                   <div className="text-center mt-4">
@@ -1213,7 +1213,7 @@ const AnalyticsPanel = () => {
                       Starts Nov 15, 2023
                     </span>
                   </div>
-                  <p className="text-sm text-center text-white">
+                  <p className="text-sm text-center">
                     QR codes generated · Materials ready
                   </p>
                   <div className="text-center mt-4">

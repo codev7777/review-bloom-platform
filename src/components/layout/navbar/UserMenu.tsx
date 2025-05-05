@@ -28,7 +28,7 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
         <Button
           variant="default"
           asChild
-          className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium text-lg 3xl:text-2xl"
+          className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E] font-medium text-lg 3xl:text-2xl rounded-full"
         >
           <Link to="/auth/signup">Sign Up</Link>
         </Button>

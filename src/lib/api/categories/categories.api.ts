@@ -16,7 +16,6 @@ export const getCategories = async (
         limit,
       },
     });
-    console.log("Categories API Response:", response.data);
 
     // Handle different response formats
     if (response.data && Array.isArray(response.data.results)) {

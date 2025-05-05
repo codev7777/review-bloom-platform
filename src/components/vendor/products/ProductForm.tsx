@@ -114,14 +114,6 @@ const ProductForm = () => {
 
   const categories: Category[] = categoriesResponse?.data ?? [];
 
-  console.log("Initial setup:", {
-    params,
-    productId,
-    isEditMode,
-    authUser: auth?.user,
-    companyId: auth?.user?.companyId,
-  });
-
   // Fetch product data in edit mode
   const { data: productData } = useQuery<Product>({
     queryKey: ["product", productId],
@@ -158,34 +150,17 @@ const ProductForm = () => {
 
       if (productData.image) {
         const imageUrl = getImageUrl(productData.image);
-        console.log("Setting image preview URL:", imageUrl);
         setImagePreview(imageUrl);
       }
     }
   }, [productData, isEditMode]);
 
   useEffect(() => {
-    console.log("useEffect triggered:", {
-      params,
-      productId,
-      isEditMode,
-      isFetching,
-      currentFormData: formData,
-    });
-
     const fetchProduct = async () => {
       if (isEditMode && productId) {
-        console.log("Starting fetchProduct with:", {
-          productId,
-          isEditMode,
-          currentFormData: formData,
-        });
-
         setIsFetching(true);
         try {
-          console.log("Making API call to get product with ID:", productId);
           const response = await getProduct(productId);
-          console.log("API Response received:", response);
 
           if (response) {
             const newFormData = {
@@ -199,13 +174,11 @@ const ProductForm = () => {
               categoryId: response.categoryId?.toString() || "",
               asin: response.asin || "",
             };
-            console.log("Setting new formData:", newFormData);
 
             setFormData(newFormData);
 
             if (response.image) {
               const imageUrl = getImageUrl(response.image);
-              console.log("Setting image preview URL:", imageUrl);
               setImagePreview(imageUrl);
             }
           } else {
@@ -225,25 +198,11 @@ const ProductForm = () => {
         } finally {
           setIsFetching(false);
         }
-      } else {
-        console.log("Skipping fetchProduct because:", {
-          isEditMode,
-          productId,
-          isFetching,
-        });
       }
     };
 
     fetchProduct();
   }, [productId, isEditMode, auth?.user?.companyId, navigate]);
-
-  useEffect(() => {
-    console.log("formData updated:", formData);
-  }, [formData]);
-
-  useEffect(() => {
-    console.log("imagePreview updated:", imagePreview);
-  }, [imagePreview]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -391,12 +350,12 @@ const ProductForm = () => {
   }
 
   return (
-    <div className="space-y-6 animate-in fade-in-500 text-white">
+    <div className="space-y-6 animate-in fade-in-500 text-black">
       <div>
         <h1 className="text-2xl font-semibold">
           {isEditMode ? "Edit Product" : "Add New Product"}
         </h1>
-        <p className="text-white">
+        <p>
           {isEditMode
             ? "Update your product information"
             : "Add a new product to your catalog"}
@@ -446,7 +405,7 @@ const ProductForm = () => {
             </div>
 
             <div className="text-black hidden">
-              <Label className="text-white">Category</Label>
+              <Label>Category</Label>
               <Select
                 value={formData.categoryId?.toString()}
                 onValueChange={(value) =>
@@ -514,11 +473,11 @@ const ProductForm = () => {
                     className="flex flex-col items-center justify-center cursor-pointer"
                     onClick={() => fileInputRef.current?.click()}
                   >
-                    <Upload className="h-8 w-8 text-white mb-2" />
-                    <p className="text-sm text-white">
+                    <Upload className="h-8 w-8  mb-2" />
+                    <p className="text-sm ">
                       Click to upload or drag and drop
                     </p>
-                    <p className="text-xs text-white mt-1">
+                    <p className="text-xs  mt-1">
                       PNG, JPG up to 5MB
                     </p>
                   </div>
@@ -545,13 +504,13 @@ const ProductForm = () => {
           </Button>
           <Button
             type="submit"
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
             disabled={isLoading}
           >
             {isLoading ? (
               <span className="flex items-center">
                 <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 "
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

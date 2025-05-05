@@ -5,16 +5,14 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
-    <section className="relative bg-[#232f3e]  max-w-screen lg:">
-      <div className="h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom  flex items-center justify-center">
+    <section className="relative bg-[#7b92ad]  max-w-screen">
+      <div className="h-[900px] flex-col sm:flex-row sm:h-[600px] 3xl:h-[900px] relative w-full bg-cover bg-no-repeat transition-opacity duration-500 bg-[#232f3e] bg-bottom  flex items-center justify-center">
         <img
           src="/images/landing/hero/hero-img.png"
           alt="Floating Element"
-          className="absolute xl:left-[18%] top-1/4 w-64 animate-floating 3xl:w-96 left-[10%]"
+          className="static sm:absolute xl:left-[18%] top-1/4 w-64 animate-floating 3xl:w-96 left-[10%]"
         />
-
-        <div className="container px-4 xl:max-w-[1300px] xl:pl-[500px] max-w-[1200px] lg:pl-[400px] pl-[350px] 3xl:pb-40">
-          <div className=" ">
+        <div className="flex items-center justify-end flex-col container px-4 xl:max-w-[1300px] xl:pl-[500px] max-w-[1200px] lg:pl-[400px] pl-0 sm:pl-[350px] 3xl:pb-40">
             <div className="inline-block mb-6 animate-fade-in">
               <div className=" inline-flex items-left px-5 py-12 rounded-full text-3xl font-medium text-white 3xl:text-5xl">
                 <div>
@@ -48,14 +46,13 @@ const Hero = () => {
               <Button
                 size="lg"
                 asChild
-                className="ml-16 w-full sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full 3xl:text-3xl"
+                className="w-max z-50 ml-16 sm:w-auto bg-[#FF9900] hover:bg-orange-600 text-[#232F3E] rounded-full text-base 3xl:text-3xl"
               >
                 <Link to="/help" className="px-8 3xl:py-8">
                   Learn More
                 </Link>
               </Button>
             </div>
-          </div>
         </div>
       </div>
 

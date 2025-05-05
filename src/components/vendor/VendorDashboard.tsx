@@ -120,7 +120,7 @@ const Sidebar = ({
                 if (isMobile) toggleSidebar();
               }}
             >
-              <span className="mr-3">{item.icon}</span>
+              <span className="mr-3 text-orange-600">{item.icon}</span>
               {item.label}
             </Button>
           ))}
@@ -135,7 +135,6 @@ const Dashboard = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const companyId = user?.companyId ? parseInt(user.companyId, 10) : undefined;
-  console.log("Company ID:", companyId);
 
   const { data: campaigns, isLoading: isLoadingCampaigns } = useQuery({
     queryKey: ["campaigns", companyId],
@@ -159,7 +158,6 @@ const Dashboard = () => {
     campaigns?.data?.filter((c) => c.isActive === "YES").length || 0;
   const totalProducts = products?.data?.length || 0;
   const totalReviews = reviews?.total || 0;
-  console.log(reviews);
   const averageRating = reviews?.total
     ? (
         reviews.reviews.reduce((sum, review) => sum + review.ratio, 0) /
@@ -217,13 +215,12 @@ const Dashboard = () => {
       label: `⭐ ${ratio}: ${count}`,
     };
   });
-  console.log(formattedRatioCounts);
   return (
-    <div className="space-y-8 text-white">
+    <div className="space-y-8 text-black">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-semibold">Dashboard</h1>
         <Button
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/campaigns/new")}
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -310,7 +307,6 @@ const Dashboard = () => {
             content: ({ payload }: any) => {
               if (!payload || payload.length === 0) return null;
               const data = payload[0].payload;
-              console.log(payload);
               return (
                 <div
                   style={{
@@ -351,10 +347,10 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {campaigns?.data?.slice(0, 3).map((campaign) => {
+            {campaigns?.data?.slice(0, 3).map((campaign, index) => {
               const displayCampaign = mapCampaignForDisplay(campaign);
               return (
-                <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-white ">
+                <div className="card bg-base-100 w-max-96 shadow-sm border-gray-700 rounded-3xl border m-2 text-black" key={index}>
                   <figure>
                     <img
                       src={
@@ -450,10 +446,10 @@ const VendorDashboard: React.FC = () => {
       try {
         const response = await fetch(`${API_URL}/health`);
         if (response.ok) {
-          toast({
-            title: "Backend connection successful",
-            description: `Connected to ${API_URL} backend API`,
-          });
+          // toast({
+          //   title: "Backend connection successful",
+          //   description: `Connected to ${API_URL} backend API`,
+          // });
         } else {
           throw new Error("Failed to connect to backend");
         }
@@ -478,7 +474,7 @@ const VendorDashboard: React.FC = () => {
     <div className="flex h-screen  bg-[#212631] text-white">
       <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
 
-      <main className="flex-1 overflow-y-auto  bg-[#212631] flex flex-col">
+      <main className="flex-1 overflow-y-auto  bg-[#e3e6e6] flex flex-col">
         <VendorNavbar />
         {isMobile && (
           <button

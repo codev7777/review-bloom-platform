@@ -181,7 +181,6 @@ const VendorsList = () => {
           limit: itemsPerPage,
           search: debouncedSearchQuery,
         });
-        console.log("Companies API response:", response);
         // Filter out companies with admin role
         const filteredCompanies = response.companies.filter(
           (company: Company) =>
@@ -195,8 +194,6 @@ const VendorsList = () => {
       }
     },
   });
-
-  console.log("Companies data:", companiesResponse);
 
   const companies = companiesResponse?.companies || [];
 

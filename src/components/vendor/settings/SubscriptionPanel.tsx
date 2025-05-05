@@ -31,8 +31,6 @@ const plans = [
       { name: "1 Product", included: true },
       { name: "1 Marketplace", included: true },
       { name: "Collect Seller Feedback", included: false },
-      { name: "Meta Pixel Support", included: false },
-      { name: "Business Features", included: false },
     ],
     planId: "silver",
     monthlyPriceId: "price_1RH8eXPuMpDKUxfQN4XUH99L",
@@ -52,7 +50,6 @@ const plans = [
       { name: "All Marketplaces", included: true },
       { name: "Collect Seller Feedback", included: true },
       { name: "Personalized Branding", included: true },
-      { name: "Meta Pixel Support", included: true },
     ],
     planId: "gold",
     monthlyPriceId: "price_1RH8eZPuMpDKUxfQAWOjGe19",
@@ -72,7 +69,6 @@ const plans = [
       { name: "All Marketplaces", included: true },
       { name: "Collect Seller Feedback", included: true },
       { name: "Personalized Branding", included: true },
-      { name: "Meta Pixel Support", included: true },
       { name: "Multiple Sub-Accounts", included: true },
     ],
     planId: "platinum",
@@ -333,7 +329,6 @@ export function SubscriptionPanel() {
       if (!user?.companyId) return;
       try {
         const details = await getBillingDetails(undefined, user.companyId);
-        console.log("details2 ", details);
         setBilling({
           paymentMethods: details.paymentMethods,
           defaultPaymentMethod: details.defaultPaymentMethod,
@@ -405,19 +400,19 @@ export function SubscriptionPanel() {
   };
 
   return (
-    <TabsContent value="subscription" className="space-y-8">
+    <TabsContent value="subscription" className="space-y-8 text-black">
       <div>
-        <h3 className="text-xl font-semibold mb-1 text-white">
+        <h3 className="text-xl font-semibold mb-1 ">
           Subscription & Billing
         </h3>
-        <p className="text-white text-sm">
+        <p className=" text-sm">
           Manage your subscription, payment methods, and billing information
         </p>
       </div>
 
       {/* Billing Switch */}
       <div className="flex items-center gap-4 mb-8">
-        <span className={!annual ? "text-orange-400 font-bold" : "text-white"}>
+        <span className={!annual ? "text-orange-400 font-bold" : ""}>
           Monthly
         </span>
         <button
@@ -429,7 +424,7 @@ export function SubscriptionPanel() {
         >
           <span className="block w-6 h-6 bg-white rounded-full shadow" />
         </button>
-        <span className={annual ? "text-orange-400 font-bold" : "text-white"}>
+        <span className={annual ? "text-orange-400 font-bold" : ""}>
           Annually
         </span>
         <span className="ml-4 py-1 px-2 bg-orange-100 text-orange-600 rounded text-xs font-semibold">
@@ -441,7 +436,7 @@ export function SubscriptionPanel() {
       <div className="bg-gray-800 p-4 rounded-lg">
         <div className="flex items-center gap-2 mb-2">
           <Tag className="h-5 w-5 text-orange-400" />
-          <h4 className="text-white font-medium">Have a discount code?</h4>
+          <h4 className="font-medium text-white">Have a discount code?</h4>
         </div>
         <div className="flex gap-2">
           <Input

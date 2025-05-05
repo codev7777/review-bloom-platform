@@ -224,7 +224,6 @@ const ReviewFunnel = ({
         try {
           campaignData = await getCampaign(campaignId);
         } catch (authError) {
-          console.log("Auth request failed, trying public endpoint");
           campaignData = await getPublicCampaign(campaignId);
         }
 
@@ -242,13 +241,8 @@ const ReviewFunnel = ({
               setPlanId(product.companyId ? Number(product.companyId) : 1);
             }
           } catch (authError) {
-            console.log("Auth products request failed, trying public endpoint");
             const publicProductsData = await getPublicProducts(
               numericProductIds
-            );
-            console.log(
-              "New public products data available:",
-              publicProductsData
             );
           }
         }
@@ -345,7 +339,6 @@ const ReviewFunnel = ({
           // First try to submit with authentication
           await createReview(reviewData);
         } catch (authError) {
-          console.log("Auth review submission failed, trying public endpoint");
           // If authenticated request fails, try public endpoint
           await createPublicReview(reviewData);
         }

@@ -186,7 +186,7 @@ const PromotionsList = () => {
           </p>
           <Button
             size="lg"
-            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+            className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700  transition-all duration-200 transform hover:scale-105"
             onClick={() => navigate("/vendor-dashboard/promotions/new")}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -198,7 +198,7 @@ const PromotionsList = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-black">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold">Promotions</h1>
@@ -207,7 +207,7 @@ const PromotionsList = () => {
           </p>
         </div>
         <Button
-          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+          className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700  transition-all duration-200 transform hover:scale-105"
           onClick={() => navigate("/vendor-dashboard/promotions/new")}
         >
           <Plus className="mr-2 h-4 w-4" />

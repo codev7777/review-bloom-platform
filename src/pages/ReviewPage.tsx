@@ -11,6 +11,8 @@ import { getProducts } from "@/lib/api/products/products.api";
 import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api/axiosConfig";
+import { useAuth } from "@/hooks/use-auth";
 import ReviewFunnelNavbar from "@/components/layout/ReviewFunnelNavbar";
 
 const demoCampaignData = {
@@ -50,6 +52,7 @@ const ReviewPage = () => {
     campaignId: string;
     step: string;
   }>();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [campaignData, setCampaignData] = useState<{
@@ -83,7 +86,6 @@ const ReviewPage = () => {
         }
         return await getCampaign(campaignIdNum);
       } catch (error) {
-        console.log("Auth campaign request failed, trying public endpoint");
         return await getPublicCampaign(campaignId);
       }
     },
@@ -104,7 +106,6 @@ const ReviewPage = () => {
       try {
         return await getProducts({ ids: productIds });
       } catch (error) {
-        console.log("Auth products request failed, trying public endpoint");
         const publicProducts = await getPublicProducts(productIds);
         return {
           data: publicProducts,
@@ -117,7 +118,12 @@ const ReviewPage = () => {
   });
 
   useEffect(() => {
-    console.log(campaignId);
+    getSubscriptionStatus();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     if (campaignId === "demo-campaign") {
       setCampaignData(demoCampaignData);
     }
@@ -157,6 +163,21 @@ const ReviewPage = () => {
       navigate(`/review/${campaignId}/step/1`, { replace: true });
     }
   }, [campaignId, step, navigate]);
+
+  const getSubscriptionStatus = async () => {
+    try {
+      const res = await api.post("/billing/get-subscription-status", {
+        userId: user.id,
+        campaignId: campaignId,
+      });
+
+      if(res.data.status === false) {
+        navigate("/")
+      }
+    } catch (err) {
+      console.error("Cancel subscription error:", err);
+    }
+  }
 
   const isLoading =
     (isCampaignLoading || isProductsLoading) && campaignId !== "demo-campaign";

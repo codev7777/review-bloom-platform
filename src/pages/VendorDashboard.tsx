@@ -17,11 +17,6 @@ const VendorDashboard = () => {
             title: "Backend connection failed",
             // description: "Using mock data. Please ensure localhost:3000 is running.",
           });
-        } else {
-          toast({
-            title: "Connected to backend",
-            description: "Successfully connected to the API server.",
-          });
         }
       } catch (error) {
         console.error("API health check failed:", error);

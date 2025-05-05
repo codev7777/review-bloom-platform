@@ -12,8 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import { forgotPassword } from "../../lib/api/users/users.api";
 import { ArrowLeft, CheckCircle, Mail } from "lucide-react";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
@@ -29,7 +28,7 @@ const ForgotPasswordPage = () => {
 
     try {
       // Simulate API call to reset password
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await forgotPassword(email);
 
       // Show success
       setIsSubmitted(true);

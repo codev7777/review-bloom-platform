@@ -27,7 +27,6 @@ const Index = () => {
   //     if (document.getElementById("isFirstLoad").innerHTML == "0")
   //       setLoading(false);
   //   }, 100);
-  //   console.log(document.getElementById("isFirstLoad").innerHTML);
   // const timer2 = setTimeout(() => {
   //   const isFirstLoadingElement = document.getElementById(
   //     "isFirstLoad"
@@ -57,7 +56,7 @@ const Index = () => {
           const elementPosition =
             element.getBoundingClientRect().top + window.scrollY;
           window.scrollTo({
-            top: elementPosition - navbarHeight - 20, // Add some extra padding
+            top: elementPosition - navbarHeight - 10, // Adjusted padding
             behavior: "smooth",
           });
         }

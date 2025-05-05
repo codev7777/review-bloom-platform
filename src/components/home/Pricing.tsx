@@ -58,7 +58,7 @@ const PricingTier = ({
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="absolute -top-5 xl:left-[115px] transform -translate-x-1/2 left-[155px] lg:left-[75px] z-50"
           >
-            <div className="relative bg-[#ff0000] text-white text-xl font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
+            <div className="relative bg-[#ff0000] text-white text-base font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
               Most Popular
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-[#ff0000] rotate-45"></div>
             </div>
@@ -72,7 +72,7 @@ const PricingTier = ({
         <div className="text-center mt-6 sm:mt-8 mb-2 text-white text-2xl sm:text-3xl font-bold z-10 bg-white">
           <div className="mb-2">
             {isPopular && (
-              <div className="text-2xl mb-6 animate-colorSwap">
+              <div className="text-2xl mb-6 animate-colorSwap px-2">
                 Limited Time Extra 20% Off!
               </div>
             )}
@@ -124,7 +124,7 @@ const PricingTier = ({
           className="mb-6 sm:mb-10 mt-6 sm:mt-10 z-50"
         >
           <Button
-            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-8 py-4 sm:px-10 sm:py-5 xl:text-2xl text-xl sm:text-2xl lg:text-xl z-50`}
+            className={` w-full bg-[#fc880a] hover:bg-[#f97316] inline text-white px-4 py-3 text-xl z-50`}
             asChild
           >
             <Link to="/auth/signup">Get Started for Free</Link>
@@ -154,8 +154,6 @@ const Pricing = () => {
         { name: "1 Product", included: true },
         { name: "1 Marketplace", included: true },
         { name: "Collect Seller Feedback", included: false },
-        { name: "Meta Pixel Support", included: false },
-        { name: "Business Features", included: false },
       ],
       cta: "Start with Silver",
       color: "bg-gray-200 border-gray-400",
@@ -176,7 +174,6 @@ const Pricing = () => {
         { name: "All Marketplaces", included: true },
         { name: "Collect Seller Feedback", included: true },
         { name: "Personalized Branding", included: true },
-        { name: "Meta Pixel Support", included: true },
       ],
       cta: "Start with Gold",
       isPopular: true,
@@ -197,7 +194,6 @@ const Pricing = () => {
         { name: "All Marketplaces", included: true },
         { name: "Collect Seller Feedback", included: true },
         { name: "Personalized Branding", included: true },
-        { name: "Meta Pixel Support", included: true },
         { name: "Multiple Sub-Accounts", included: true },
       ],
       cta: "Start with Platinum",
@@ -209,7 +205,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="py-12 sm:py-24 bg-muted/50 max-w-screen">
-      <div className="container mx-auto px-2 sm:px-4 text-center max-w-7xl">
+      <div className="container mx-auto px-2 sm:px-8 text-center max-w-7xl">
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -262,7 +258,7 @@ const Pricing = () => {
             </span>
           </div>
         </motion.div>
-        <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-3 mx-auto">
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-3 mx-auto px-20">
           {tiers.map((tier, index) => (
             <PricingTier key={index} {...tier} isAnnual={isAnnual} />
           ))}

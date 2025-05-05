@@ -112,7 +112,6 @@ const Step1Marketplace = ({
 
   useEffect(() => {
     const CompanyPlan = () => {
-      console.log(campaignId, products);
       // setCompanyPlan(data.planType);
     };
 
@@ -127,7 +126,6 @@ const Step1Marketplace = ({
       setErrors((prev) => ({ ...prev, rating: "" }));
     }
   };
-  console.log(marketPlaces);
   const handleCountryChange = (value: string) => {
     updateFormData({ country: value });
     if (errors.country) {

@@ -30,13 +30,10 @@ function useFetchWithFallback<T>(
       setIsLoading(true);
       setError(null);
       try {
-        console.log("Fetching data with params:", params);
         const result = await fetchFn(params);
-        console.log("API response:", result);
 
         if (result && result.data && Array.isArray(result.data)) {
           if (result.data.length > 0) {
-            console.log("Using API data:", result.data.length, "items");
             setData(result.data);
             setPagination({
               totalPages: result.totalPages || 1,
@@ -45,7 +42,6 @@ function useFetchWithFallback<T>(
             });
             setUsingMockData(false);
           } else {
-            console.log("API returned empty array, using mock data");
             setData(mockData);
             setPagination({
               totalPages: 1,

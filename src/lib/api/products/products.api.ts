@@ -42,21 +42,12 @@ export const getProduct = async (id: string | number): Promise<Product> => {
       throw new Error("Invalid product ID");
     }
 
-    console.log("Making API call to get product with ID:", numericId);
     const response = await api.get(`/products/${numericId}`);
-    console.log("API response for product:", response.data);
 
     if (!response.data) {
       throw new Error("No product data received");
     }
-
-    // Log the full response to see what we're getting
-    console.log("Full API response:", {
-      status: response.status,
-      headers: response.headers,
-      data: response.data,
-    });
-
+    
     return response.data;
   } catch (error) {
     console.error("Error in getProduct API call:", error);
