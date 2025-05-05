@@ -43,7 +43,7 @@ const AdminHeader = ({
   }, [location]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center gap-4 border-b bg-white px-4 sm:px-6">
+    <header className="fixed top-0 left-0 right-0 z-40 flex h-16 items-center gap-4 border-b px-4 sm:px-6">
       <Button
         variant="ghost"
         size="icon"
@@ -57,11 +57,6 @@ const AdminHeader = ({
         <h1 className="text-lg font-semibold md:text-xl">{title}</h1>
       </div>
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-          <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[#FF9900]"></span>
-          <span className="sr-only">Notifications</span>
-        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

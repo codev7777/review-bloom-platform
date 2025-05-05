@@ -175,7 +175,7 @@ const PromotionsList = () => {
 
   if (promotions.length === 0) {
     return (
-      <div className="flex items-center justify-center h-96">
+      <div className="flex items-center justify-center h-96 text-black">
         <div className="text-center max-w-md">
           <div className="mx-auto w-24 h-24 bg-orange-50 rounded-full flex items-center justify-center mb-6">
             <Package className="h-12 w-12 text-orange-500" />

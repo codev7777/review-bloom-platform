@@ -334,11 +334,11 @@ const Dashboard = () => {
           </div>
         ) : campaigns?.data?.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-white">
+            <p>
               No campaigns found. Create your first campaign to get started!
             </p>
             <Button
-             className="mt-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white transition-all duration-200 transform hover:scale-105"
+             className="mt-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 transition-all duration-200 transform hover:scale-105"
              onClick={() => navigate("/vendor-dashboard/campaigns/new")}
             >
               <Plus className="mr-2 h-4 w-4" />
