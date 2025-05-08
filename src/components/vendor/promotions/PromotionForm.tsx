@@ -6,6 +6,7 @@ import {
   Image as ImageIcon,
   X,
   CreditCard,
+  CircleOff,
   Tag,
   Gift,
   Download,
@@ -76,6 +77,11 @@ const MOCK_PROMOTIONS = [
 ];
 
 const PROMOTION_TYPES = [
+  {
+    value: "NONE" as const,
+    label: "No Promotion",
+    icon: <CircleOff className="h-4 w-4" />,
+  },
   {
     value: "GIFT_CARD" as const,
     label: "Gift Card or eGift Card",
@@ -404,6 +410,13 @@ const PromotionForm = () => {
 
               <div>
                 <Label htmlFor="description">Description</Label>
+                <p className="text-sm mb-2">
+                  Provide a detailed description about the promotion, conditions, instructions on how to use the gift card or coupon code once your customers receive it, or any other related information.
+                </p>
+                <p className="text-sm mb-1">
+                  Example:
+                  *Limit one free product per household. Only valid on full priced purchases. Proof of purchase is required. No additional purchase is necessary. Please allow 1-2 weeks for delivery. Our offer is not in any way dependent on feedback that you provide, positive or negative. Offer only valid where permitted; void where prohibited. Offer valid while supplies last and subject to change or cancellation at any time.
+                </p>
                 <Textarea
                   id="description"
                   name="description"

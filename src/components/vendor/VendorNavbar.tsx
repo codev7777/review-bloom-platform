@@ -20,7 +20,7 @@ const VendorNavbar = () => {
           <img
             src="/images/logo/logo.png"
             alt="ReviewBrothers Logo"
-            style={{ height: "40px" }}
+            style={{ height: "80px", width: "80px" }}
           />
         </Link>
       </div>

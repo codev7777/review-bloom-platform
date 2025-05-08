@@ -8,8 +8,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { Eye, EyeOff } from "lucide-react";
 import { AxiosError } from "axios";
 
-const SITE_KEY = "6LfCDAorAAAAAPRLQArW4LBb9xO3Tw00J-BIKiLA"; // 👈 Replace with your actual site key
-
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

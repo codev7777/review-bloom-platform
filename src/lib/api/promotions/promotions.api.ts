@@ -47,6 +47,15 @@ export const getPromotion = async (id: string | number): Promise<Promotion> => {
   return response.data;
 };
 
+export const getPromotionByUserId = async (params?: GetPromotionsParams) => {
+  const queryParams = new URLSearchParams();
+  if (params?.companyId)
+    queryParams.append("companyId", params.companyId.toString());
+
+  const response = await api.get(`/promotions/user/?${queryParams.toString()}`);
+  return response.data;
+};
+
 export const updatePromotion = async (
   id: string | number,
   data: {

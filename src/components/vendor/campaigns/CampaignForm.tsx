@@ -90,6 +90,10 @@ const MARKETPLACE_COUNTRY_NAMES: Record<string, string> = {
 
 const PROMOTION_TYPES = [
   {
+    value: "NONE" as const,
+    label: "No Promotion",
+  },
+  {
     value: "GIFT_CARD" as const,
     label: "Gift Card or eGift Card",
   },
@@ -341,7 +345,7 @@ const CampaignForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <Label htmlFor="title">Campaign Title</Label>
+              <Label htmlFor="title">Campaign Title (Internal use only)</Label>
               <Input
                 id="title"
                 name="title"
@@ -431,11 +435,11 @@ const CampaignForm = () => {
               <div>
                 <div className="flex items-center gap-1 my-1">
                   <img
-                      src="/images/amazon-logo-white.png"
+                      src="/images/amazon-logo.png"
                       alt="Amazon"
                       className="h-5 inline-block align-middle"
                     />
-                  <Label className="text-white">Marketplaces</Label>
+                  <Label>Marketplaces</Label>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {MARKETPLACE_COUNTRIES.map((country) => (
@@ -468,7 +472,7 @@ const CampaignForm = () => {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center space-x-2 my-8">
+              <div className="flex items-center space-x-2 mt-8 mb-1">
                 <Switch
                   id="isActive"
                   checked={formData.isActive === "YES"}
@@ -477,6 +481,10 @@ const CampaignForm = () => {
                   }
                 />
                 <Label htmlFor="isActive">Active Campaign</Label>
+              </div>
+              <div className="flex flex-col">
+                <p>Active campaigns are live and ready to collect reviews.</p>
+                <p>Inactive campaigns can only be viewed by you in Preview Mode.</p>
               </div>
             </div>
           )}

@@ -4,16 +4,16 @@ import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminOverview from "@/components/admin/overview/AdminOverview";
 import VendorsList from "@/components/admin/vendors/VendorsList";
+import ProductsList from "@/components/admin/vendors/product/ProductsList";
+import PromotionsList from "@/components/admin/vendors/promotions/PromotionsList";
+import CampaignsList from "@/components/admin/vendors/campaigns/CampaignsList";
 import DiscountCodesList from "@/components/admin/discounts/DiscountCodesList";
 import WhiteLabelSettings from "@/components/admin/white-label/WhiteLabelSettings";
 import AdminSettings from "@/components/admin/settings/AdminSettings";
-import Categories from "@/pages/admin/Categories";
 import { Layout, LayoutContent } from "@/components/ui/layout";
 import { useToast } from "@/components/ui/use-toast";
-import { API_URL } from "@/config/env";
 import { checkApiHealth } from "@/lib/api/axiosConfig";
 import { useIsMobile } from "@/hooks/use-mobile";
-
 const AdminDashboard = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
@@ -78,6 +78,9 @@ const AdminDashboard = () => {
           <Routes>
             <Route path="/" element={<AdminOverview />} />
             <Route path="/vendors" element={<VendorsList />} />
+            <Route path="/vendors/products/:id" element={<ProductsList />} />
+            <Route path="/vendors/promotions/:id" element={<PromotionsList />} />
+            <Route path="/vendors/campaigns/:id" element={<CampaignsList />} />
             {/* <Route path="/categories" element={<Categories />} /> */}
             <Route path="/discounts" element={<DiscountCodesList />} />
             <Route path="/white-label" element={<WhiteLabelSettings />} />

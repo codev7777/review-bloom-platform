@@ -54,7 +54,11 @@ const AdminHeader = ({
         <span className="sr-only">Toggle Menu</span>
       </Button>
       <div className="flex-1">
-        <h1 className="text-lg font-semibold md:text-xl">{title}</h1>
+        <img
+          src="/images/logo/logo.png"
+          alt="ReviewBrothers Logo"
+          style={{ height: "80px", width: "80px" }}
+        />
       </div>
       <div className="flex items-center gap-4">
         <DropdownMenu>

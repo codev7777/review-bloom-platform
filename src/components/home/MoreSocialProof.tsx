@@ -15,7 +15,7 @@ const MoreSocialProof: React.FC = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <img
-            src="/images/landing/with_rsg.png"
+            src="/images/landing/with_rsg.jpg"
             alt="Social Proof"
             className="w-full max-w-[500px]  3xl:mx-0 3xl:px-0"
           />

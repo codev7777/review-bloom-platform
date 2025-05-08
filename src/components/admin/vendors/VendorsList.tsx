@@ -47,6 +47,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCompanies } from "@/lib/api/companies/companies.api";
 import VendorDetails from "./VendorDetails";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface PaginationProps {
   currentPage: number;
@@ -125,12 +126,12 @@ interface User {
 }
 
 const VendorsList = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [totalVendors, setTotalVendors] = useState(0);
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const itemsPerPage = 10;
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -196,11 +197,7 @@ const VendorsList = () => {
   });
 
   const companies = companiesResponse?.companies || [];
-
-  const totalPages = companiesResponse
-    ? Math.ceil(companiesResponse.totalCount / itemsPerPage)
-    : 0;
-
+  
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
   };
@@ -259,19 +256,6 @@ const VendorsList = () => {
         title: "Export failed",
         description: "Failed to export vendor data. Please try again.",
       });
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "suspended":
-        return "bg-red-100 text-red-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      default:
-        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -358,6 +342,7 @@ const VendorsList = () => {
                 <TableHead>Subscription</TableHead>
                 <TableHead className="text-right">Campaigns</TableHead>
                 <TableHead className="text-right">Products</TableHead>
+                <TableHead className="text-right">Promotions</TableHead>
                 <TableHead className="text-right">Reviews</TableHead>
               </TableRow>
             </TableHeader>
@@ -366,7 +351,6 @@ const VendorsList = () => {
                 <TableRow
                   key={company.id}
                   className="group hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedCompany(company)}
                 >
                   <TableCell>
                     <div className="flex flex-col">
@@ -392,10 +376,34 @@ const VendorsList = () => {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    {company.campaigns?.length || 0}
+                    {/* {company.campaigns?.length || 0}
+                     */}
+                     <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate(`/admin-dashboard/vendors/campaigns/${company.id}`)}
+                      >
+                        <Edit className="h-4 w-4 text-orange-500" />
+                    </Button>
                   </TableCell>
-                  <TableCell className="text-right">
-                    {company.Products?.length || 0}
+                  <TableCell className="text-right" >
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate(`/admin-dashboard/vendors/products/${company.id}`)}
+                      >
+                        <Edit className="h-4 w-4 text-orange-500" />
+                    </Button>
+                    {/* {company.Products?.length || 0} */}
+                  </TableCell>
+                  <TableCell className="text-right" >
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => navigate(`/admin-dashboard/vendors/promotions/${company.id}`)}
+                      >
+                        <Edit className="h-4 w-4 text-orange-500" />
+                    </Button>
                   </TableCell>
                   <TableCell className="text-right">
                     {company.reviews || 0}
@@ -498,15 +506,6 @@ const VendorsList = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      {/* Vendor Details Dialog */}
-      {selectedCompany && (
-        <VendorDetails
-          company={selectedCompany}
-          isOpen={!!selectedCompany}
-          onClose={() => setSelectedCompany(null)}
-        />
-      )}
     </div>
   );
 };

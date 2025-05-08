@@ -297,6 +297,7 @@ export function SubscriptionPanel() {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(true);
   const [showDowngradeModal, setShowDowngradeModal] = useState(false);
+  const [subscription, setSubscription] = useState(null);
   const [downgradeData, setDowngradeData] = useState<{
     limits: any;
     targetPlanType: string;
@@ -322,13 +323,15 @@ export function SubscriptionPanel() {
   const [billing, setBilling] = useState<{
     paymentMethods: PaymentMethod[];
     defaultPaymentMethod?: PaymentMethod;
-  }>({ paymentMethods: [] });
+  }>({ paymentMethods: [], subscription: null });
 
   useEffect(() => {
     const loadBillingDetails = async () => {
       if (!user?.companyId) return;
       try {
         const details = await getBillingDetails(undefined, user.companyId);
+
+        setSubscription(details?.data?.subscription)
         setBilling({
           paymentMethods: details.paymentMethods,
           defaultPaymentMethod: details.defaultPaymentMethod,
@@ -400,7 +403,7 @@ export function SubscriptionPanel() {
   };
 
   return (
-    <TabsContent value="subscription" className="space-y-8 text-black">
+    <TabsContent value="subscription" className="space-y-4 text-black">
       <div>
         <h3 className="text-xl font-semibold mb-1 ">
           Subscription & Billing
@@ -409,6 +412,20 @@ export function SubscriptionPanel() {
           Manage your subscription, payment methods, and billing information
         </p>
       </div>
+
+      {subscription && (
+        <div>
+          <h3 className="text-xl font-semibold mb-1 ">
+            Current Plan
+          </h3>
+          <p className="text-sm">
+            <span className="font-bold">Plan Type:</span> {subscription?.plan?.planType}
+          </p>
+          <p className="text-sm">
+            <span className="font-bold">Expire Date:</span> {new Date(subscription?.currentPeriodEnd).toISOString().split('T')[0]}
+          </p>
+        </div>
+      )}
 
       {/* Billing Switch */}
       <div className="flex items-center gap-4 mb-8">
