@@ -1,5 +1,3 @@
-import { useState, useEffect, useRef } from "react";
-
 const steps = [
   {
     icon: "/images/landing/step-1.png",
@@ -154,56 +152,21 @@ const steps = [
 ];
 
 const AnimatedStep = ({ step, index }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const stepRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        } else {
-          setIsVisible(false);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    if (stepRef.current) {
-      observer.observe(stepRef.current);
-    }
-
-    return () => {
-      if (stepRef.current) {
-        observer.unobserve(stepRef.current);
-      }
-    };
-  }, []);
-
   return (
     <div
-      ref={stepRef}
       id="howitworks"
       className="flex justify-center items-center my-10"
     >
       <div
-        className={`flex flex-col md:flex-row items-center w-full max-w-6xl transition-all duration-700 ${
-          isVisible
-            ? "opacity-100 translate-x-0"
-            : "opacity-100 translate-x-0 md:opacity-0 md:-translate-x-20"
-        }`}
+        className='flex flex-col md:flex-row items-center justify-center w-full max-w-6xl transition-all duration-700'
       >
         <img
           src={step.icon}
           alt={step.title}
-          className={`self-center max-w-[500px] md:max-w-[400px] lg:max-w-[500px] object-contain md:transition-transform duration-700 ${
-            isVisible ? "translate-x-0" : "-translate-x-10"
-          }`}
+          className='self-center w-full md:max-w-[400px] lg:max-w-[500px] object-contain md:transition-transform duration-700'
         />
         <div
-          className={`self-start mt-10 md:mt-0 ml-10  transition-transform  duration-700 ${
-            isVisible ? "translate-x-0" : "translate-x-10"
-          }`}
+          className='self-start mt-10 md:mt-0 ml-10  transition-transform  duration-700'
         >
           <h2 className="mt-5 text-2xl font-bold mb-2 bg-[#FF9900] inline-block rounded-full px-3">
             Step {index + 1}
