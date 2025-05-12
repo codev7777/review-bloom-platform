@@ -393,7 +393,7 @@ const ProductForm = () => {
             </div>
 
             <div >
-              <Label htmlFor="asin">ASIN (Enter the Amazon Product ASIN (Starts with B0) For variations, enter the child ASIN.)</Label>
+              <Label htmlFor="asin">ASIN <span className="font-normal">(Enter the Amazon Product ASIN (Starts with B0) For variations, enter the child ASIN.)</span></Label>
               <Input
                 id="asin"
                 name="asin"

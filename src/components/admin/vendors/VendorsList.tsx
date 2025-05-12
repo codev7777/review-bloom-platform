@@ -150,7 +150,7 @@ const VendorsList = () => {
       case 3:
         return "PLATINUM";
       default:
-        return "BASIC";
+        return "";
     }
   };
 
@@ -366,14 +366,18 @@ const VendorsList = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={getSubscriptionColor(
-                        getSubscriptionType(company.planId)
-                      )}
-                    >
-                      {getSubscriptionType(company.planId)}
-                    </Badge>
+                    {
+                      company.planId && (
+                        <Badge
+                          variant="outline"
+                          className={getSubscriptionColor(
+                            getSubscriptionType(company.planId)
+                          )}
+                        >
+                          {getSubscriptionType(company.planId)}
+                        </Badge>
+                      )
+                    }
                   </TableCell>
                   <TableCell className="text-right">
                     {/* {company.campaigns?.length || 0}

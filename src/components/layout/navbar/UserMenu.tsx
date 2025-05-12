@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,8 @@ interface UserMenuProps {
 }
 
 const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
+  const { user } = useAuth();
+
   if (!isAuthenticated) {
     return (
       <>
@@ -41,15 +44,13 @@ const UserMenu = ({ isAuthenticated, isAdmin, logout }: UserMenuProps) => {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="rounded-full w-10 h-10 p-0 text-[#FF9900]"
+          className="rounded-full h-10 p-0 text-[#FF9900] px-3"
         >
           <User size={20} />
+          <span>{user?.name}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem asChild>
-          <Link to="/profile">Profile</Link>
-        </DropdownMenuItem>
+      <DropdownMenuContent>
         <DropdownMenuItem asChild>
           <Link
             to={

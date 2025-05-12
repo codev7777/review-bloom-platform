@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Check, X, QrCode, AlertCircle, Copy } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,8 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { generateQRCode } from "@/utils/qrCodeGenerator";
@@ -345,7 +343,7 @@ const CampaignForm = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <Label htmlFor="title">Campaign Title (Internal use only)</Label>
+              <Label htmlFor="title">Campaign Title <span className="font-normal">(Internal use only)</span></Label>
               <Input
                 id="title"
                 name="title"
@@ -380,6 +378,10 @@ const CampaignForm = () => {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            
+            <div className="flex items-center justify-start gap-1 w-max border border-gray-500 rounded-lg p-1">
+             <Plus size={16} /> <button className="text-sm" onClick={() => navigate("/vendor-dashboard/promotions/new")}>Create New Promotion</button>
             </div>
 
             <div>
@@ -433,7 +435,7 @@ const CampaignForm = () => {
           {1 && (
             <div>
               <div>
-                <div className="flex items-center gap-1 my-1">
+                <div className="flex items-center justify-center gap-1 my-1">
                   <img
                       src="/images/amazon-logo.png"
                       alt="Amazon"

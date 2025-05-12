@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { CheckCircle, ExternalLink, ArrowRight, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import Step1Marketplace from "./steps/Step1Marketplace";
@@ -14,6 +12,8 @@ import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { createPublicReview } from "@/lib/api/public/publicReview";
 import { Campaign, Product, Promotion, Company } from "@/types";
+import api from "@/lib/api/axiosConfig";
+import { useAuth } from "@/hooks/use-auth";
 
 interface ReviewFunnelProps {
   campaignId: any;
@@ -87,6 +87,8 @@ const ReviewFunnel = ({
   products,
   marketPlaces,
 }: ReviewFunnelProps) => {
+  const { user } = useAuth();
+
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -277,6 +279,33 @@ const ReviewFunnel = ({
     const urlStepNumber = getCurrentStep();
     setStep(urlStepNumber);
   }, [urlStep]);
+
+  useEffect(() => {
+    getReviewStatus();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const getReviewStatus = async () => {
+    try {
+      const res = await api.post("/billing/get-review-status", {
+        userId: user.id,
+        campaignId: campaignId,
+      });
+
+      if(res.data.status === false) {
+        toast({
+          variant: "destructive",
+          title: "No Subscription",
+          description: "Please check your subscription plan",
+        });
+
+        // navigate("/")
+      }
+    } catch (err) {
+      console.error("Cancel subscription error:", err);
+    }
+  }
 
   const updateFormData = (newData: Partial<ReviewFormData>) => {
     setFormData((prev) => ({ ...prev, ...newData }));

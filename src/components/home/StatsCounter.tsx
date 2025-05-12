@@ -95,7 +95,7 @@ const StatsCounter = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
           <Counter
             title="Active Vendors"
             end={3864}
@@ -105,11 +105,6 @@ const StatsCounter = () => {
             title="Reviews Collected"
             end={31423}
             icon={<Star className="h-8 w-8 text-[#FF9900]" />}
-          />
-          <Counter
-            title="Leads Collected"
-            end={30356}
-            icon={<Inbox className="h-8 w-8 text-[#FF9900]" />}
           />
           <Counter
             title="Campaigns Created"

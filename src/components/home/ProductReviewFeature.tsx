@@ -33,33 +33,31 @@ const ProductReviewsFeature: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 3xl:mx-0 3xl:px-0">
       {/* <h1 className="text-4xl font-bold text-teal-500 mb-4"> */}
-      <h1 className="text-4xl font-bold text-secondary mb-4">
-        Boost Your Sales with Better Product Reviews
+      <h1 className="text-3xl font-bold text-secondary mb-4">
+        Boost Your Sales with Powerful Product Reviews
       </h1>
 
       <p className="text-gray-600 text-lg mb-12">
-        Increase Customer Engagement by making it easy for your shoppers to
-        connect with your brand, redeem gifts, and leave you valuable feedback
-        and product reviews
+        Turn every customer moment into a growth opportunity. Make it effortless for your shoppers to engage with your brand, share their experience, and unlock exclusive gifts — while you collect valuable insights and drive more reviews.
       </p>
 
       <div className="space-y-4">
         <FeatureItem
           icon={<Star className="w-8 h-8 text-gray-700" />}
-          title="Boost Reviews and Ratings"
-          description="Get more customer feedback and increase your product ratings with seamless review requests"
+          title="Boost Reviews & Ratings"
+          description="Get consistent, high-quality feedback and improve your product ratings through automated and easy-to-use review invitations."
         />
 
         <FeatureItem
           icon={<Mail className="w-8 h-8 text-gray-700" />}
           title="Build Your Email List"
-          description="Collect customer details and email addresses for future marketing campaigns and product launches"
+          description="Capture customer data and email addresses directly from the review process — ideal for future launches, promotions, and loyalty campaigns"
         />
 
         <FeatureItem
           icon={<Rocket className="w-8 h-8 text-gray-700" />}
           title="Easy 5-Step Integration"
-          description="Simple to set up and integrate into your existing product packaging and sales process"
+          description="Set up in minutes. Seamlessly add ReviewBrothers to your existing packaging, checkout flow, or follow-up emails — no coding required."
         />
       </div>
     </div>

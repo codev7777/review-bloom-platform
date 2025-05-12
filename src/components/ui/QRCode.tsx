@@ -8,6 +8,7 @@ import { Download, Printer, Share2 } from "lucide-react";
 
 export interface QRCodeProps {
   url: string;
+  status: boolean;
   size?: number;
   logoUrl?: string;
   logoWidth?: number;
@@ -23,6 +24,7 @@ export interface QRCodeProps {
 
 export function QRCode({
   url,
+  status,
   size = 200,
   logoUrl,
   logoWidth = 50,
@@ -35,6 +37,7 @@ export function QRCode({
   showDialog = false,
   onCloseDialog,
 }: QRCodeProps) {
+
   const [qrUrl, setQrUrl] = useState<string>("");
   
   // Generate QR code as data URL when props change

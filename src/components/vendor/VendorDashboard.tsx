@@ -14,6 +14,7 @@ import {
   MessageSquare,
   ClipboardList,
   Star,
+  House,
 } from "lucide-react";
 import { subDays, format, isSameDay } from "date-fns";
 import { BarChart, PieChart } from "@mantine/charts";
@@ -86,6 +87,11 @@ const Sidebar = ({
       icon: <SettingsIcon size={20} />,
       label: "Settings",
       path: "/vendor-dashboard/settings",
+    },
+    {
+      icon: <House size={20} />,
+      label: "Go to Home Page",
+      path: "/",
     },
   ];
 

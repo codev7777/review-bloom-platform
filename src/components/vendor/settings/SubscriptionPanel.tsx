@@ -348,6 +348,7 @@ export function SubscriptionPanel() {
 
     loadBillingDetails();
   }, []);
+  
   useEffect(() => {
     refresh(); // Always refresh subscription status when this panel mounts
   }, []);

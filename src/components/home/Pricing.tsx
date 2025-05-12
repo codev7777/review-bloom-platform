@@ -181,7 +181,7 @@ const Pricing = () => {
       buttonColor: "bg-yellow-400 hover:bg-yellow-600",
     },
     {
-      title: "PLATIUM",
+      title: "PLATINUM",
       AnnuallyPrice: "179",
       MonthlyPrice: "199",
       description: "For established businesses scaling at full speed",

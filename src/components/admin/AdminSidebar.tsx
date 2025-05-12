@@ -7,7 +7,6 @@ import {
   Settings,
   Menu,
   X,
-  List,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

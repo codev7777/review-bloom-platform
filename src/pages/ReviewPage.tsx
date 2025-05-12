@@ -3,16 +3,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReviewFunnel from "@/components/review/ReviewFunnel";
-import Navbar from "@/components/layout/Navbar";
-import Logo from "@/components/layout/navbar/Logo";
 import { Link } from "react-router-dom";
 import { getCampaign } from "@/lib/api/campaigns/campaigns.api";
 import { getProducts } from "@/lib/api/products/products.api";
 import { getPublicCampaign } from "@/lib/api/public/publicCampaign";
 import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { useQuery } from "@tanstack/react-query";
-import api from "@/lib/api/axiosConfig";
-import { useAuth } from "@/hooks/use-auth";
+
 import ReviewFunnelNavbar from "@/components/layout/ReviewFunnelNavbar";
 
 const demoCampaignData = {
@@ -52,7 +49,7 @@ const ReviewPage = () => {
     campaignId: string;
     step: string;
   }>();
-  const { user } = useAuth();
+  
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [campaignData, setCampaignData] = useState<{
@@ -118,12 +115,6 @@ const ReviewPage = () => {
   });
 
   useEffect(() => {
-    getSubscriptionStatus();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     if (campaignId === "demo-campaign") {
       setCampaignData(demoCampaignData);
     }
@@ -164,20 +155,7 @@ const ReviewPage = () => {
     }
   }, [campaignId, step, navigate]);
 
-  const getSubscriptionStatus = async () => {
-    try {
-      const res = await api.post("/billing/get-subscription-status", {
-        userId: user.id,
-        campaignId: campaignId,
-      });
-
-      if(res.data.status === false) {
-        navigate("/")
-      }
-    } catch (err) {
-      console.error("Cancel subscription error:", err);
-    }
-  }
+  
 
   const isLoading =
     (isCampaignLoading || isProductsLoading) && campaignId !== "demo-campaign";

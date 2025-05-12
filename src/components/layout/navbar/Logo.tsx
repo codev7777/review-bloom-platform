@@ -9,7 +9,7 @@ const Logo = () => {
       <img
         src="/images/logo/logo.png"
         alt="ReviewBrothers Logo"
-        style={{ height: "40px" }}
+        style={{ height: "100px" }}
       />
     </Link>
   );

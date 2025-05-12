@@ -10,13 +10,15 @@ import {
   CheckCircle,
   XCircle,
   Filter,
-  SlidersHorizontal,
   ArrowUpDown,
   ChevronUp,
   ChevronDown,
   Download,
 } from "lucide-react";
-import { Campaign, mapCampaignForDisplay, CampaignStatus } from "@/types";
+import {
+  getBillingDetails,
+} from "@/lib/api/billing/billing.api";
+import { mapCampaignForDisplay } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -67,17 +69,30 @@ const CampaignsList: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>("updatedAt");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [selectedQrCode, setSelectedQrCode] = useState<{
+    subscriptionStatus: boolean;
+    visibleStatus: boolean;
     url: string;
     name: string;
   } | null>(null);
   const [qrDialogOpen, setQrDialogOpen] = useState(false);
+  const [billingDetails, setBillingDetails] = useState(null);
 
   // Check authentication status
   useEffect(() => {
+    getBillInformation();
+
     if (!isAuthenticated) {
       navigate("/auth/login");
     }
   }, [isAuthenticated, user, navigate]);
+
+
+  const getBillInformation = async () => {
+    const details = await getBillingDetails(undefined, user.companyId);
+
+    if(details?.data)
+      setBillingDetails(details?.data);
+  }
 
   const { data: campaignsResponse, isLoading } = useQuery({
     queryKey: [
@@ -152,6 +167,8 @@ const CampaignsList: React.FC = () => {
 
   const showQrCode = (campaign: any) => {
     setSelectedQrCode({
+      subscriptionStatus: billingDetails?.subscription ? true : false,
+      visibleStatus: campaign.status === "active" ? true : false,
       url: campaign.url,
       name: campaign.name,
     });
@@ -166,7 +183,7 @@ const CampaignsList: React.FC = () => {
       day: "numeric",
     });
   };
-  
+
   return (
     <div className="space-y-6 text-black">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -346,9 +363,6 @@ const CampaignsList: React.FC = () => {
                       <div className="font-medium">
                         {campaign.name || campaign.title}
                       </div>
-                      <div className="text-xs ">
-                        Code: {campaign.code || "N/A"}
-                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -492,6 +506,7 @@ const CampaignsList: React.FC = () => {
                 url={selectedQrCode.url}
                 size={280}
                 title={`${selectedQrCode.name} Campaign QR Code`}
+                status={!selectedQrCode.subscriptionStatus || !selectedQrCode.visibleStatus ? false : true}
                 showDialog={false}
               />
 
