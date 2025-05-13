@@ -289,7 +289,6 @@ const ReviewFunnel = ({
   const getReviewStatus = async () => {
     try {
       const res = await api.post("/billing/get-review-status", {
-        userId: user.id,
         campaignId: campaignId,
       });
 
@@ -300,7 +299,7 @@ const ReviewFunnel = ({
           description: "Please check your subscription plan",
         });
 
-        // navigate("/")
+        navigate("/")
       }
     } catch (err) {
       console.error("Cancel subscription error:", err);
