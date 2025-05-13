@@ -295,8 +295,8 @@ const ReviewFunnel = ({
       if(res.data.status === false) {
         toast({
           variant: "destructive",
-          title: "No Subscription",
-          description: "Please check your subscription plan",
+          title: "Review Permission Issue",
+          description: "This subscription has expired or this campaign is not eligible for review.",
         });
 
         navigate("/")

@@ -88,12 +88,13 @@ api.interceptors.response.use(
           !currentPath.includes("/auth/") &&
           !currentPath.includes("/review/")
         ) {
-          window.location.href = "/auth/login"; // Redirect to login
-          toast({
-            variant: "destructive",
-            title: "Session expired",
-            description: "Please log in again to continue.",
-          });
+          // window.location.href = "/auth/login";
+          window.location.href = "/";
+          // toast({
+          //   variant: "destructive",
+          //   title: "Session expired",
+          //   description: "Please log in again to continue.",
+          // });
         }
         return Promise.reject(refreshError);
       } finally {

@@ -17,7 +17,7 @@ export const PrivateRoute = ({ children, requiredRole }: PrivateRouteProps) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Role check if required
