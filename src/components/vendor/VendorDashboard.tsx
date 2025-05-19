@@ -88,11 +88,6 @@ const Sidebar = ({
       label: "Settings",
       path: "/vendor-dashboard/settings",
     },
-    {
-      icon: <House size={20} />,
-      label: "Go to Home Page",
-      path: "/",
-    },
   ];
 
   return (

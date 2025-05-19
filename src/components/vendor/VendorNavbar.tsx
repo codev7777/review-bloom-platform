@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { User } from "lucide-react";
+import { User, House } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import {
   DropdownMenu,
@@ -25,7 +25,10 @@ const VendorNavbar = () => {
         </Link>
       </div>
 
-      <div>
+      <div className="flex flex-row items-center gap-3">
+        <Link to="/" className="flex items-center">
+          <House size={20} />
+        </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
