@@ -111,7 +111,7 @@ const PricingTier = ({
               ) : (
                 <X className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-red-500 z-10 bg-white stroke-[5]" />
               )}
-              <span className="ml-1 sm:ml-3 text-base sm:text-lg z-10 bg-white text-[#2e3a48] font-bold">
+              <span className={`ml-1 sm:ml-3 text-base sm:text-lg z-10 bg-white text-[#2e3a48] font-bold ${!feature.included ? 'line-through [text-decoration-color:red] [text-decoration-thickness:2px]' : ''}`}>
                 {feature.name}
               </span>
             </motion.li>
@@ -154,6 +154,8 @@ const Pricing = () => {
         { name: "1 Product", included: true },
         { name: "1 Marketplace", included: true },
         { name: "Collect Seller Feedback", included: false },
+        { name: "Personalized Branding", included: false },
+        { name: "Multiple Sub-Accounts", included: false },
       ],
       cta: "Start with Silver",
       color: "bg-gray-200 border-gray-400",
@@ -174,6 +176,7 @@ const Pricing = () => {
         { name: "All Marketplaces", included: true },
         { name: "Collect Seller Feedback", included: true },
         { name: "Personalized Branding", included: true },
+        { name: "Multiple Sub-Accounts", included: false },
       ],
       cta: "Start with Gold",
       isPopular: true,

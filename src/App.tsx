@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
+import InActive from "./pages/InActive";
 import NotFound from "./pages/NotFound";
 import ReviewPage from "./pages/ReviewPage";
 import VendorDashboard from "./pages/VendorDashboard";
@@ -56,6 +57,7 @@ const App = () => {
               <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Index />} />
+                <Route path="/inactive" element={<InActive />} />
                 <Route path="/success" element={<SuccessPage />} />
                 <Route path="/subscription" element={<SubscriptionPage />} />
                 <Route

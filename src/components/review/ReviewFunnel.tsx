@@ -299,7 +299,7 @@ const ReviewFunnel = ({
           description: "This subscription has expired or this campaign is not eligible for review.",
         });
 
-        navigate("/")
+        navigate("/inactive")
       }
     } catch (err) {
       console.error("Cancel subscription error:", err);

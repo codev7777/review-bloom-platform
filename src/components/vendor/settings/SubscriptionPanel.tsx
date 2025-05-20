@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Check, CreditCard, Tag } from "lucide-react";
+import { Check, X, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { TabsContent } from "@/components/ui/tabs";
@@ -31,6 +31,9 @@ const plans = [
       { name: "1 Product", included: true },
       { name: "1 Marketplace", included: true },
       { name: "Collect Seller Feedback", included: false },
+      { name: "Personalized Branding", included: false },
+      { name: "Multiple Sub-Accounts", included: false },
+      
     ],
     planId: "silver",
     monthlyPriceId: "price_1RH8eXPuMpDKUxfQN4XUH99L",
@@ -50,6 +53,7 @@ const plans = [
       { name: "All Marketplaces", included: true },
       { name: "Collect Seller Feedback", included: true },
       { name: "Personalized Branding", included: true },
+      { name: "Multiple Sub-Accounts", included: false },
     ],
     planId: "gold",
     monthlyPriceId: "price_1RH8eZPuMpDKUxfQAWOjGe19",
@@ -520,16 +524,19 @@ export function SubscriptionPanel() {
                     key={i}
                     className="flex items-center gap-2 text-white text-md"
                   >
-                    <Check
-                      className={`w-5 h-5 ${
-                        f.included
-                          ? "text-green-400"
-                          : "text-gray-400 opacity-60"
-                      }`}
-                    />
+                    {
+                      f.included ? 
+                        <Check
+                          className="w-5 h-5 text-green-400"
+                        /> :
+                        <X
+                          className="w-5 h-5 text-gray-400 opacity-60"
+                        />
+                    }
                     <span
                       className={
-                        f.included ? "font-semibold" : "line-through opacity-70"
+                        // f.included ? "font-semibold" : "line-through text-white [text-decoration-color:red]"
+                        f.included ? "font-semibold" : "line-through text-white"
                       }
                     >
                       {f.name}

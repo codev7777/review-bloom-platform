@@ -15,6 +15,8 @@ import {
   ClipboardList,
   Star,
   House,
+  Home,
+  CircleHelp
 } from "lucide-react";
 import { subDays, format, isSameDay } from "date-fns";
 import { BarChart, PieChart } from "@mantine/charts";
@@ -57,7 +59,7 @@ const Sidebar = ({
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const menuItems = [
+  const menuItemsHeader = [
     {
       icon: <LayoutDashboard size={20} />,
       label: "Dashboard",
@@ -83,10 +85,22 @@ const Sidebar = ({
       label: "Reviews",
       path: "/vendor-dashboard/reviews",
     },
+  ];
+  const menuItemsFooter = [
+    {
+      icon: <Home size={20} />,
+      label: "Home",
+      path: "/",
+    },
     {
       icon: <SettingsIcon size={20} />,
       label: "Settings",
       path: "/vendor-dashboard/settings",
+    },
+    {
+      icon: <CircleHelp size={20} />,
+      label: "Help",
+      path: "/help",
     },
   ];
 
@@ -109,9 +123,25 @@ const Sidebar = ({
         </button>
       )}
 
-      <div className="flex flex-col py-6 mt-16">
-        <nav className="flex-1 space-y-1 px-3">
-          {menuItems.map((item, index) => (
+      <div className="flex flex-col justify-between py-6 mt-16 h-[calc(100%-64px)]">
+        <nav className="space-y-1 px-3">
+          {menuItemsHeader.map((item, index) => (
+            <Button
+              key={index}
+              variant="ghost"
+              className="w-full justify-start hover:text-orange-500 hover:bg-orange-50"
+              onClick={() => {
+                navigate(item.path);
+                if (isMobile) toggleSidebar();
+              }}
+            >
+              <span className="mr-3 text-orange-600">{item.icon}</span>
+              {item.label}
+            </Button>
+          ))}
+        </nav>
+        <nav className="space-y-1 px-3">
+          {menuItemsFooter.map((item, index) => (
             <Button
               key={index}
               variant="ghost"

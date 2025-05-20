@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
 
       if (user.role === "USER") {
-        navigate("/");
+        navigate("/vendor-dashboard");
       } else {
         navigate("/admin-dashboard");
       }

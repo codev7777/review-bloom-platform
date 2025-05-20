@@ -65,14 +65,6 @@ const DesktopNav = () => {
           Pricing
         </Link>
       </div>
-      <div>
-        <Link
-          to="/help"
-          className="text-lg font-medium text-white hover:text-[#FF9900] transition-colors 3xl:text-2xl"
-        >
-          Help
-        </Link>
-      </div>
     </div>
   );
 };
