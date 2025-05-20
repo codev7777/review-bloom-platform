@@ -111,7 +111,7 @@ const PricingTier = ({
               ) : (
                 <X className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0 mt-0.5 text-red-500 z-10 bg-white stroke-[5]" />
               )}
-              <span className={`ml-1 sm:ml-3 text-base sm:text-lg z-10 bg-white text-[#2e3a48] font-bold ${!feature.included ? 'line-through [text-decoration-color:red] [text-decoration-thickness:2px]' : ''}`}>
+              <span className={`ml-1 sm:ml-3 text-base sm:text-lg z-10 bg-white text-start text-[#2e3a48] font-bold ${!feature.included ? 'line-through [text-decoration-color:red] [text-decoration-thickness:2px]' : ''}`}>
                 {feature.name}
               </span>
             </motion.li>
@@ -261,7 +261,7 @@ const Pricing = () => {
             </span>
           </div>
         </motion.div>
-        <div className="grid grid-cols-1 gap-14 lg:grid-cols-3 mx-auto px-20">
+        <div className="grid grid-cols-1 gap-14 md:grid-cols-2 xl:grid-cols-3 mx-auto px-10 lg:px-20">
           {tiers.map((tier, index) => (
             <PricingTier key={index} {...tier} isAnnual={isAnnual} />
           ))}
