@@ -20,6 +20,7 @@
     "@mantine/core": "^7.17.4",
     "@mui/icons-material": "^7.0.2",
     "@mui/material": "^7.0.2",
+    "@paypal/react-paypal-js": "^8.8.3",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",

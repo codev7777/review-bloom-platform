@@ -6,15 +6,16 @@ import { TabsContent } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import {
   getBillingDetails,
-  addPaymentMethod,
-  removePaymentMethod,
-  setDefaultPaymentMethod,
   type PaymentMethod,
 } from "@/lib/api/billing/billing.api";
 import api from "@/lib/api/axiosConfig";
 import { DowngradeConfirmationModal } from "./DowngradeConfirmationModal";
 import { validateDiscountCode } from "@/services/discountCode.service";
 import { Input } from "@/components/ui/input";
+import { PaymentMethodModal } from "./PaymentMethodModal";
+import { PayPalCheckout } from "./PayPalCheckout";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 // Subscription plans
 const plans = [
@@ -81,6 +82,14 @@ const plans = [
   },
 ];
 
+interface DowngradeLimits {
+  products: { current: number; limit: number; exceeded: boolean };
+  campaigns: { current: number; limit: number; exceeded: boolean };
+  promotions: { current: number; limit: number; exceeded: boolean };
+  users: { current: number; limit: number; exceeded: boolean };
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSubscription = () => {
   const { user } = useAuth();
   const [tier, setTier] = useState<string | null>(null);
@@ -301,9 +310,11 @@ export function SubscriptionPanel() {
   const { user } = useAuth();
   const [annual, setAnnual] = useState(true);
   const [showDowngradeModal, setShowDowngradeModal] = useState(false);
+  const [showPaymentMethodModal, setShowPaymentMethodModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
   const [subscription, setSubscription] = useState(null);
   const [downgradeData, setDowngradeData] = useState<{
-    limits: any;
+    limits: DowngradeLimits;
     targetPlanType: string;
     targetPlanId: string;
   } | null>(null);
@@ -312,7 +323,6 @@ export function SubscriptionPanel() {
     status,
     loading,
     subscribe,
-    manage,
     refresh,
     trialEndDate,
     currentPeriodEnd,
@@ -327,7 +337,10 @@ export function SubscriptionPanel() {
   const [billing, setBilling] = useState<{
     paymentMethods: PaymentMethod[];
     defaultPaymentMethod?: PaymentMethod;
-  }>({ paymentMethods: [], subscription: null });
+  }>({ paymentMethods: [] });
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"stripe" | "paypal" | null>(null);
+  const [showPayPalDialog, setShowPayPalDialog] = useState(false);
+  const [isTrialFlow, setIsTrialFlow] = useState(false);
 
   useEffect(() => {
     const loadBillingDetails = async () => {
@@ -335,7 +348,7 @@ export function SubscriptionPanel() {
       try {
         const details = await getBillingDetails(undefined, user.companyId);
 
-        setSubscription(details?.data?.subscription)
+        setSubscription(details?.data?.subscription);
         setBilling({
           paymentMethods: details.paymentMethods,
           defaultPaymentMethod: details.defaultPaymentMethod,
@@ -351,52 +364,45 @@ export function SubscriptionPanel() {
     };
 
     loadBillingDetails();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   
   useEffect(() => {
-    refresh(); // Always refresh subscription status when this panel mounts
+    refresh();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePlanSelect = async (planId: string) => {
-    if (!user?.companyId) return;
+  const handlePaymentMethodSelect = (method: "stripe" | "paypal") => {
+    if (!selectedPlan) return;
 
-    // If downgrading, check limits first
-    if (tier && plans.findIndex(p => p.planId === tier) > plans.findIndex(p => p.planId === planId)) {
-      try {
-        // Map plan ID to numeric ID
-        const planIdMap: Record<string, number> = {
-          'silver': 1,
-          'gold': 2,
-          'platinum': 3
-        };
-
-        const response = await api.post("/billing/check-downgrade-limits", {
-          companyId: user.companyId,
-          targetPlanId: planIdMap[planId]
-        });
-
-        if (response.data.success) {
-          setDowngradeData({
-            limits: response.data.data.limits,
-            targetPlanType: response.data.data.targetPlanType,
-            targetPlanId: planId
-          });
-          setShowDowngradeModal(true);
-          return;
-        }
-      } catch (error) {
-        console.error("Error checking downgrade limits:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to check plan limits. Please try again.",
-        });
-        return;
-      }
+    if (method === "stripe") {
+      setShowPaymentMethodModal(false);
+      setSelectedPaymentMethod(null);
+      subscribe(selectedPlan.planId, annual, isTrialFlow);
+      setIsTrialFlow(false);
+    } else if (method === "paypal") {
+      setShowPaymentMethodModal(false);
+      setSelectedPaymentMethod("paypal");
+      setShowPayPalDialog(true);
+      // Do NOT clear selectedPlan here!
     }
+  };
 
-    // If upgrading or no limits exceeded, proceed with subscription
-    subscribe(planId, annual);
+  const handlePayPalSuccess = () => {
+    refresh();
+    setSelectedPlan(null);
+    setSelectedPaymentMethod(null);
+    setShowPayPalDialog(false);
+    setIsTrialFlow(false);
+  };
+
+  const handlePayPalCancel = () => {
+    setSelectedPlan(null);
+    setSelectedPaymentMethod(null);
+    setShowPayPalDialog(false);
+    setIsTrialFlow(false);
   };
 
   const handleDowngradeConfirm = () => {
@@ -406,6 +412,20 @@ export function SubscriptionPanel() {
       setDowngradeData(null);
     }
   };
+
+  // Calculate the correct price for the current selection
+  let selectedAmount = "0.00";
+  if (selectedPlan) {
+    if (isTrialFlow) {
+      selectedAmount = annual
+        ? ((selectedPlan.annually  / 30) * 7).toFixed(2)
+        : ((selectedPlan.monthly / 30) * 7).toFixed(2);
+    } else {
+      selectedAmount = annual
+        ? (selectedPlan.annually * 12).toFixed(2)
+        : selectedPlan.monthly.toFixed(2);
+    }
+  }
 
   return (
     <TabsContent value="subscription" className="space-y-4 text-black">
@@ -592,14 +612,22 @@ export function SubscriptionPanel() {
               ) : (
                 <div className="space-y-2">
                   <Button
-                    onClick={() => handlePlanSelect(plan.planId)}
+                    onClick={() => {
+                      setSelectedPlan(plan);
+                      setIsTrialFlow(false);
+                      setShowPaymentMethodModal(true);
+                    }}
                     className="w-full bg-orange-500 hover:bg-orange-600 text-white"
                     disabled={loading}
                   >
                     {loading ? "Processing..." : "Choose Plan"}
                   </Button>
                   <Button
-                    onClick={() => subscribe(plan.planId, annual, true)}
+                    onClick={() => {
+                      setSelectedPlan(plan);
+                      setIsTrialFlow(true);
+                      setShowPaymentMethodModal(true);
+                    }}
                     className={`w-full bg-blue-500 hover:bg-blue-600 text-white ${
                       hasUsedTrial ? "opacity-50 cursor-not-allowed" : ""
                     }`}
@@ -618,16 +646,6 @@ export function SubscriptionPanel() {
         ))}
       </div>
 
-      {/* <div className="flex items-center gap-3 mt-3">
-        <Button
-          variant="outline"
-          className="bg-white text-orange-500 border-orange-500 border font-semibold"
-          onClick={manage}
-        >
-          Manage Subscription
-        </Button>
-      </div> */}
-
       {downgradeData && (
         <DowngradeConfirmationModal
           isOpen={showDowngradeModal}
@@ -640,6 +658,42 @@ export function SubscriptionPanel() {
           targetPlanType={downgradeData.targetPlanType}
         />
       )}
+
+      <PaymentMethodModal
+        isOpen={showPaymentMethodModal}
+        onClose={() => {
+          setShowPaymentMethodModal(false);
+          setSelectedPlan(null);
+        }}
+        onSelectPaymentMethod={handlePaymentMethodSelect}
+        selectedPlan={selectedPlan || plans[0]}
+        isAnnual={annual}
+      />
+
+      {/* PayPal Payment Dialog */}
+      <Dialog open={showPayPalDialog} onOpenChange={setShowPayPalDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Pay with PayPal</DialogTitle>
+          </DialogHeader>
+          {selectedPlan && selectedPaymentMethod === "paypal" && (
+            <PayPalScriptProvider options={{
+              clientId: import.meta.env.VITE_PAYPAL_CLIENT_ID || "",
+              currency: "USD",
+              intent: "capture"
+            }}>
+              <PayPalCheckout
+                plan={selectedPlan}
+                isAnnual={annual}
+                isTrial={isTrialFlow}
+                amount={selectedAmount}
+                onSuccess={handlePayPalSuccess}
+                onCancel={handlePayPalCancel}
+              />
+            </PayPalScriptProvider>
+          )}
+        </DialogContent>
+      </Dialog>
     </TabsContent>
   );
 }
