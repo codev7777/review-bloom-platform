@@ -21,13 +21,6 @@ const Footer = () => {
               <a
                 href="#"
                 className="text-white hover:text-orange-500 transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={20} />
@@ -38,13 +31,6 @@ const Footer = () => {
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-white hover:text-orange-500 transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={20} />
               </a>
             </div>
           </div>
