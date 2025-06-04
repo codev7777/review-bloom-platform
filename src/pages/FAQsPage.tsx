@@ -245,7 +245,7 @@ const FAQsPage = () => {
                   </a>
                 </Button>
                 <Button asChild className="bg-[#FF9900] hover:bg-orange-500 text-[#232F3E]">
-                  <a href="/contact" className="min-w-[160px]">
+                  <a href="/contact-us" className="min-w-[160px]">
                     Contact Support
                   </a>
                 </Button>

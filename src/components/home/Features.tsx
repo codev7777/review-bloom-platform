@@ -105,7 +105,7 @@ const Features = () => {
             </Card>
           </AnimatedCard>
 
-          <AnimatedCard delay={700}>
+          {/* <AnimatedCard delay={700}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
                 src="/images/landing/features/card-04.jpg"
@@ -113,7 +113,7 @@ const Features = () => {
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
             </Card>
-          </AnimatedCard>
+          </AnimatedCard> */}
 
           <AnimatedCard delay={200}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
@@ -125,7 +125,7 @@ const Features = () => {
             </Card>
           </AnimatedCard>
 
-          <AnimatedCard delay={400}>
+          {/* <AnimatedCard delay={400}>
             <Card className="border border-gray-200 shadow-md rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col min-h-64">
               <img
                 src="/images/landing/features/card-06.jpg"
@@ -153,7 +153,7 @@ const Features = () => {
                 className="w-full h-full object-cover aspect-w-1 aspect-h-1 transform transition-transform duration-500 ease-in-out hover:scale-110"
               />
             </Card>
-          </AnimatedCard>
+          </AnimatedCard> */}
         </div>
       </div>
     </section>

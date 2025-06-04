@@ -24,7 +24,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import SignupPage from "./pages/auth/SignupPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPassword";
 import ResetPasswordPage from "./pages/auth/ResetPassword";
-import ContractPage from "./pages/ContractPage";
+import ContactPage from "./pages/ContactPage";
 import HelpPage from "./pages/HelpPage";
 import AboutUsPage from "./pages/AboutUsPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
@@ -78,12 +78,12 @@ const App = () => {
                   path="/auth/reset-password"
                   element={<ResetPasswordPage />}
                 />
-                <Route path="/contract" element={<ContractPage />} />
+                <Route path="/contact" element={<ContactPage />} />
                 <Route path="/help" element={<HelpPage />} />
                 <Route path="/about" element={<AboutUsPage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
                 <Route path="/careers" element={<CareersPage />} />
-                <Route path="/contact" element={<ContactUsPage />} />
+                <Route path="/contact-us" element={<ContactUsPage />} />
                 <Route path="/faqs" element={<FAQsPage />} />
                 <Route path="/verify-email" element={<VerifyEmailPage />} />
                 <Route

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Step1Marketplace from "./steps/Step1Marketplace";
 import Step2UserInfo from "./steps/Step2UserInfo";
 import Step3Feedback from "./steps/Step3Feedback";
@@ -13,7 +13,6 @@ import { getPublicProducts } from "@/lib/api/public/publicProduct";
 import { createPublicReview } from "@/lib/api/public/publicReview";
 import { Campaign, Product, Promotion, Company } from "@/types";
 import api from "@/lib/api/axiosConfig";
-import { useAuth } from "@/hooks/use-auth";
 
 interface ReviewFunnelProps {
   campaignId: any;
@@ -87,11 +86,9 @@ const ReviewFunnel = ({
   products,
   marketPlaces,
 }: ReviewFunnelProps) => {
-  const { user } = useAuth();
 
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
   const { step: urlStep } = useParams<{ step: string }>();
   const [isDemo, setIsDemo] = useState(false);
   const [formData, setFormData] = useState<ReviewFormData>({
@@ -272,16 +269,22 @@ const ReviewFunnel = ({
     if (currentUrlStep !== step) {
       navigate(`/review/${campaignId}/step/${step}`, { replace: true });
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, campaignId, navigate]);
 
   // Update step when URL changes
   useEffect(() => {
     const urlStepNumber = getCurrentStep();
     setStep(urlStepNumber);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [urlStep]);
 
   useEffect(() => {
-    getReviewStatus();
+    if(campaignId !== "demo-campaign") {
+      getReviewStatus();
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -13,7 +13,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 
-const ContractPage = () => {
+const ContactPage = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -267,4 +267,4 @@ This Agreement shall be governed by the laws of the State of California.
   );
 };
 
-export default ContractPage;
+export default ContactPage;

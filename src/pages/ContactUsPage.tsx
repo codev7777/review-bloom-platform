@@ -65,8 +65,9 @@ const ContactUsPage = () => {
               </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-              <div className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
+            {/* <div className="grid md:grid-cols-3 gap-8 mb-12"> */}
+            <div className="flex justify-center items-center gap-8 mb-12">
+              {/* <div className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
                 <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
                   <Phone className="h-6 w-6 text-orange-500" />
                 </div>
@@ -75,7 +76,7 @@ const ContactUsPage = () => {
                 <a href="tel:+31644060394" className="text-orange-500 hover:underline">
                   +31 6 44 06 03 94
                 </a>
-              </div>
+              </div> */}
               
               <div className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
                 <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
@@ -88,7 +89,7 @@ const ContactUsPage = () => {
                 </a>
               </div>
               
-              <div className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
+              {/* <div className="flex flex-col items-center text-center p-6 bg-gray-50 rounded-lg">
                 <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
                   <MapPin className="h-6 w-6 text-orange-500" />
                 </div>
@@ -98,7 +99,7 @@ const ContactUsPage = () => {
                   123 Review Street<br />
                   San Francisco, CA 94103
                 </address>
-              </div>
+              </div> */}
             </div>
             
             <div className="grid md:grid-cols-2 gap-12">

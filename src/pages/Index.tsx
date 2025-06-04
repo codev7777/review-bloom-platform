@@ -116,7 +116,7 @@ const Index = () => {
             <HowItWorks />
             <StatsCounter />
             <Demo />
-            <div className="video-box bg-gray-50">
+            {/* <div className="video-box bg-gray-50">
               <div className="container-xl rounded-[10px]">
                 <iframe
                   src="https://www.youtube.com/embed/QlPkrGA1SBk"
@@ -134,7 +134,7 @@ const Index = () => {
                   }}
                 ></iframe>
               </div>
-            </div>
+            </div> */}
             <RecentReviews />
             <Pricing />
             <BenefitsSection />

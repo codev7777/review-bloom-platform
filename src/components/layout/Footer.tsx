@@ -90,10 +90,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/contract"
+                  to="/contact"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
-                  Contract & Terms
+                  Contact & Terms
                 </Link>
               </li>
               <li>
@@ -130,7 +130,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/contact"
+                  to="/contact-us"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Contact Us

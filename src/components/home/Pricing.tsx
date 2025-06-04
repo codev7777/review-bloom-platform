@@ -56,7 +56,7 @@ const PricingTier = ({
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute -top-5 xl:left-[115px] transform -translate-x-1/2 left-[155px] lg:left-[75px] z-50"
+            className="absolute -top-5 left-[25%] transform -translate-x-1/2 z-50"
           >
             <div className="relative bg-[#ff0000] text-white text-base font-medium px-4 py-1 uppercase shadow-md rounded-t-md">
               Most Popular
