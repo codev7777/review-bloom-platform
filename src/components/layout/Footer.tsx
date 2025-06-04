@@ -90,10 +90,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/contact"
+                  to="/terms-and-conditions"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
-                  Contact & Terms
+                  Terms and Conditions
                 </Link>
               </li>
               <li>
