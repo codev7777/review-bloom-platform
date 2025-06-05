@@ -3,7 +3,6 @@ import { useNavigate, Routes, Route } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
-  BarChart4,
   ShoppingBag,
   QrCode,
   Settings as SettingsIcon,
@@ -14,21 +13,19 @@ import {
   MessageSquare,
   ClipboardList,
   Star,
-  House,
   Home,
   CircleHelp
 } from "lucide-react";
 import { subDays, format, isSameDay } from "date-fns";
-import { BarChart, PieChart } from "@mantine/charts";
+import { BarChart } from "@mantine/charts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/use-auth";
-import { Campaign, mapCampaignForDisplay, Review } from "@/types";
+import { mapCampaignForDisplay, Review } from "@/types";
 import { getCampaigns } from "@/lib/api/campaigns/campaigns.api";
 import { getProducts } from "@/lib/api/products/products.api";
 import { getReviews } from "@/lib/api/reviews/reviews.api";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import CampaignCard from "./CampaignCard";
 import StatsCard from "./StatsCard";
 import ProductsList from "./products/ProductsList";
 import ProductForm from "./products/ProductForm";
@@ -39,14 +36,12 @@ import SettingsPanel from "./settings/SettingsPanel";
 import VendorNavbar from "./VendorNavbar";
 import PromotionsList from "./promotions/PromotionsList";
 import PromotionForm from "./promotions/PromotionForm";
-import useFetchWithFallback from "@/hooks/useFetchWithFallback";
 import { API_URL } from "@/config/env";
 import { getPromotions } from "@/lib/api/promotions/promotions.api";
 import ReviewsPage from "@/pages/vendor/ReviewsPage";
 import { getImageUrl } from "@/utils/imageUrl";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { getCompanyStats, CompanyStats } from "@/lib/api/company/company.api";
-import ReviewsChart from "./analytics/ReviewsChart";
 import RecentReviews from "./analytics/RecentReviews";
 
 const Sidebar = ({
@@ -462,15 +457,6 @@ const VendorDashboard: React.FC = () => {
     queryKey: ["promotions"],
     queryFn: () => getPromotions(),
   });
-
-  const campaigns = campaignsResponse?.data || [];
-  const products = productsResponse?.data || [];
-  const promotions = promotionsResponse?.data || [];
-
-  const activeCampaigns = campaigns.filter((c) => c.isActive === "YES").length;
-  const totalProducts = products.length;
-  const totalPromotions = promotions.length;
-  const totalClaims = campaigns.reduce((sum, c) => sum + (c.claims || 0), 0);
 
   useEffect(() => {
     const checkBackendConnection = async () => {

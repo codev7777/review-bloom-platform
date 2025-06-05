@@ -95,9 +95,9 @@ const App = () => {
                 <Route
                   path="/vendor-dashboard/*"
                   element={
-                    // <PrivateRoute>
-                    <VendorDashboard />
-                    // </PrivateRoute>
+                    <PrivateRoute requiredRole="USER">
+                      <VendorDashboard />
+                    </PrivateRoute>
                   }
                 />
 

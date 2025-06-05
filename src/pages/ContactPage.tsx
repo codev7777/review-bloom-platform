@@ -74,7 +74,7 @@ This Agreement shall be governed by the laws of the State of California.
           <div className="max-w-4xl mx-auto">
             <div className="mb-12 text-center">
               <h1 className="text-3xl sm:text-4xl font-semibold mb-4">
-                ReviewBrothers Contract & Terms
+                ReviewBrothers Terms and Conditions
               </h1>
               <p className="text-lg text-muted-foreground">
                 Our commitment to transparency and fair business practices

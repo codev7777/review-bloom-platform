@@ -58,7 +58,7 @@ const MobileMenu = ({
 
           {/* How It Works */}
           <Link
-            to="/how-it-works"
+            to="/#how-it-works"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
             onClick={toggleMenu}
           >
@@ -67,7 +67,7 @@ const MobileMenu = ({
 
           {/* Demo */}
           <Link
-            to="/demo"
+            to="/#demo"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
             onClick={toggleMenu}
           >
@@ -76,7 +76,7 @@ const MobileMenu = ({
 
           {/* Pricing */}
           <Link
-            to="/pricing"
+            to="/#pricing"
             className="text-base font-medium text-white hover:text-[#FF9900] transition-colors"
             onClick={toggleMenu}
           >

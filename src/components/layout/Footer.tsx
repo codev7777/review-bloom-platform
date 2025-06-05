@@ -58,7 +58,7 @@ const Footer = () => {
               </li> */}
               <li>
                 <Link
-                  to="/vendor-dashboard/analytics"
+                  to="/vendor-dashboard"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Analytics Dashboard
