@@ -23,7 +23,7 @@ const vendorReviews = [
     id: 1,
     vendorName: "Elite Amazon Sellers",
     jobTitle: "CEO & Founder",
-    reviewerName: "John Doe", // Human name
+    reviewerName: "John D", // Human name
     avatar: "/images/avatars/man-1.jpg",
     rating: 5,
     comment:
@@ -34,7 +34,7 @@ const vendorReviews = [
     id: 2,
     vendorName: "TechHub Enterprises",
     jobTitle: "Marketing Director",
-    reviewerName: "Jane Smith", // Human name
+    reviewerName: "James S", // Human name
     avatar: "/images/avatars/man-2.jpg",
     rating: 4,
     comment:
@@ -45,7 +45,7 @@ const vendorReviews = [
     id: 3,
     vendorName: "EcoGoods Marketplace",
     jobTitle: "Operations Manager",
-    reviewerName: "Olivia Marie", // Human name
+    reviewerName: "Olivia M", // Human name
     avatar: "/images/avatars/woman-1.jpg",
     rating: 5,
     comment:
@@ -56,7 +56,7 @@ const vendorReviews = [
     id: 4,
     vendorName: "HomeEssentials Pro",
     jobTitle: "E-commerce Manager",
-    reviewerName: "Emily White", // Human name
+    reviewerName: "Jun L", // Human name
     avatar: "/images/avatars/man-3.jpg",
     rating: 5,
     comment:
@@ -67,7 +67,7 @@ const vendorReviews = [
     id: 5,
     vendorName: "Gadget World",
     jobTitle: "Product Manager",
-    reviewerName: "CMia Elizabeth", // Human name
+    reviewerName: "Mia E", // Human name
     avatar: "/images/avatars/woman-2.jpg",
     rating: 4,
     comment:

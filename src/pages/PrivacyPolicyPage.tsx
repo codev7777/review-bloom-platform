@@ -71,9 +71,9 @@ const PrivacyPolicyPage = () => {
               <p className="mb-6">
                 If you have any questions about this privacy policy or our privacy practices, please contact us at:
                 <br /><br />
-                Email: privacy@reviewbrothers.com<br />
-                Phone: +1 (555) 123-4567<br />
-                Address: 123 Review Street, San Francisco, CA 94103, USA
+                Email: info@reviewbrothers.com<br />
+                {/* Phone: +1 (555) 123-4567<br />
+                Address: 123 Review Street, San Francisco, CA 94103, USA */}
               </p>
             </div>
           </div>

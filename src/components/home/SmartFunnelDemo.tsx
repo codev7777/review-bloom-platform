@@ -14,7 +14,7 @@ const Demo = () => {
     >
       {/* Header */}
       <motion.header
-        className="w-full max-w-4xl pt-20 pb-12 px-4 text-center bg-[#faf4f3]"
+        className="w-full max-w-4xl pt-32 pb-12 px-4 text-center bg-[#faf4f3]"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: false, amount: 0.2 }}

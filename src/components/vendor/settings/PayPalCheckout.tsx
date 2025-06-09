@@ -39,9 +39,14 @@ export function PayPalCheckout({
 
   const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
   const PAYPAL_CLIENT_SECRET = import.meta.env.VITE_PAYPAL_CLIENT_SECRET;
+  const PAYPAL_ENV = import.meta.env.VITE_PAYPAL_ENV || 'sandbox';
+
+  // Determine PayPal API base URLs based on environment
+  const PAYPAL_API_BASE = PAYPAL_ENV === 'live' ? 'https://api.paypal.com' : 'https://api.sandbox.paypal.com';
+  const PAYPAL_API_M_BASE = PAYPAL_ENV === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
 
   const getAccessToken = async () => {
-    const response = await fetch('https://api.sandbox.paypal.com/v1/oauth2/token', {
+    const response = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -55,7 +60,7 @@ export function PayPalCheckout({
 
   // Create a product if needed
   const createProduct = async (token: string) => {
-    const response = await fetch('https://api.sandbox.paypal.com/v1/catalogs/products', {
+    const response = await fetch(`${PAYPAL_API_BASE}/v1/catalogs/products`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -76,7 +81,7 @@ export function PayPalCheckout({
 
   // Find product by description
   const findProduct = async (token: string) => {
-    const response = await fetch('https://api-m.sandbox.paypal.com/v1/catalogs/products?page_size=20&page=1&total_required=true', {
+    const response = await fetch(`${PAYPAL_API_M_BASE}/v1/catalogs/products?page_size=20&page=1&total_required=true`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -89,7 +94,7 @@ export function PayPalCheckout({
 
   // Create a billing plan for the product
   const createPlan = async (token: string, productId: string) => {
-    const response = await fetch('https://api.sandbox.paypal.com/v1/billing/plans', {
+    const response = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -134,7 +139,7 @@ export function PayPalCheckout({
 
   // Find plan by name
   const findPlan = async (token: string) => {
-    const response = await fetch(`https://api.sandbox.paypal.com/v1/billing/plans?page_size=20&page=1&total_required=true`, {
+    const response = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans?page_size=20&page=1&total_required=true`, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'

@@ -14,13 +14,13 @@ const VendorNavbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full bg-[#212631] border-b border-gray-700 h-[74px] px-6 pl-16">
-      <div>
+    <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between w-full bg-[#212631] border-b border-gray-700 px-6 pl-16 h-[85px]">
+      <div className="flex p-3">
         <Link to="/vendor-dashboard" className="flex items-center">
           <img
             src="/images/logo/logo.png"
             alt="ReviewBrothers Logo"
-            className="h-24 w-24"
+            className="h-[80px] w-[100px]"
           />
         </Link>
       </div>
@@ -40,9 +40,6 @@ const VendorNavbar = () => {
             <p className="text-xs leading-none text-black">{user?.email}</p>
           </div>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link to="/vendor-dashboard/settings">Settings</Link>
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

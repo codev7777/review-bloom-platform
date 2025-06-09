@@ -10,23 +10,25 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-orange-500">
-              ReviewBrothers
-            </h3>
+            <img
+              src="/images/logo/logo.png"
+              alt="ReviewBrothers Logo"
+              style={{ height: "100px" }}
+            />
             <p className="text-sm text-gray-400">
               Revolutionizing the way Amazon vendors collect and leverage
               customer reviews.
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61576801787946&mibextid=LQQJ4d"
                 className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={20} />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/reviewbrothers.official?igsh=cmpndXp1c3d4ejR5&utm_source=qr"
                 className="text-white hover:text-orange-500 transition-colors"
                 aria-label="Instagram"
               >
@@ -104,14 +106,14 @@ const Footer = () => {
                   Privacy Policy
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   to="/careers"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Careers
                 </Link>
-              </li>
+              </li> */}
             </ul>
           </div>
 
@@ -129,12 +131,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact-us"
+                <a
+                  href="mailto:info@reviewbrothers.com"
                   className="text-white hover:text-orange-500 transition-colors text-sm"
                 >
                   Contact Us
-                </Link>
+                </a>
               </li>
               <li>
                 <Link
