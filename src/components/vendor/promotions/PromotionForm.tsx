@@ -326,10 +326,16 @@ const PromotionForm = () => {
       navigate("/vendor-dashboard/promotions");
     } catch (error: any) {
       console.error("Error submitting promotion:", error);
-      setError({
+      // setError({
+      //   title: "Error",
+      //   message: error.message || "Failed to submit promotion",
+      //   showUpgradeButton: false,
+      // });
+      toast({
+        variant: "destructive",
         title: "Error",
-        message: error.message || "Failed to submit promotion",
-        showUpgradeButton: false,
+        description:
+          error.response?.data?.message || "Failed to save promotion",
       });
     } finally {
       setIsLoading(false);

@@ -190,8 +190,6 @@ export function PayPalCheckout({
   if (!planId || !amount) {
     return <div className="checkout"><p>No subscription plan or price found</p></div>;
   }
-
-  console.log(isAnnual)
   
   const setPaypalSession = async (details: any) => {
     try {
