@@ -383,12 +383,44 @@ export function SubscriptionPanel() {
       subscribe(selectedPlan.planId, annual, isTrialFlow);
       setIsTrialFlow(false);
     } else if (method === "paypal") {
-      setShowPaymentMethodModal(false);
-      setSelectedPaymentMethod("paypal");
-      setShowPayPalDialog(true);
-      // Do NOT clear selectedPlan here!
+      if(isTrialFlow) {
+        setTrialByPaypal();
+      } else {
+        setShowPaymentMethodModal(false);
+        setSelectedPaymentMethod("paypal");
+        setShowPayPalDialog(true);
+      }
     }
   };
+
+  const setTrialByPaypal = async () => {
+    try {
+      const res = await api.post("/billing/create-paypal-subscription", {
+        annual: annual,
+        details: {},
+        isTrial: isTrialFlow,
+        planId: selectedPlan?.planId,
+        user: user
+      });
+
+      if (res.data.success) {
+        toast({
+          title: "Subscription Successful",
+          description: res.data.message,
+        });
+
+        setShowPaymentMethodModal(false);
+      }
+    } catch (err) {
+      console.error("Paypal Checkout Error:", err);
+      
+      toast({
+        variant: "destructive",
+        title: "Paypal Subscription Error",
+        description: "Failed to initiate checkout. Try again.",
+      });
+    }
+  }
 
   const handlePayPalSuccess = () => {
     refresh();
