@@ -10,10 +10,10 @@ const Demo = () => {
   return (
     <div
       id="demo"
-      className="flex flex-col items-center bg-gray-50 pb-20  max-w-screen"
+      className="flex flex-col items-center bg-gray-50 pb-20  max-w-screen pt-12"
     >
       {/* Header */}
-      <motion.header
+      {/* <motion.header
         className="w-full max-w-4xl pt-32 pb-12 px-4 text-center bg-[#faf4f3]"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -24,12 +24,11 @@ const Demo = () => {
           Boost Reviews —<br />
           The Amazon-Safe Way
         </h1>
-      </motion.header>
+      </motion.header> */}
 
       {/* Main Content */}
       <main className="w-full max-w-4xl flex-1 bg-[#faf4f3]">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          {/* Image - Slide in from Left */}
+        {/* <div className="grid md:grid-cols-2 gap-8 items-center">
           <motion.div
             className="flex justify-end md:justify-end"
             initial={{ opacity: 0, x: -100 }}
@@ -42,7 +41,6 @@ const Demo = () => {
             </div>
           </motion.div>
 
-          {/* Steps - Fade in one by one */}
           <motion.div
             className="flex flex-col justify-center space-y-6"
             initial="hidden"
@@ -83,10 +81,10 @@ const Demo = () => {
               </motion.div>
             ))}
           </motion.div>
-        </div>
+        </div> */}
 
         {/* Compliance Section - Fade in from Bottom */}
-        <motion.div
+        {/* <motion.div
           className="bg-teal-800 text-white p-6 rounded-lg"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -111,7 +109,6 @@ const Demo = () => {
             </div>
           </div>
 
-          {/* Watch Demo Button - Fade in */}
           <motion.div
             className="mt-8 flex justify-center"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -125,7 +122,7 @@ const Demo = () => {
               </Button>
             </Link>
           </motion.div>
-        </motion.div>
+        </motion.div> */}
 
         {/* QR Code Section - Fade in from Bottom */}
         <motion.div

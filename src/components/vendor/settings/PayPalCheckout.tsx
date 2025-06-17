@@ -234,6 +234,7 @@ export function PayPalCheckout({
         </div>
       ) : (
         <PayPalButtons
+          fundingSource="paypal"
           style={{ layout: "vertical" }}
           createOrder={(
             data: Record<string, unknown>,

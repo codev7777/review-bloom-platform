@@ -207,7 +207,7 @@ const FAQ = () => {
               asChild
               className="gap-2 bg-[#FF9900] text-[#232F3E] hover:bg-orange-500"
             >
-              <a href="mailto:support@reviewbrothers.com">
+              <a href="mailto:info@reviewbrothers.com">
                 <Mail className="h-4 w-4" />
                 Contact Support
               </a>

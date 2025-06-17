@@ -378,49 +378,14 @@ export function SubscriptionPanel() {
     if (!selectedPlan) return;
 
     if (method === "stripe") {
-      setShowPaymentMethodModal(false);
       setSelectedPaymentMethod(null);
       subscribe(selectedPlan.planId, annual, isTrialFlow);
       setIsTrialFlow(false);
     } else if (method === "paypal") {
-      if(isTrialFlow) {
-        setTrialByPaypal();
-      } else {
-        setShowPaymentMethodModal(false);
-        setSelectedPaymentMethod("paypal");
-        setShowPayPalDialog(true);
-      }
+      setSelectedPaymentMethod("paypal");
+      setShowPayPalDialog(true);
     }
   };
-
-  const setTrialByPaypal = async () => {
-    try {
-      const res = await api.post("/billing/create-paypal-subscription", {
-        annual: annual,
-        details: {},
-        isTrial: isTrialFlow,
-        planId: selectedPlan?.planId,
-        user: user
-      });
-
-      if (res.data.success) {
-        toast({
-          title: "Subscription Successful",
-          description: res.data.message,
-        });
-
-        setShowPaymentMethodModal(false);
-      }
-    } catch (err) {
-      console.error("Paypal Checkout Error:", err);
-      
-      toast({
-        variant: "destructive",
-        title: "Paypal Subscription Error",
-        description: "Failed to initiate checkout. Try again.",
-      });
-    }
-  }
 
   const handlePayPalSuccess = () => {
     refresh();
@@ -449,9 +414,10 @@ export function SubscriptionPanel() {
   let selectedAmount = "0.00";
   if (selectedPlan) {
     if (isTrialFlow) {
-      selectedAmount = annual
-        ? ((selectedPlan.annually  / 30) * 7).toFixed(2)
-        : ((selectedPlan.monthly / 30) * 7).toFixed(2);
+      // selectedAmount = annual
+      //   ? ((selectedPlan.annually  / 30) * 7).toFixed(2)
+      //   : ((selectedPlan.monthly / 30) * 7).toFixed(2);
+      selectedAmount = "2.5";
     } else {
       selectedAmount = annual
         ? (selectedPlan.annually * 12).toFixed(2)
