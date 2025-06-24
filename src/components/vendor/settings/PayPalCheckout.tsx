@@ -4,6 +4,36 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "@/components/ui/use-toast";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 
+// PayPal types
+interface PayPalOrderDetails {
+  payer?: {
+    name?: {
+      given_name?: string;
+    };
+  };
+  id?: string;
+  status?: string;
+  create_time?: string;
+  update_time?: string;
+  payment_source?: Record<string, unknown>;
+}
+
+interface PayPalCreateOrderData {
+  [key: string]: unknown;
+}
+
+interface PayPalCreateOrderActions {
+  order: {
+    create: (order: Record<string, unknown>) => Promise<string>;
+  };
+}
+
+interface PayPalOnApproveActions {
+  order?: {
+    capture: () => Promise<PayPalOrderDetails>;
+  };
+}
+
 interface PayPalCheckoutProps {
   plan: {
     planId: string;
@@ -32,10 +62,10 @@ export function PayPalCheckout({
   const [loading, setLoading] = useState(true);
 
   const PLAN_CURRENCY = "USD";
-  const PRODUCT_NAME = `${plan.title} ${isAnnual ? 'Annual' : 'Monthly'} Subscription`;
-  const PRODUCT_DESCRIPTION = `${plan.title} ${isAnnual ? 'Annual' : 'Monthly'}`;
-  const PLAN_NAME = `${plan.title} ${isAnnual ? 'Annual' : 'Monthly'} Plan`;
-  const PLAN_DESC = `${isTrial ? '7-day Trial' : isAnnual ? 'Annual' : 'Monthly'} subscription for ${plan.title} tier`;
+  const PRODUCT_NAME = `${plan.title} ${isTrial ? 'Trial' : isAnnual ? 'Annual' : 'Monthly'} Subscription`;
+  const PRODUCT_DESCRIPTION = `${plan.title} ${isTrial ? 'Trial' : isAnnual ? 'Annual' : 'Monthly'}`;
+  const PLAN_NAME = `${plan.title} ${isTrial ? 'Trial' : isAnnual ? 'Annual' : 'Monthly'} Plan`;
+  const PLAN_DESC = `${isTrial ? '1-day Trial ($2.50) + ' : ''}${isAnnual ? 'Annual' : 'Monthly'} subscription for ${plan.title} tier`;
 
   const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID;
   const PAYPAL_CLIENT_SECRET = import.meta.env.VITE_PAYPAL_CLIENT_SECRET;
@@ -94,6 +124,61 @@ export function PayPalCheckout({
 
   // Create a billing plan for the product
   const createPlan = async (token: string, productId: string) => {
+    const trialAmount = "2.50"; // $2.50 for trial
+    const trialDuration = 1; // 1 day for testing (PayPal minimum interval)
+    
+    const billingCycles = isTrial ? [
+      // Trial cycle - 1 day (PayPal minimum interval)
+      {
+        frequency: {
+          interval_unit: "DAY",
+          interval_count: trialDuration
+        },
+        tenure_type: "TRIAL",
+        sequence: 1,
+        total_cycles: 1,
+        pricing_scheme: {
+          fixed_price: {
+            value: trialAmount,
+            currency_code: PLAN_CURRENCY
+          }
+        }
+      },
+      // Regular cycle after trial
+      {
+        frequency: {
+          interval_unit: isAnnual ? "YEAR" : "MONTH",
+          interval_count: 1
+        },
+        tenure_type: "REGULAR",
+        sequence: 2,
+        total_cycles: 0,
+        pricing_scheme: {
+          fixed_price: {
+            value: amount,
+            currency_code: PLAN_CURRENCY
+          }
+        }
+      }
+    ] : [
+      // Regular cycle without trial
+      {
+        frequency: {
+          interval_unit: isAnnual ? "YEAR" : "MONTH",
+          interval_count: 1
+        },
+        tenure_type: "REGULAR",
+        sequence: 1,
+        total_cycles: 0,
+        pricing_scheme: {
+          fixed_price: {
+            value: amount,
+            currency_code: PLAN_CURRENCY
+          }
+        }
+      }
+    ];
+
     const response = await fetch(`${PAYPAL_API_BASE}/v1/billing/plans`, {
       method: 'POST',
       headers: {
@@ -105,23 +190,7 @@ export function PayPalCheckout({
         name: PLAN_NAME,
         description: PLAN_DESC,
         status: "ACTIVE",
-        billing_cycles: [
-          {
-            frequency: {
-              interval_unit: isAnnual ? "YEAR" : "MONTH",
-              interval_count: 1
-            },
-            tenure_type: "REGULAR",
-            sequence: 1,
-            total_cycles: 0,
-            pricing_scheme: {
-              fixed_price: {
-                value: amount,
-                currency_code: PLAN_CURRENCY
-              }
-            }
-          }
-        ],
+        billing_cycles: billingCycles,
         payment_preferences: {
           auto_bill_outstanding: true,
           setup_fee: {
@@ -174,7 +243,7 @@ export function PayPalCheckout({
     };
     setup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [plan, isAnnual]);
+  }, [plan, isAnnual, isTrial]);
 
   if (loading) {
     return (
@@ -191,14 +260,14 @@ export function PayPalCheckout({
     return <div className="checkout"><p>No subscription plan or price found</p></div>;
   }
   
-  const setPaypalSession = async (details: any) => {
+  const setPaypalSession = async (details: PayPalOrderDetails) => {
     try {
       const res = await api.post("/billing/create-paypal-subscription", {
         annual: isAnnual,
         details: details,
         isTrial: isTrial,
         planId: plan?.planId,
-        user: user
+        user: user,
       });
 
       if (res.data.success) {
@@ -237,8 +306,8 @@ export function PayPalCheckout({
           fundingSource="paypal"
           style={{ layout: "vertical" }}
           createOrder={(
-            data: Record<string, unknown>,
-            actions: { order: { create: (order: any) => Promise<string> } }
+            data: PayPalCreateOrderData,
+            actions: PayPalCreateOrderActions
           ) => {
             return actions.order.create({
               purchase_units: [
@@ -254,17 +323,15 @@ export function PayPalCheckout({
             });
           }}
           onApprove={(
-            data: Record<string, unknown>,
-            actions: { order: { capture: () => Promise<any> } }
+            data: PayPalCreateOrderData,
+            actions: PayPalOnApproveActions
           ) => {
-            return actions.order.capture().then((details: { payer?: { name?: { given_name?: string } } }) => {
+            if (!actions.order) {
+              throw new Error("Order actions not available");
+            }
+            return actions.order.capture().then((details: PayPalOrderDetails) => {
               console.log(details);
-
               setPaypalSession(details);
-              // if (details?.payer?.name?.given_name) {
-              //   alert(`Transaction completed by ${details.payer.name.given_name}`);
-              // }
-              // if (onSuccess) onSuccess();
             });
           }}
           onError={onCancel}

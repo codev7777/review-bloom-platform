@@ -3,7 +3,7 @@ import Logo from "./navbar/Logo";
 
 const ReviewFunnelNavbar = () => {
   return (
-    <header className="w-full fixed top-0 left-0 right-0 z-50 h-[8vh] bg-[#232F3E] dark:bg-[#232F3E]">
+    <header className="w-full fixed top-0 left-0 right-0 z-50 h-[90px] bg-[#232F3E] dark:bg-[#232F3E]">
       <div className="container px-4 mx-auto flex items-center justify-center h-full">
         <Link to="/" className="cursor-pointer">
           <Logo />

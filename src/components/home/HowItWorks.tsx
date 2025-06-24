@@ -1,6 +1,6 @@
 const steps = [
   {
-    icon: "/images/landing/step-1.png",
+    icon: "/images/landing/step-1.jpg",
     title: "Make It Easy for Customers to Leave a Review",
     description: `
       <div class="opacity-0">opacity-0</div>
@@ -32,7 +32,7 @@ const steps = [
     `,
   },
   {
-    icon: "/images/landing/step-2.png",
+    icon: "/images/landing/step-2.jpg",
     title: "Place Your QR Code on an Insert or Inside the Packaging",
     description: `
       <div class="opacity-0">opacity-0</div>
@@ -72,7 +72,7 @@ const steps = [
     `,
   },
   {
-    icon: "/images/landing/step-3.png",
+    icon: "/images/landing/step-3.jpg",
     title: "Boost Engagement and Reviews in Seconds!",
     description: `
       <div class="opacity-0">opacity-0</div>
@@ -86,7 +86,7 @@ const steps = [
     `,
   },
   {
-    icon: "/images/landing/step-4.png",
+    icon: "/images/landing/step-4.jpg",
     title: "Collect Reviews, Feedback & Emails — Automatically",
     description: `
           <div class="opacity-0">opacity-0</div>
@@ -119,7 +119,7 @@ const steps = [
     `,
   },
   {
-    icon: "/images/landing/step-5.png",
+    icon: "/images/landing/step-5.jpg",
     title: "Deliver Your Promotion – Automatically or Manually",
     description: `
       <div class="flex items-start">

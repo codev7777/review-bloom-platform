@@ -20,7 +20,7 @@ const VendorNavbar = () => {
           <img
             src="/images/logo/logo.png"
             alt="ReviewBrothers Logo"
-            className="h-[80px] w-[100px]"
+            className="h-[80px] min-w-[100px]"
           />
         </Link>
       </div>
